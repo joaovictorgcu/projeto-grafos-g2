@@ -213,6 +213,39 @@
 </div>
 </div>
 </section>
+<section id="paralelos" data-transition="fade" style="background:#F7F5F0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">02 · Grafo</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Arcos paralelos viram um arco</h2>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:40px">
+<div style="position:relative; width:1664px; height:420px; flex:none; background:#EDE9E0; border-radius:24px">
+<p style="position:absolute; left:20px; top:30px; width:720px; font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#4A5568">Multigrafo: uma transferência, um arco</p>
+<p style="position:absolute; left:924px; top:30px; width:720px; font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#4A5568">Grafo do projeto: um arco por par</p>
+<div style="position:absolute; left:20px; top:110px; width:200px; height:200px; background:#FCFBF7; border:2px solid #14213D; border-radius:24px; display:flex; justify-content:center; align-items:center"><p style="font-size:24px; font-weight:700; color:#14213D">Real Madrid</p></div>
+<div style="position:absolute; left:540px; top:110px; width:200px; height:200px; background:#FCFBF7; border:2px solid #14213D; border-radius:24px; display:flex; justify-content:center; align-items:center"><p style="font-size:24px; font-weight:700; color:#14213D">PSG</p></div>
+<div style="position:absolute; left:924px; top:110px; width:200px; height:200px; background:#FCFBF7; border:2px solid #14213D; border-radius:24px; display:flex; justify-content:center; align-items:center"><p style="font-size:24px; font-weight:700; color:#14213D">Real Madrid</p></div>
+<div style="position:absolute; left:1444px; top:110px; width:200px; height:200px; background:#FCFBF7; border:2px solid #14213D; border-radius:24px; display:flex; justify-content:center; align-items:center"><p style="font-size:24px; font-weight:700; color:#14213D">PSG</p></div>
+<x-connector x1="220" y1="140" x2="540" y2="140" style="color:#1F5F8B; border-width:3px"></x-connector>
+<x-connector x1="220" y1="210" x2="540" y2="210" style="color:#A93B1A; border-width:3px"></x-connector>
+<x-connector x1="220" y1="280" x2="540" y2="280" style="color:#A93B1A; border-width:3px"></x-connector>
+<x-connector x1="768" y1="210" x2="896" y2="210" style="color:#14213D; border-width:6px"></x-connector>
+<x-connector x1="1124" y1="210" x2="1444" y2="210" style="color:#A93B1A; border-width:5px"></x-connector>
+<p style="position:absolute; left:236px; top:96px; width:288px; font-size:24px; font-weight:600; text-align:center; color:#1F5F8B">Navas 2019: +5 mi</p>
+<p style="position:absolute; left:236px; top:166px; width:288px; font-size:24px; font-weight:600; text-align:center; color:#A93B1A">Ramos 2021: −10 mi</p>
+<p style="position:absolute; left:236px; top:236px; width:288px; font-size:24px; font-weight:600; text-align:center; color:#A93B1A">Asensio 2023: −25 mi</p>
+<p style="position:absolute; left:776px; top:160px; width:112px; font-size:24px; text-align:center; color:#14213D">soma</p>
+<p style="position:absolute; left:1140px; top:154px; width:288px; font-size:30px; font-weight:700; text-align:center; color:#A93B1A">−30 mi</p>
+</div>
+<div style="display:flex; gap:64px; align-items:flex-start">
+<div style="width:520px; flex:none; display:flex; flex-direction:column; gap:8px">
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#14213D">4.816</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">transferências somadas a um arco que já existia: 36.442 transferências viram 31.626 arcos</p>
+</div>
+<p style="flex:1; font-size:30px; line-height:1.4; color:#14213D">O arco guarda a soma dos pesos das transferências do par: +5 − 10 − 25 = −30 mi. O grafo fica simples, sem arcos paralelos, e cada par ordenado tem um só peso.</p>
+</div>
+</div>
+</section>
 <section id="formal" data-transition="fade" style="background:#F7F5F0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px; display:flex; flex-direction:column; gap:56px">
 <div style="display:flex; flex-direction:column; gap:16px">
 <p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">02 · Grafo</p>
@@ -432,6 +465,86 @@
 </div>
 <p style="position:absolute; left:128px; bottom:64px; width:1664px; font-size:24px; color:#4A5568">Componentes contadas por propagação de rótulos com pandas, ignorando a direção dos arcos · fonte: scripts/ficha_transfermarkt.py</p>
 </section>
+<section id="esquema" data-transition="fade" style="background:#F7F5F0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">02 · Grafo</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Como o grafo se organiza</h2>
+</div>
+<div style="display:flex; flex-direction:column; gap:32px">
+<div style="position:relative; width:1664px; height:500px; flex:none; background:#EDE9E0; border-radius:24px">
+<svg aria-label="Esquema de um grafo dirigido: uma componente grande com uma fonte, um sumidouro e um ciclo de dois arcos em laranja, e ao lado três componentes de só dois clubes" style="position:absolute; left:0; top:0" width="1664" height="500" viewBox="0 0 1664 500">
+<defs>
+<marker id="ec" orient="auto" markerWidth="5" markerHeight="5" refX="0.8" refY="2" overflow="visible"><path d="M-3.2 -1.7 L0.8 0 L-3.2 1.7" transform="translate(0 2)" fill="none" stroke="#8A94A6" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></marker>
+<marker id="eo" orient="auto" markerWidth="5" markerHeight="5" refX="0.8" refY="2" overflow="visible"><path d="M-3.2 -1.7 L0.8 0 L-3.2 1.7" transform="translate(0 2)" fill="none" stroke="#A93B1A" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+<path d="M 178 114 L 278 83" fill="none" stroke="#8A94A6" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ec)"/>
+<path d="M 317 84 L 429 136" fill="none" stroke="#8A94A6" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ec)"/>
+<path d="M 468 140 L 588 99" fill="none" stroke="#8A94A6" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ec)"/>
+<path d="M 789 152 L 907 140" fill="none" stroke="#8A94A6" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ec)"/>
+<path d="M 946 148 L 991 177" fill="none" stroke="#8A94A6" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ec)"/>
+<path d="M 221 235 L 171 140" fill="none" stroke="#8A94A6" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ec)"/>
+<path d="M 249 255 L 377 276" fill="none" stroke="#8A94A6" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ec)"/>
+<path d="M 407 262 L 442 168" fill="none" stroke="#8A94A6" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ec)"/>
+<path d="M 419 276 L 547 249" fill="none" stroke="#8A94A6" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ec)"/>
+<path d="M 575 226 L 604 114" fill="none" stroke="#8A94A6" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ec)"/>
+<path d="M 588 250 L 708 291" fill="none" stroke="#8A94A6" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ec)"/>
+<path d="M 749 294 L 868 267" fill="none" stroke="#8A94A6" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ec)"/>
+<path d="M 906 252 L 990 202" fill="none" stroke="#8A94A6" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ec)"/>
+<path d="M 735 280 L 764 176" fill="none" stroke="#8A94A6" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ec)"/>
+<path d="M 186 378 L 222 274" fill="none" stroke="#8A94A6" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ec)"/>
+<path d="M 199 398 L 347 412" fill="none" stroke="#8A94A6" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ec)"/>
+<path d="M 374 395 L 395 302" fill="none" stroke="#8A94A6" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ec)"/>
+<path d="M 389 412 L 547 391" fill="none" stroke="#8A94A6" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ec)"/>
+<path d="M 570 369 L 570 267" fill="none" stroke="#8A94A6" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ec)"/>
+<path d="M 589 392 L 748 427" fill="none" stroke="#8A94A6" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ec)"/>
+<path d="M 765 414 L 737 320" fill="none" stroke="#8A94A6" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ec)"/>
+<path d="M 898 279 L 941 375" fill="none" stroke="#8A94A6" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ec)"/>
+<path d="M 789 428 L 927 401" fill="none" stroke="#8A94A6" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ec)"/>
+<path d="M 1005 208 L 956 374" fill="none" stroke="#8A94A6" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ec)"/>
+<path d="M 1269 160 L 1427 160" fill="none" stroke="#8A94A6" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ec)"/>
+<path d="M 1269 280 L 1427 280" fill="none" stroke="#8A94A6" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ec)"/>
+<path d="M 1269 400 L 1427 400" fill="none" stroke="#8A94A6" stroke-width="2.5" stroke-linecap="round" marker-end="url(#ec)"/>
+<path d="M 625 105 L 746 152" fill="none" stroke="#A93B1A" stroke-width="3" stroke-linecap="round" marker-end="url(#eo)"/>
+<path d="M 755 141 L 634 94" fill="none" stroke="#A93B1A" stroke-width="3" stroke-linecap="round" marker-end="url(#eo)"/>
+<circle cx="160" cy="120" r="16" fill="#FCFBF7" stroke="#14213D" stroke-width="2"/>
+<circle cx="300" cy="76" r="16" fill="#FCFBF7" stroke="#14213D" stroke-width="2"/>
+<circle cx="450" cy="146" r="16" fill="#FCFBF7" stroke="#14213D" stroke-width="2"/>
+<circle cx="610" cy="92" r="16" fill="#FCFBF7" stroke="#A93B1A" stroke-width="3"/>
+<circle cx="770" cy="154" r="16" fill="#FCFBF7" stroke="#A93B1A" stroke-width="3"/>
+<circle cx="930" cy="138" r="16" fill="#FCFBF7" stroke="#14213D" stroke-width="2"/>
+<circle cx="230" cy="252" r="16" fill="#FCFBF7" stroke="#14213D" stroke-width="2"/>
+<circle cx="400" cy="280" r="16" fill="#FCFBF7" stroke="#14213D" stroke-width="2"/>
+<circle cx="570" cy="244" r="16" fill="#FCFBF7" stroke="#14213D" stroke-width="2"/>
+<circle cx="730" cy="298" r="16" fill="#FCFBF7" stroke="#14213D" stroke-width="2"/>
+<circle cx="890" cy="262" r="16" fill="#FCFBF7" stroke="#14213D" stroke-width="2"/>
+<circle cx="1010" cy="190" r="16" fill="#FCFBF7" stroke="#14213D" stroke-width="2"/>
+<circle cx="180" cy="396" r="16" fill="#1F5F8B" stroke="#1F5F8B" stroke-width="2"/>
+<circle cx="370" cy="414" r="16" fill="#FCFBF7" stroke="#14213D" stroke-width="2"/>
+<circle cx="570" cy="388" r="16" fill="#FCFBF7" stroke="#14213D" stroke-width="2"/>
+<circle cx="770" cy="432" r="16" fill="#FCFBF7" stroke="#14213D" stroke-width="2"/>
+<circle cx="950" cy="396" r="16" fill="#14213D" stroke="#14213D" stroke-width="2"/>
+<circle cx="1250" cy="160" r="16" fill="#FCFBF7" stroke="#14213D" stroke-width="2"/>
+<circle cx="1450" cy="160" r="16" fill="#FCFBF7" stroke="#14213D" stroke-width="2"/>
+<circle cx="1250" cy="280" r="16" fill="#FCFBF7" stroke="#14213D" stroke-width="2"/>
+<circle cx="1450" cy="280" r="16" fill="#FCFBF7" stroke="#14213D" stroke-width="2"/>
+<circle cx="1250" cy="400" r="16" fill="#FCFBF7" stroke="#14213D" stroke-width="2"/>
+<circle cx="1450" cy="400" r="16" fill="#FCFBF7" stroke="#14213D" stroke-width="2"/>
+</svg>
+<p style="position:absolute; left:60px; top:14px; width:700px; font-size:24px; font-weight:600; color:#14213D">Componente gigante: 4.588 clubes (96,81%)</p>
+<p style="position:absolute; left:790px; top:40px; width:200px; font-size:24px; font-weight:600; color:#A93B1A">ciclo de 2 arcos</p>
+<p style="position:absolute; left:1180px; top:84px; width:440px; font-size:24px; font-weight:600; color:#14213D">57 componentes de só 2 clubes</p>
+<p style="position:absolute; left:1330px; top:432px; width:40px; font-size:24px; text-align:center; color:#4A5568">…</p>
+<p style="position:absolute; left:130px; top:424px; width:100px; font-size:24px; font-weight:600; text-align:center; color:#1F5F8B">fonte</p>
+<p style="position:absolute; left:885px; top:424px; width:130px; font-size:24px; font-weight:600; text-align:center; color:#14213D">sumidouro</p>
+</div>
+<div style="display:flex; gap:48px; align-items:center">
+<div style="display:flex; align-items:center; gap:12px"><div style="width:28px; height:28px; border-radius:14px; background:#1F5F8B"></div><p style="font-size:24px; color:#14213D">fonte (só saída): 1.119 clubes</p></div>
+<div style="display:flex; align-items:center; gap:12px"><div style="width:28px; height:28px; border-radius:14px; background:#14213D"></div><p style="font-size:24px; color:#14213D">sumidouro (só entrada): 485 clubes</p></div>
+<div style="display:flex; align-items:center; gap:12px"><div style="width:40px; height:6px; background:#A93B1A"></div><p style="font-size:24px; color:#14213D">ciclo negativo de 2 arcos: 1.780 pares</p></div>
+</div>
+</div>
+<p style="position:absolute; left:128px; bottom:64px; width:1664px; font-size:24px; color:#4A5568">Esquema ilustrativo, fora de escala: o grafo real tem 4.739 clubes e 31.626 arcos · fonte: scripts/ficha_transfermarkt.py</p>
+</section>
 <section id="destaque" data-transition="fade" style="background:#A93B1A; color:#F7F5F0; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px; display:flex; flex-direction:column; justify-content:center; gap:28px">
 <p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#FFF1E8">03 · Pesos negativos</p>
 <p style="font-family:'Oswald', Arial, sans-serif; font-size:200px; font-weight:600; line-height:1; color:#F7F5F0">79,14%</p>
@@ -618,6 +731,78 @@
 </div>
 </div>
 <p style="position:absolute; left:128px; bottom:64px; width:1664px; font-size:24px; color:#4A5568">Fonte: scripts/ficha_transfermarkt.py, seção do grafo expandido no tempo · 52.290 = 35.326 + 16.964 arcos</p>
+</section>
+<section id="tempo" data-transition="fade" style="background:#EDE9E0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">04 · Algoritmos</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">O ciclo Real Madrid ⇄ PSG no tempo</h2>
+</div>
+<div style="display:flex; flex-direction:column; gap:32px">
+<div style="position:relative; width:1664px; height:420px; flex:none; background:#FCFBF7; border:1px solid #DDD7CA; border-radius:24px">
+<svg aria-label="Grafo expandido no tempo: duas linhas de nós, Real Madrid e PSG, de 19/20 a 25/26, ligadas por arcos de espera tracejados; quatro arcos de transferência cruzam entre as linhas sempre avançando uma temporada" style="position:absolute; left:0; top:0" width="1664" height="420" viewBox="0 0 1664 420">
+<defs>
+<marker id="tg" orient="auto" markerWidth="5" markerHeight="5" refX="0.8" refY="2" overflow="visible"><path d="M-3.2 -1.7 L0.8 0 L-3.2 1.7" transform="translate(0 2)" fill="none" stroke="#8A94A6" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></marker>
+<marker id="to" orient="auto" markerWidth="5" markerHeight="5" refX="0.8" refY="2" overflow="visible"><path d="M-3.2 -1.7 L0.8 0 L-3.2 1.7" transform="translate(0 2)" fill="none" stroke="#A93B1A" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></marker>
+<marker id="tb" orient="auto" markerWidth="5" markerHeight="5" refX="0.8" refY="2" overflow="visible"><path d="M-3.2 -1.7 L0.8 0 L-3.2 1.7" transform="translate(0 2)" fill="none" stroke="#1F5F8B" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+<path d="M 408 110 L 451 110" fill="none" stroke="#8A94A6" stroke-width="3" stroke-dasharray="6 5" marker-end="url(#tg)"/>
+<path d="M 608 110 L 651 110" fill="none" stroke="#8A94A6" stroke-width="3" stroke-dasharray="6 5" marker-end="url(#tg)"/>
+<path d="M 808 110 L 851 110" fill="none" stroke="#8A94A6" stroke-width="3" stroke-dasharray="6 5" marker-end="url(#tg)"/>
+<path d="M 1008 110 L 1051 110" fill="none" stroke="#8A94A6" stroke-width="3" stroke-dasharray="6 5" marker-end="url(#tg)"/>
+<path d="M 1208 110 L 1251 110" fill="none" stroke="#8A94A6" stroke-width="3" stroke-dasharray="6 5" marker-end="url(#tg)"/>
+<path d="M 1408 110 L 1451 110" fill="none" stroke="#8A94A6" stroke-width="3" stroke-dasharray="6 5" marker-end="url(#tg)"/>
+<path d="M 408 310 L 451 310" fill="none" stroke="#8A94A6" stroke-width="3" stroke-dasharray="6 5" marker-end="url(#tg)"/>
+<path d="M 608 310 L 651 310" fill="none" stroke="#8A94A6" stroke-width="3" stroke-dasharray="6 5" marker-end="url(#tg)"/>
+<path d="M 808 310 L 851 310" fill="none" stroke="#8A94A6" stroke-width="3" stroke-dasharray="6 5" marker-end="url(#tg)"/>
+<path d="M 1008 310 L 1051 310" fill="none" stroke="#8A94A6" stroke-width="3" stroke-dasharray="6 5" marker-end="url(#tg)"/>
+<path d="M 1208 310 L 1251 310" fill="none" stroke="#8A94A6" stroke-width="3" stroke-dasharray="6 5" marker-end="url(#tg)"/>
+<path d="M 1408 310 L 1451 310" fill="none" stroke="#8A94A6" stroke-width="3" stroke-dasharray="6 5" marker-end="url(#tg)"/>
+<path d="M 330 142 L 530 275" fill="none" stroke="#1F5F8B" stroke-width="3" stroke-linecap="round" marker-end="url(#tb)"/>
+<path d="M 730 142 L 930 275" fill="none" stroke="#A93B1A" stroke-width="3" stroke-linecap="round" marker-end="url(#to)"/>
+<path d="M 1130 142 L 1310 275" fill="none" stroke="#A93B1A" stroke-width="5" stroke-linecap="round" marker-end="url(#to)"/>
+<path d="M 1350 278 L 1530 145" fill="none" stroke="#A93B1A" stroke-width="5" stroke-linecap="round" marker-end="url(#to)"/>
+<rect x="255" y="78" width="150" height="64" rx="32" fill="#EDE9E0" stroke="#14213D" stroke-width="2"/>
+<rect x="455" y="78" width="150" height="64" rx="32" fill="#EDE9E0" stroke="#14213D" stroke-width="2"/>
+<rect x="655" y="78" width="150" height="64" rx="32" fill="#EDE9E0" stroke="#14213D" stroke-width="2"/>
+<rect x="855" y="78" width="150" height="64" rx="32" fill="#EDE9E0" stroke="#14213D" stroke-width="2"/>
+<rect x="1055" y="78" width="150" height="64" rx="32" fill="#EDE9E0" stroke="#14213D" stroke-width="2"/>
+<rect x="1255" y="78" width="150" height="64" rx="32" fill="#EDE9E0" stroke="#14213D" stroke-width="2"/>
+<rect x="1455" y="78" width="150" height="64" rx="32" fill="#EDE9E0" stroke="#14213D" stroke-width="2"/>
+<rect x="255" y="278" width="150" height="64" rx="32" fill="#EDE9E0" stroke="#14213D" stroke-width="2"/>
+<rect x="455" y="278" width="150" height="64" rx="32" fill="#EDE9E0" stroke="#14213D" stroke-width="2"/>
+<rect x="655" y="278" width="150" height="64" rx="32" fill="#EDE9E0" stroke="#14213D" stroke-width="2"/>
+<rect x="855" y="278" width="150" height="64" rx="32" fill="#EDE9E0" stroke="#14213D" stroke-width="2"/>
+<rect x="1055" y="278" width="150" height="64" rx="32" fill="#EDE9E0" stroke="#14213D" stroke-width="2"/>
+<rect x="1255" y="278" width="150" height="64" rx="32" fill="#EDE9E0" stroke="#14213D" stroke-width="2"/>
+<rect x="1455" y="278" width="150" height="64" rx="32" fill="#EDE9E0" stroke="#14213D" stroke-width="2"/>
+</svg>
+<p style="position:absolute; left:16px; top:89px; width:220px; font-size:30px; font-weight:700; color:#14213D">Real Madrid</p>
+<p style="position:absolute; left:16px; top:289px; width:220px; font-size:30px; font-weight:700; color:#14213D">PSG</p>
+<p style="position:absolute; left:255px; top:93px; width:150px; font-size:24px; font-weight:600; text-align:center; color:#14213D">19/20</p>
+<p style="position:absolute; left:455px; top:93px; width:150px; font-size:24px; font-weight:600; text-align:center; color:#14213D">20/21</p>
+<p style="position:absolute; left:655px; top:93px; width:150px; font-size:24px; font-weight:600; text-align:center; color:#14213D">21/22</p>
+<p style="position:absolute; left:855px; top:93px; width:150px; font-size:24px; font-weight:600; text-align:center; color:#14213D">22/23</p>
+<p style="position:absolute; left:1055px; top:93px; width:150px; font-size:24px; font-weight:600; text-align:center; color:#14213D">23/24</p>
+<p style="position:absolute; left:1255px; top:93px; width:150px; font-size:24px; font-weight:600; text-align:center; color:#14213D">24/25</p>
+<p style="position:absolute; left:1455px; top:93px; width:150px; font-size:24px; font-weight:600; text-align:center; color:#14213D">25/26</p>
+<p style="position:absolute; left:255px; top:293px; width:150px; font-size:24px; font-weight:600; text-align:center; color:#14213D">19/20</p>
+<p style="position:absolute; left:455px; top:293px; width:150px; font-size:24px; font-weight:600; text-align:center; color:#14213D">20/21</p>
+<p style="position:absolute; left:655px; top:293px; width:150px; font-size:24px; font-weight:600; text-align:center; color:#14213D">21/22</p>
+<p style="position:absolute; left:855px; top:293px; width:150px; font-size:24px; font-weight:600; text-align:center; color:#14213D">22/23</p>
+<p style="position:absolute; left:1055px; top:293px; width:150px; font-size:24px; font-weight:600; text-align:center; color:#14213D">23/24</p>
+<p style="position:absolute; left:1255px; top:293px; width:150px; font-size:24px; font-weight:600; text-align:center; color:#14213D">24/25</p>
+<p style="position:absolute; left:1455px; top:293px; width:150px; font-size:24px; font-weight:600; text-align:center; color:#14213D">25/26</p>
+<p style="position:absolute; left:474px; top:193px; width:110px; font-size:24px; font-weight:700; color:#1F5F8B">+5 mi</p>
+<p style="position:absolute; left:874px; top:193px; width:110px; font-size:24px; font-weight:700; color:#A93B1A">−10 mi</p>
+<p style="position:absolute; left:1078px; top:193px; width:110px; font-size:24px; font-weight:700; text-align:right; color:#A93B1A">−25 mi</p>
+<p style="position:absolute; left:1480px; top:193px; width:120px; font-size:24px; font-weight:700; color:#A93B1A">−180 mi</p>
+</div>
+<div style="display:flex; gap:64px; align-items:flex-start">
+<p style="flex:1; font-size:30px; line-height:1.4; color:#14213D">Estático: Real Madrid → PSG → Real Madrid é um ciclo de −210 mi.</p>
+<p style="flex:1.4; font-size:30px; line-height:1.4; color:#14213D">No tempo: (Real Madrid, 23/24) → (PSG, 24/25) → (Real Madrid, 25/26) é um caminho de −205 mi. Nenhum arco volta no tempo.</p>
+</div>
+</div>
+<p style="position:absolute; left:128px; bottom:64px; width:1664px; font-size:24px; color:#4A5568">Tracejado: arcos de espera, peso 0 · transferências: Navas (19/20), Ramos (21/22), Asensio (23/24) e Mbappé (24/25)</p>
 </section>
 <section id="dijkstra" data-transition="fade" style="background:#F7F5F0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px; display:flex; flex-direction:column; gap:56px">
 <div style="display:flex; flex-direction:column; gap:16px">
