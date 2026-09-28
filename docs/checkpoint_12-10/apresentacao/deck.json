@@ -3,7 +3,7 @@
   "createdOnFiles": {"v": 1, "at": "2026-09-28T14:10:00Z"},
   "title": "Proposta do Dataset — Grupo 2",
   "cover": "capa",
-  "order": ["capa", "roteiro", "fonte", "recorte", "modelo", "formal", "tamanho", "representacao", "metricas", "graus", "conectividade", "destaque", "pesos", "caminho", "ciclo", "bellman", "dag", "dijkstra", "complexidade", "atributos", "requisitos", "plano", "pergunta", "reprodutibilidade", "fim"],
+  "order": ["capa", "roteiro", "fonte", "recorte", "modelo", "paralelos", "formal", "tamanho", "representacao", "metricas", "graus", "conectividade", "esquema", "destaque", "pesos", "caminho", "ciclo", "bellman", "dag", "tempo", "dijkstra", "complexidade", "atributos", "requisitos", "plano", "pergunta", "reprodutibilidade", "fim"],
   "sections": {
     "s1": {"description": "Abertura: o grupo, o tema e o roteiro da proposta", "start": "capa"},
     "s2": {"description": "O dataset: fonte e recorte dos dados", "start": "fonte"},
