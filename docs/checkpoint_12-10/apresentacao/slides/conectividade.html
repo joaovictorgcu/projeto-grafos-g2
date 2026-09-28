@@ -1,0 +1,36 @@
+<section id="conectividade" data-transition="fade" style="background:#EDE9E0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">02 · Grafo</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Conectividade</h2>
+</div>
+<div style="flex:1; display:flex; gap:64px">
+<div style="flex:1.1; display:flex; flex-direction:column; gap:32px">
+<div style="display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Componente fraca gigante</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:120px; font-weight:500; line-height:1; color:#14213D">96,81%</p>
+<p style="font-size:30px; line-height:1.35; color:#14213D">dos clubes (4.588 de 4.739) estão na maior componente fracamente conexa</p>
+</div>
+<div style="display:flex; gap:48px; border-top:1px solid #D5CEC0; padding-top:24px">
+<div style="flex:1; display:flex; flex-direction:column; gap:8px">
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#14213D">68</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">componentes fracamente conexas</p>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:8px">
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#14213D">57</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">delas com só 2 clubes</p>
+</div>
+</div>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:32px">
+<div style="background:#FCFBF7; border:1px solid #DDD7CA; border-radius:16px; padding:36px; display:flex; flex-direction:column; gap:12px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Alcance da BFS e da DFS</p>
+<p style="font-size:30px; line-height:1.35; color:#14213D">O que uma fonte alcança cabe na sua componente fraca. Uma fonte fora da componente gigante alcança no máximo o próprio componente.</p>
+</div>
+<div style="background:#FCFBF7; border:1px solid #DDD7CA; border-radius:16px; padding:36px; display:flex; flex-direction:column; gap:12px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">Onde ficam os ciclos</p>
+<p style="font-size:30px; line-height:1.35; color:#14213D">Todo ciclo, inclusive os negativos, fica dentro de uma componente fortemente conexa. A DFS do projeto vai relatar os ciclos a partir de cada fonte.</p>
+</div>
+</div>
+</div>
+<p style="position:absolute; left:128px; bottom:64px; width:1664px; font-size:24px; color:#4A5568">Componentes contadas por propagação de rótulos com pandas, ignorando a direção dos arcos · fonte: scripts/ficha_transfermarkt.py</p>
+</section>

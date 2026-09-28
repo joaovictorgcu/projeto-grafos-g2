@@ -1,0 +1,32 @@
+<section id="representacao" data-transition="fade" style="background:#F7F5F0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">02 · Grafo</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Representação: lista de adjacência</h2>
+</div>
+<div style="flex:1; display:flex; gap:64px; align-items:center">
+<div style="flex:1; display:flex; flex-direction:column; gap:32px">
+<div style="display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Lista de adjacência · O(|V| + |E|)</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:120px; font-weight:500; line-height:1; color:#1F5F8B">36.365</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">entradas: uma por clube e uma por arco</p>
+</div>
+<div style="display:flex; flex-direction:column; gap:8px; border-top:1px solid #E2DDD2; padding-top:24px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">Matriz de adjacência · O(|V|²)</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:120px; font-weight:500; line-height:1; color:#A93B1A">22,5 milhões</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">de células, 99,86% delas vazias: a densidade é 0,14%</p>
+</div>
+</div>
+<div style="width:760px; flex:none; background:#EDE9E0; border-radius:24px; padding:40px; display:flex; flex-direction:column; gap:20px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#4A5568">Na prática: clube → lista de (destino, peso)</p>
+<div style="display:flex; flex-direction:column; gap:4px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:24px; line-height:1.4; white-space:nowrap; color:#14213D">adj = {</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:24px; line-height:1.4; white-space:nowrap; color:#14213D">&#160;&#160;"Real Madrid": [("PSG", −30 mi), …],</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:24px; line-height:1.4; white-space:nowrap; color:#14213D">&#160;&#160;"PSG": [("Real Madrid", −180 mi), …],</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:24px; line-height:1.4; white-space:nowrap; color:#14213D">&#160;&#160;…</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:24px; line-height:1.4; white-space:nowrap; color:#14213D">}</p>
+</div>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">Percorrer os vizinhos de um clube custa O(grau de saída). É a estrutura que o enunciado pede em graph.py: lista de adjacência dirigida.</p>
+</div>
+</div>
+<p style="position:absolute; left:128px; bottom:64px; width:1664px; font-size:24px; color:#4A5568">|V| = 4.739 e |E| = 31.626 · matriz: |V|² = 22.458.121 células · fonte: scripts/ficha_transfermarkt.py</p>
+</section>

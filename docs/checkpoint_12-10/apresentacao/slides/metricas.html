@@ -1,0 +1,39 @@
+<section id="metricas" data-transition="fade" style="background:#F7F5F0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">02 · Grafo</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Estrutura do grafo</h2>
+</div>
+<div style="flex:1; display:grid; grid-template-columns:repeat(3, 1fr); gap:32px">
+<div style="background:#FCFBF7; border:1px solid #E2DDD2; border-radius:16px; padding:32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Fontes</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#14213D">1.119</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">clubes com grau de entrada 0: só aparecem como origem</p>
+</div>
+<div style="background:#FCFBF7; border:1px solid #E2DDD2; border-radius:16px; padding:32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Sumidouros</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#14213D">485</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">clubes com grau de saída 0: só aparecem como destino</p>
+</div>
+<div style="background:#FCFBF7; border:1px solid #E2DDD2; border-radius:16px; padding:32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Arcos paralelos</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#14213D">4.816</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">transferências somadas a um arco que já existia</p>
+</div>
+<div style="background:#FCFBF7; border:1px solid #E2DDD2; border-radius:16px; padding:32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Reciprocidade</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#14213D">0,148</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">fração dos arcos que têm arco de volta</p>
+</div>
+<div style="background:#FCFBF7; border:1px solid #E2DDD2; border-radius:16px; padding:32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">Arcos negativos</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#A93B1A">25.029</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">79,14% dos arcos</p>
+</div>
+<div style="background:#FCFBF7; border:1px solid #E2DDD2; border-radius:16px; padding:32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Arcos positivos</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#1F5F8B">5.855</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">e 742 arcos com peso zero</p>
+</div>
+</div>
+<p style="position:absolute; left:128px; bottom:64px; width:1664px; font-size:24px; color:#4A5568">Fonte: scripts/ficha_transfermarkt.py, seção de métricas do grafo · contagens com pandas</p>
+</section>
