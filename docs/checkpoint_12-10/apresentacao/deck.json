@@ -1,0 +1,22 @@
+{
+  "v": 4,
+  "createdOnFiles": {"v": 1, "at": "2026-09-28T14:10:00Z"},
+  "title": "Proposta do Dataset — Grupo 2",
+  "cover": "capa",
+  "order": ["capa", "roteiro", "fonte", "recorte", "modelo", "formal", "tamanho", "representacao", "metricas", "graus", "conectividade", "destaque", "pesos", "caminho", "ciclo", "bellman", "dag", "dijkstra", "complexidade", "atributos", "requisitos", "plano", "pergunta", "reprodutibilidade", "fim"],
+  "sections": {
+    "s1": {"description": "Abertura: o grupo, o tema e o roteiro da proposta", "start": "capa"},
+    "s2": {"description": "O dataset: fonte e recorte dos dados", "start": "fonte"},
+    "s3": {"description": "O grafo: modelagem, definição formal, tamanho, representação, estrutura, graus e conectividade", "start": "modelo"},
+    "s4": {"description": "Pesos negativos: origem, caminho mínimo e ciclo negativo", "start": "destaque"},
+    "s5": {"description": "Algoritmos: Bellman-Ford, grafo expandido no tempo, Dijkstra com pesos negativos e complexidade", "start": "bellman"},
+    "s6": {"description": "Atributos para a AVD e conferência dos requisitos do enunciado", "start": "atributos"},
+    "s7": {"description": "Plano da Parte 2, pergunta de pesquisa e reprodutibilidade", "start": "plano"}
+  },
+  "faces": {
+    "oswald": {"family": "Oswald", "href": "https://fonts.googleapis.com/css2?family=Oswald:wght@300..700&display=swap"},
+    "ibm-plex-sans": {"family": "IBM Plex Sans", "href": "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&display=swap"},
+    "jetbrains-mono": {"family": "JetBrains Mono", "href": "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap"}
+  },
+  "designSystems": []
+}
