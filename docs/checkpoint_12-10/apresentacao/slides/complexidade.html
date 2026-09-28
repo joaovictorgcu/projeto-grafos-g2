@@ -1,0 +1,33 @@
+<section id="complexidade" data-transition="fade" style="background:#EDE9E0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">04 · Algoritmos</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Complexidade no tamanho deste grafo</h2>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:40px">
+<div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:32px">
+<div style="background:#FCFBF7; border:1px solid #DDD7CA; border-radius:16px; padding:32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">BFS e DFS</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; color:#14213D">O(|V| + |E|)</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#14213D">≈ 36 mil</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">vértices e arcos, cada um visitado uma vez</p>
+</div>
+<div style="background:#FCFBF7; border:1px solid #DDD7CA; border-radius:16px; padding:32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Dijkstra com heap</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; color:#14213D">O((|V| + |E|) log |V|)</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#14213D">≈ 440 mil</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">operações, com heapq (heap binário)</p>
+</div>
+<div style="background:#FCFBF7; border:1px solid #DDD7CA; border-radius:16px; padding:32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">Bellman-Ford</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; color:#14213D">O(|V| · |E|)</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#A93B1A">≈ 150 milhões</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">relaxações no pior caso: |V| − 1 passadas sobre os |E| arcos</p>
+</div>
+</div>
+<div style="display:flex; gap:64px">
+<p style="flex:1; font-size:30px; line-height:1.4; color:#14213D">Com ciclo negativo, o Bellman-Ford executa todas as |V| − 1 passadas. Sem ciclo, pode parar na primeira passada em que nada relaxa.</p>
+<p style="flex:1; font-size:30px; line-height:1.4; color:#4A5568">Na escalabilidade (10%, 50% e 100% do grafo), os tempos medidos serão comparados com essas curvas.</p>
+</div>
+</div>
+<p style="position:absolute; left:128px; bottom:64px; width:1664px; font-size:24px; color:#4A5568">Contas com |V| = 4.739 e |E| = 31.626; log de |V| na base 2 ≈ 12,2</p>
+</section>

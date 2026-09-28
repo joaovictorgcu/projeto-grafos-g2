@@ -1,0 +1,35 @@
+<section id="dijkstra" data-transition="fade" style="background:#F7F5F0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">04 · Algoritmos</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Dijkstra e pesos negativos</h2>
+</div>
+<div style="flex:1; display:flex; gap:64px">
+<div style="width:700px; flex:none; display:flex; flex-direction:column; gap:20px">
+<div style="position:relative; width:700px; height:360px; background:#EDE9E0; border-radius:24px">
+<div style="position:absolute; left:40px; top:120px; width:120px; height:120px; border-radius:60px; background:#FCFBF7; border:2px solid #14213D; display:flex; justify-content:center; align-items:center"><p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; font-weight:600; color:#14213D">s</p></div>
+<div style="position:absolute; left:540px; top:20px; width:120px; height:120px; border-radius:60px; background:#FCFBF7; border:2px solid #14213D; display:flex; justify-content:center; align-items:center"><p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; font-weight:600; color:#14213D">a</p></div>
+<div style="position:absolute; left:540px; top:220px; width:120px; height:120px; border-radius:60px; background:#FCFBF7; border:2px solid #14213D; display:flex; justify-content:center; align-items:center"><p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; font-weight:600; color:#14213D">b</p></div>
+<x-connector x1="159" y1="168" x2="541" y2="92" style="color:#14213D; border-width:3px"></x-connector>
+<x-connector x1="159" y1="192" x2="541" y2="268" style="color:#14213D; border-width:3px"></x-connector>
+<x-connector x1="600" y1="220" x2="600" y2="140" style="color:#A93B1A; border-width:4px"></x-connector>
+<p style="position:absolute; left:320px; top:70px; width:60px; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; font-weight:600; text-align:center; color:#14213D">2</p>
+<p style="position:absolute; left:320px; top:250px; width:60px; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; font-weight:600; text-align:center; color:#14213D">5</p>
+<p style="position:absolute; left:616px; top:159px; width:70px; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; font-weight:600; color:#A93B1A">−4</p>
+</div>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">O Dijkstra fecha a com custo 2 antes de ver b; depois, s → b → a custa 5 − 4 = 1, e a distância fechada fica errada.</p>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:24px">
+<p style="font-size:30px; line-height:1.4; color:#14213D">Com 79,14% dos arcos negativos, o Dijkstra roda sobre pesos transformados. Opções em avaliação:</p>
+<div style="background:#FCFBF7; border:1px solid #E2DDD2; border-radius:16px; padding:28px 32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">Deslocamento</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; color:#14213D">w′ = w − mín(w) = w + 180 mi</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">Pesos não negativos, mas cada arco soma 180 mi: favorece caminhos com menos arcos e pode mudar o caminho mínimo.</p>
+</div>
+<div style="background:#FCFBF7; border:1px solid #E2DDD2; border-radius:16px; padding:28px 32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Repesagem de Johnson</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; color:#14213D">w′(u, v) = w(u, v) + h(u) − h(v)</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">h vem de um Bellman-Ford; preserva os caminhos mínimos, mas exige grafo sem ciclo negativo, como o grafo expandido no tempo.</p>
+</div>
+</div>
+</div>
+</section>
