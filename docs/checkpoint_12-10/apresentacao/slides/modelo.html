@@ -1,0 +1,40 @@
+<section id="modelo" data-transition="fade" style="background:#F7F5F0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">02 · Grafo</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Modelagem do grafo</h2>
+</div>
+<div style="flex:1; display:flex; gap:64px; align-items:center">
+<div style="position:relative; width:760px; height:520px; flex:none; background:#EDE9E0; border-radius:24px">
+<p style="position:absolute; left:60px; top:64px; width:640px; font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; text-align:center; color:#4A5568">Um arco por par ordenado</p>
+<div style="position:absolute; left:60px; top:170px; width:240px; height:140px; background:#FCFBF7; border:2px solid #14213D; border-radius:70px; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:4px">
+<p style="font-size:30px; font-weight:700; color:#14213D">Clube A</p>
+<p style="font-size:24px; color:#4A5568">origem</p>
+</div>
+<div style="position:absolute; left:460px; top:170px; width:240px; height:140px; background:#FCFBF7; border:2px solid #14213D; border-radius:70px; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:4px">
+<p style="font-size:30px; font-weight:700; color:#14213D">Clube B</p>
+<p style="font-size:24px; color:#4A5568">destino</p>
+</div>
+<x-connector x1="300" y1="240" x2="460" y2="240" style="color:#A93B1A; border-width:4px"></x-connector>
+<p style="position:absolute; left:308px; top:186px; width:144px; font-size:24px; text-align:center; color:#A93B1A">jogador</p>
+<p style="position:absolute; left:60px; top:372px; width:640px; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:24px; line-height:1.4; text-align:center; color:#14213D">w(A→B) = Σ (transfer_fee − market_value_in_eur)</p>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:28px">
+<div style="display:flex; gap:32px; border-top:1px solid #E2DDD2; padding-top:24px">
+<p style="width:150px; flex:none; font-family:'Oswald', Arial, sans-serif; font-size:30px; font-weight:500; letter-spacing:2px; text-transform:uppercase; color:#1F5F8B">Nó</p>
+<p style="flex:1; font-size:30px; line-height:1.35; color:#14213D">Clube (club_id), sem 6 pseudo-clubes como Without Club e Retired.</p>
+</div>
+<div style="display:flex; gap:32px; border-top:1px solid #E2DDD2; padding-top:24px">
+<p style="width:150px; flex:none; font-family:'Oswald', Arial, sans-serif; font-size:30px; font-weight:500; letter-spacing:2px; text-transform:uppercase; color:#1F5F8B">Arco</p>
+<p style="flex:1; font-size:30px; line-height:1.35; color:#14213D">Clube de origem → clube de destino do jogador: direção nativa da fonte.</p>
+</div>
+<div style="display:flex; gap:32px; border-top:1px solid #E2DDD2; padding-top:24px">
+<p style="width:150px; flex:none; font-family:'Oswald', Arial, sans-serif; font-size:30px; font-weight:500; letter-spacing:2px; text-transform:uppercase; color:#1F5F8B">Peso</p>
+<p style="flex:1; font-size:30px; line-height:1.35; color:#14213D">Soma, em EUR, de valor pago − valor de mercado das transferências do par.</p>
+</div>
+<div style="display:flex; gap:32px; border-top:1px solid #E2DDD2; padding-top:24px">
+<p style="width:150px; flex:none; font-family:'Oswald', Arial, sans-serif; font-size:30px; font-weight:500; letter-spacing:2px; text-transform:uppercase; color:#1F5F8B">Tipo</p>
+<p style="flex:1; font-size:30px; line-height:1.35; color:#14213D">Dirigido e ponderado, com pesos positivos e negativos.</p>
+</div>
+</div>
+</div>
+</section>

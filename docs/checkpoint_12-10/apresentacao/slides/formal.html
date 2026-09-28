@@ -1,0 +1,36 @@
+<section id="formal" data-transition="fade" style="background:#F7F5F0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">02 · Grafo</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Definição formal</h2>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; justify-content:space-between">
+<div style="display:flex; align-items:baseline; gap:32px; border-top:1px solid #E2DDD2; padding-top:18px">
+<p style="width:420px; flex:none; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; font-weight:600; color:#1F5F8B">G = (V, E, w)</p>
+<p style="flex:1; font-size:30px; line-height:1.35; color:#14213D">Grafo dirigido e ponderado.</p>
+</div>
+<div style="display:flex; align-items:baseline; gap:32px; border-top:1px solid #E2DDD2; padding-top:18px">
+<p style="width:420px; flex:none; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; font-weight:600; color:#1F5F8B">V</p>
+<p style="flex:1; font-size:30px; line-height:1.35; color:#14213D">Clubes do recorte: |V| = 4.739.</p>
+</div>
+<div style="display:flex; align-items:baseline; gap:32px; border-top:1px solid #E2DDD2; padding-top:18px">
+<p style="width:420px; flex:none; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; font-weight:600; color:#1F5F8B">E ⊆ V × V</p>
+<p style="flex:1; font-size:30px; line-height:1.35; color:#14213D">(u, v) ∈ E se ao menos um jogador foi de u para v; sem laços: |E| = 31.626.</p>
+</div>
+<div style="display:flex; align-items:baseline; gap:32px; border-top:1px solid #E2DDD2; padding-top:18px">
+<p style="width:420px; flex:none; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; font-weight:600; color:#1F5F8B">w : E → ℝ</p>
+<p style="flex:1; font-size:30px; line-height:1.35; color:#14213D">w(u, v) = Σ (valor pago − valor de mercado) das transferências de u para v, em EUR.</p>
+</div>
+<div style="display:flex; align-items:baseline; gap:32px; border-top:1px solid #E2DDD2; padding-top:18px">
+<p style="width:420px; flex:none; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; font-weight:600; color:#1F5F8B">c(P) = Σ w(e)</p>
+<p style="flex:1; font-size:30px; line-height:1.35; color:#14213D">Custo de um caminho P: soma dos pesos dos seus arcos.</p>
+</div>
+<div style="display:flex; align-items:baseline; gap:32px; border-top:1px solid #E2DDD2; padding-top:18px">
+<p style="width:420px; flex:none; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; font-weight:600; color:#1F5F8B">d(s, t) = min c(P)</p>
+<p style="flex:1; font-size:30px; line-height:1.35; color:#14213D">Distância: menor custo entre os caminhos de s a t.</p>
+</div>
+<div style="display:flex; align-items:baseline; gap:32px; border-top:1px solid #E2DDD2; padding-top:18px">
+<p style="width:420px; flex:none; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; font-weight:600; color:#A93B1A">c(C) &lt; 0</p>
+<p style="flex:1; font-size:30px; line-height:1.35; color:#14213D">Ciclo negativo. Se C é alcançável de s e alcança t, então d(s, t) = −∞.</p>
+</div>
+</div>
+</section>
