@@ -1,0 +1,41 @@
+<section id="recorte" data-transition="fade" style="background:#F7F5F0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">01 · Dataset</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Recorte dos dados</h2>
+</div>
+<div style="flex:1; display:flex; gap:64px; align-items:center">
+<div style="width:760px; flex:none; display:flex; flex-direction:column; gap:16px">
+<div style="display:flex; align-items:center; gap:28px">
+<p style="width:440px; flex:none; font-family:'Oswald', Arial, sans-serif; font-size:120px; font-weight:500; line-height:1; color:#14213D">175.165</p>
+<p style="flex:1; font-size:24px; line-height:1.4; color:#4A5568">transferências no arquivo bruto</p>
+</div>
+<div style="display:flex; align-items:center; gap:28px; padding-left:200px">
+<x-connector style="height:64px; color:#A93B1A; border-width:4px"></x-connector>
+<p style="font-size:24px; font-weight:600; color:#A93B1A">filtros ao lado</p>
+</div>
+<div style="display:flex; align-items:center; gap:28px">
+<p style="width:440px; flex:none; font-family:'Oswald', Arial, sans-serif; font-size:120px; font-weight:500; line-height:1; color:#14213D">36.442</p>
+<p style="flex:1; font-size:24px; line-height:1.4; color:#4A5568">transferências usadas: 20,8% das brutas</p>
+</div>
+<div style="display:flex; align-items:center; gap:28px; padding-left:200px">
+<x-connector style="height:64px; color:#A93B1A; border-width:4px"></x-connector>
+<p style="font-size:24px; font-weight:600; color:#A93B1A">agregação por par ordenado</p>
+</div>
+<div style="display:flex; align-items:center; gap:28px">
+<p style="width:440px; flex:none; font-family:'Oswald', Arial, sans-serif; font-size:120px; font-weight:500; line-height:1; color:#A93B1A">31.626</p>
+<p style="flex:1; font-size:24px; line-height:1.4; color:#4A5568">arcos do grafo</p>
+</div>
+</div>
+<div style="flex:1; background:#FCFBF7; border:1px solid #E2DDD2; border-radius:20px; padding:48px; display:flex; flex-direction:column; gap:24px">
+<h3 style="font-size:30px; font-weight:700; line-height:1.3; color:#14213D">Filtros aplicados</h3>
+<ul style="font-size:30px; line-height:1.45; color:#14213D">
+<li>Datas até 06/07/2026 (depois, só retornos de empréstimo agendados)</li>
+<li>Valor pago e valor de mercado conhecidos</li>
+<li>Sem os 6 pseudo-clubes: Without Club, Unknown, Retired, Career break, Ban e Own Youth</li>
+<li>Sem self-loops (origem igual ao destino)</li>
+<li>Sem empréstimos: fee = 0 em ida e volta consecutiva do mesmo jogador (heurística)</li>
+</ul>
+</div>
+</div>
+<p style="position:absolute; left:128px; bottom:64px; width:1664px; font-size:24px; color:#4A5568">Fonte: Transfermarkt Datasets, snapshot de 05/09/2026 · filtros de scripts/ficha_transfermarkt.py</p>
+</section>
