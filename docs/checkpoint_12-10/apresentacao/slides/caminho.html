@@ -1,0 +1,37 @@
+<section id="caminho" data-transition="fade" style="background:#F7F5F0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">03 · Pesos negativos</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Caminho mínimo no domínio</h2>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:48px">
+<div style="position:relative; width:1664px; height:300px; flex:none; background:#EDE9E0; border-radius:24px">
+<div style="position:absolute; left:96px; top:90px; width:320px; height:120px; background:#FCFBF7; border:2px solid #14213D; border-radius:60px; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:2px">
+<p style="font-size:30px; font-weight:700; color:#14213D">Clube A</p>
+<p style="font-size:24px; color:#4A5568">origem</p>
+</div>
+<div style="position:absolute; left:672px; top:90px; width:320px; height:120px; background:#FCFBF7; border:2px solid #14213D; border-radius:60px; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:2px">
+<p style="font-size:30px; font-weight:700; color:#14213D">Clube B</p>
+<p style="font-size:24px; color:#4A5568">intermediário</p>
+</div>
+<div style="position:absolute; left:1248px; top:90px; width:320px; height:120px; background:#FCFBF7; border:2px solid #14213D; border-radius:60px; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:2px">
+<p style="font-size:30px; font-weight:700; color:#14213D">Clube C</p>
+<p style="font-size:24px; color:#4A5568">destino</p>
+</div>
+<x-connector x1="416" y1="150" x2="672" y2="150" style="color:#A93B1A; border-width:4px"></x-connector>
+<x-connector x1="992" y1="150" x2="1248" y2="150" style="color:#A93B1A; border-width:4px"></x-connector>
+<p style="position:absolute; left:424px; top:96px; width:240px; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:24px; text-align:center; color:#A93B1A">w(A→B)</p>
+<p style="position:absolute; left:1000px; top:96px; width:240px; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:24px; text-align:center; color:#A93B1A">w(B→C)</p>
+<p style="position:absolute; left:96px; top:236px; width:1472px; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:24px; text-align:center; color:#14213D">custo(A → B → C) = w(A→B) + w(B→C)</p>
+</div>
+<div style="display:flex; gap:64px">
+<div style="flex:1.3; display:flex; flex-direction:column; gap:12px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Definição do grupo</p>
+<p style="font-size:30px; line-height:1.4; color:#14213D">O caminho mínimo entre dois clubes não é a sequência com os menores valores de transferência, e sim aquela em que a diferença entre valor pago e valor de mercado resulta no menor custo acumulado.</p>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:12px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">Com pesos negativos</p>
+<p style="font-size:30px; line-height:1.4; color:#4A5568">Um caminho pode ter custo total menor mesmo passando por várias transferências.</p>
+</div>
+</div>
+</div>
+</section>

@@ -1,0 +1,32 @@
+<section id="ciclo" data-transition="fade" style="background:#F7F5F0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">03 · Pesos negativos</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Ciclo negativo no domínio</h2>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:40px">
+<div style="position:relative; width:1664px; height:340px; flex:none; background:#EDE9E0; border-radius:24px">
+<div style="position:absolute; left:96px; top:90px; width:360px; height:160px; background:#FCFBF7; border:2px solid #14213D; border-radius:24px; display:flex; flex-direction:column; justify-content:center; align-items:center">
+<p style="font-size:30px; font-weight:700; color:#14213D">Real Madrid</p>
+</div>
+<div style="position:absolute; left:1208px; top:90px; width:360px; height:160px; background:#FCFBF7; border:2px solid #14213D; border-radius:24px; display:flex; flex-direction:column; justify-content:center; align-items:center">
+<p style="font-size:30px; font-weight:700; color:#14213D">PSG</p>
+</div>
+<x-connector x1="456" y1="130" x2="1208" y2="130" style="color:#A93B1A; border-width:4px"></x-connector>
+<x-connector x1="1208" y1="210" x2="456" y2="210" style="color:#A93B1A; border-width:4px"></x-connector>
+<p style="position:absolute; left:480px; top:70px; width:704px; font-size:24px; text-align:center; color:#14213D">Real Madrid → PSG: −30 mi (Ramos, Navas, Asensio)</p>
+<p style="position:absolute; left:480px; top:236px; width:704px; font-size:24px; text-align:center; color:#14213D">PSG → Real Madrid: −180 mi (Mbappé, sem compensação)</p>
+</div>
+<div style="display:flex; gap:64px; align-items:flex-start">
+<div style="width:380px; flex:none; display:flex; flex-direction:column; gap:8px">
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#A93B1A">−210 mi</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">soma do ciclo Real Madrid → PSG → Real Madrid</p>
+</div>
+<div style="width:380px; flex:none; display:flex; flex-direction:column; gap:8px">
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#14213D">1.780</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">pares de clubes com arcos nos dois sentidos e soma negativa</p>
+</div>
+<p style="flex:1; font-size:30px; line-height:1.4; color:#14213D">A cada volta o custo diminui: para os clubes alcançáveis a partir do ciclo, o caminho mínimo fica indefinido. O Bellman-Ford detecta e exibe esse ciclo.</p>
+</div>
+</div>
+<p style="position:absolute; left:128px; bottom:64px; width:1664px; font-size:24px; color:#4A5568">Exemplo nos dados: Navas (2019), Ramos (2021), Asensio (2023) e Mbappé (2024), com os filtros de scripts/ficha_transfermarkt.py</p>
+</section>
