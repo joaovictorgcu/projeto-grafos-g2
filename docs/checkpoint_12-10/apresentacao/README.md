@@ -2,6 +2,6 @@
 
 Slides da proposta do dataset da Parte 2 (Transfermarkt, tabela transfers).
 
-- `index.html`: abre direto no navegador. Setas ← → passam os slides, F deixa em tela cheia e Ctrl+P salva em PDF.
+- `index.html`: abre direto no navegador. Setas ← → passam os slides, F deixa em tela cheia e Ctrl+P salva em PDF. São 28 slides; `index.html#13` abre direto no slide 13.
 - `slides/` e `deck.json`: um arquivo por slide e a ordem deles.
 - `gerar_index.py`: remonta o `index.html` depois de mexer em algum slide (`python gerar_index.py`).
