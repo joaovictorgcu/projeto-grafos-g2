@@ -1,0 +1,979 @@
+<!doctype html>
+<!-- [IA] Claude Code (Claude Opus 5.5) – gerado por gerar_index.py -->
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proposta do Dataset — Grupo 2</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@300..700&family=IBM+Plex+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #0B1222; }
+  #palco { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
+  #palco * { box-sizing: border-box; }
+  #palco > section { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden;
+                     opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility .3s; }
+  #palco > section.ativo { opacity: 1; visibility: visible; }
+  #palco h1, #palco h2, #palco h3, #palco p, #palco ul, #palco ol, #palco table { margin: 0; }
+  #palco p, #palco li { line-height: 1.4; }
+  #palco h1 { line-height: 1.1; } #palco h2 { line-height: 1.15; } #palco h3 { line-height: 1.2; }
+  #palco ul, #palco ol { padding-left: 1.3em; }
+  #palco table { width: 100%; border-collapse: collapse; }
+  #palco th, #palco td { border: 1px solid #D5CEC0; padding: .35em .6em; text-align: left; vertical-align: top; }
+  #palco th { font-weight: 600; }
+  #palco aside { display: none; }
+  #barra { position: fixed; right: 16px; bottom: 10px; font: 14px 'IBM Plex Sans', Arial, sans-serif;
+           color: #C9D3E0; opacity: .7; user-select: none; }
+  @media print {
+    @page { size: 1920px 1080px; margin: 0; }
+    html, body { height: auto; overflow: visible; background: none; }
+    #palco { position: static; transform: none !important; width: auto; height: auto; }
+    #palco > section { position: relative; opacity: 1; visibility: visible; transition: none; break-after: page; }
+    #barra { display: none; }
+  }
+</style>
+</head>
+<body>
+<div id="palco">
+<section id="capa" data-transition="fade" style="background:#14213D; color:#F7F5F0; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px; display:flex; flex-direction:column; justify-content:space-between">
+<svg aria-label="Desenho decorativo de uma rede dirigida de clubes, com dois arcos destacados em laranja" style="position:absolute; left:1100px; top:170px" width="690" height="320" viewBox="0 0 690 320">
+<defs>
+<marker id="mc" orient="auto" markerWidth="5" markerHeight="5" refX="0.8" refY="2" overflow="visible"><path d="M-3.2 -1.7 L0.8 0 L-3.2 1.7" transform="translate(0 2)" fill="none" stroke="#8FA0B8" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></marker>
+<marker id="mo" orient="auto" markerWidth="5" markerHeight="5" refX="0.8" refY="2" overflow="visible"><path d="M-3.2 -1.7 L0.8 0 L-3.2 1.7" transform="translate(0 2)" fill="none" stroke="#F28C5B" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+<path d="M 58 66 L 186 36" fill="none" stroke="#8FA0B8" stroke-width="2" stroke-linecap="round" marker-end="url(#mc)"/>
+<path d="M 229 40 L 354 106" fill="none" stroke="#8FA0B8" stroke-width="2" stroke-linecap="round" marker-end="url(#mc)"/>
+<path d="M 404 111 L 550 57" fill="none" stroke="#F28C5B" stroke-width="3" stroke-linecap="round" marker-end="url(#mo)"/>
+<path d="M 48 86 L 110 219" fill="none" stroke="#8FA0B8" stroke-width="2" stroke-linecap="round" marker-end="url(#mc)"/>
+<path d="M 140 244 L 280 275" fill="none" stroke="#8FA0B8" stroke-width="2" stroke-linecap="round" marker-end="url(#mc)"/>
+<path d="M 308 264 L 367 146" fill="none" stroke="#8FA0B8" stroke-width="2" stroke-linecap="round" marker-end="url(#mc)"/>
+<path d="M 317 276 L 476 236" fill="none" stroke="#8FA0B8" stroke-width="2" stroke-linecap="round" marker-end="url(#mc)"/>
+<path d="M 508 209 L 562 70" fill="none" stroke="#8FA0B8" stroke-width="2" stroke-linecap="round" marker-end="url(#mc)"/>
+<path d="M 520 238 L 632 283" fill="none" stroke="#8FA0B8" stroke-width="2" stroke-linecap="round" marker-end="url(#mc)"/>
+<path d="M 399 138 L 482 213" fill="none" stroke="#F28C5B" stroke-width="3" stroke-linecap="round" marker-end="url(#mo)"/>
+<path d="M 138 232 L 354 132" fill="none" stroke="#8FA0B8" stroke-width="2" stroke-linecap="round" marker-end="url(#mc)"/>
+<circle cx="40" cy="70" r="14" fill="#C9D3E0"/>
+<circle cx="210" cy="30" r="18" fill="#C9D3E0"/>
+<circle cx="380" cy="120" r="22" fill="#F28C5B"/>
+<circle cx="570" cy="50" r="14" fill="#C9D3E0"/>
+<circle cx="120" cy="240" r="16" fill="#C9D3E0"/>
+<circle cx="300" cy="280" r="14" fill="#C9D3E0"/>
+<circle cx="500" cy="230" r="18" fill="#C9D3E0"/>
+<circle cx="650" cy="290" r="12" fill="#C9D3E0"/>
+</svg>
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#F28C5B">Teoria dos Grafos + AVD · 2026.2 · Checkpoint de 12/10</p>
+<div style="display:flex; flex-direction:column; gap:32px">
+<h1 style="font-family:'Oswald', Arial, sans-serif; font-size:120px; font-weight:600; line-height:1.05; color:#F7F5F0">Rede de transferências<br>entre clubes</h1>
+<p style="font-size:30px; line-height:1.35; color:#C9D3E0; width:1100px">Proposta de dataset da Parte 2 · Transfermarkt Datasets, tabela transfers</p>
+<p style="font-size:24px; line-height:1.4; color:#C9D3E0">Turma 5A · Grupo 2 — João Victor Uchôa, Luís Eduardo Bérard, Caio Leimig, Guilherme Burle, Gabriel França</p>
+</div>
+</section>
+<section id="roteiro" data-transition="fade" style="background:#F7F5F0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">Proposta de dataset · Parte 2</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Roteiro</h2>
+</div>
+<div style="flex:1; display:grid; grid-template-columns:repeat(3, 1fr); gap:32px">
+<div style="background:#FCFBF7; border:1px solid #E2DDD2; border-radius:16px; padding:36px; display:flex; flex-direction:column; gap:12px">
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#A93B1A">01</p>
+<p style="font-size:30px; line-height:1.3; color:#14213D">Dataset: fonte e recorte</p>
+</div>
+<div style="background:#FCFBF7; border:1px solid #E2DDD2; border-radius:16px; padding:36px; display:flex; flex-direction:column; gap:12px">
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#A93B1A">02</p>
+<p style="font-size:30px; line-height:1.3; color:#14213D">Grafo: modelagem, representação, estrutura, graus e conectividade</p>
+</div>
+<div style="background:#FCFBF7; border:1px solid #E2DDD2; border-radius:16px; padding:36px; display:flex; flex-direction:column; gap:12px">
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#A93B1A">03</p>
+<p style="font-size:30px; line-height:1.3; color:#14213D">Pesos negativos: caminho mínimo e ciclo negativo</p>
+</div>
+<div style="background:#FCFBF7; border:1px solid #E2DDD2; border-radius:16px; padding:36px; display:flex; flex-direction:column; gap:12px">
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#A93B1A">04</p>
+<p style="font-size:30px; line-height:1.3; color:#14213D">Algoritmos: Bellman-Ford, grafo no tempo, Dijkstra e complexidade</p>
+</div>
+<div style="background:#FCFBF7; border:1px solid #E2DDD2; border-radius:16px; padding:36px; display:flex; flex-direction:column; gap:12px">
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#A93B1A">05</p>
+<p style="font-size:30px; line-height:1.3; color:#14213D">Atributos e requisitos do enunciado</p>
+</div>
+<div style="background:#FCFBF7; border:1px solid #E2DDD2; border-radius:16px; padding:36px; display:flex; flex-direction:column; gap:12px">
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#A93B1A">06</p>
+<p style="font-size:30px; line-height:1.3; color:#14213D">Plano, pergunta de pesquisa e reprodutibilidade</p>
+</div>
+</div>
+</section>
+<section id="fonte" data-transition="fade" style="background:#EDE9E0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">01 · Dataset</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Dataset e fonte</h2>
+</div>
+<div style="flex:1; display:flex; gap:64px">
+<div style="flex:1.15; background:#FCFBF7; border:1px solid #DDD7CA; border-radius:20px; padding:48px; display:flex; flex-direction:column; gap:20px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Fonte</p>
+<h3 style="font-size:30px; font-weight:700; line-height:1.3; color:#14213D">Transfermarkt Datasets · tabela transfers</h3>
+<p style="font-size:30px; line-height:1.35; color:#4A5568">Mantido por dcaribou, com dados coletados de transfermarkt.co.uk.</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:24px; color:#14213D">github.com/dcaribou/transfermarkt-datasets</p>
+<div style="flex:1"></div>
+<div style="display:flex; flex-direction:column; gap:8px">
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:120px; font-weight:500; line-height:1; color:#14213D">175.165</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">transferências de jogadores entre clubes no arquivo bruto</p>
+</div>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; justify-content:center; gap:32px">
+<div style="display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">Versão</p>
+<p style="font-size:30px; line-height:1.35; color:#14213D">Snapshot com dados até 06/07/2026, publicado em 05/09/2026.</p>
+</div>
+<div style="display:flex; flex-direction:column; gap:8px; border-top:1px solid #D5CEC0; padding-top:28px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">Licença</p>
+<p style="font-size:30px; line-height:1.35; color:#14213D">CC0-1.0, declarada pelo mantenedor. Pelos termos do Transfermarkt, o repositório terá só o script de download, sem os CSVs brutos.</p>
+</div>
+<div style="display:flex; flex-direction:column; gap:8px; border-top:1px solid #D5CEC0; padding-top:28px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">Acesso</p>
+<p style="font-size:30px; line-height:1.35; color:#14213D">Download HTTP público, sem login: 3 arquivos .csv.gz (10,3 MB) conferidos por SHA-256.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="recorte" data-transition="fade" style="background:#F7F5F0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">01 · Dataset</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Recorte dos dados</h2>
+</div>
+<div style="flex:1; display:flex; gap:64px; align-items:center">
+<div style="width:760px; flex:none; display:flex; flex-direction:column; gap:16px">
+<div style="display:flex; align-items:center; gap:28px">
+<p style="width:440px; flex:none; font-family:'Oswald', Arial, sans-serif; font-size:120px; font-weight:500; line-height:1; color:#14213D">175.165</p>
+<p style="flex:1; font-size:24px; line-height:1.4; color:#4A5568">transferências no arquivo bruto</p>
+</div>
+<div style="display:flex; align-items:center; gap:28px; padding-left:200px">
+<x-connector style="height:64px; color:#A93B1A; border-width:4px"></x-connector>
+<p style="font-size:24px; font-weight:600; color:#A93B1A">filtros ao lado</p>
+</div>
+<div style="display:flex; align-items:center; gap:28px">
+<p style="width:440px; flex:none; font-family:'Oswald', Arial, sans-serif; font-size:120px; font-weight:500; line-height:1; color:#14213D">36.442</p>
+<p style="flex:1; font-size:24px; line-height:1.4; color:#4A5568">transferências usadas: 20,8% das brutas</p>
+</div>
+<div style="display:flex; align-items:center; gap:28px; padding-left:200px">
+<x-connector style="height:64px; color:#A93B1A; border-width:4px"></x-connector>
+<p style="font-size:24px; font-weight:600; color:#A93B1A">agregação por par ordenado</p>
+</div>
+<div style="display:flex; align-items:center; gap:28px">
+<p style="width:440px; flex:none; font-family:'Oswald', Arial, sans-serif; font-size:120px; font-weight:500; line-height:1; color:#A93B1A">31.626</p>
+<p style="flex:1; font-size:24px; line-height:1.4; color:#4A5568">arcos do grafo</p>
+</div>
+</div>
+<div style="flex:1; background:#FCFBF7; border:1px solid #E2DDD2; border-radius:20px; padding:48px; display:flex; flex-direction:column; gap:24px">
+<h3 style="font-size:30px; font-weight:700; line-height:1.3; color:#14213D">Filtros aplicados</h3>
+<ul style="font-size:30px; line-height:1.45; color:#14213D">
+<li>Datas até 06/07/2026 (depois, só retornos de empréstimo agendados)</li>
+<li>Valor pago e valor de mercado conhecidos</li>
+<li>Sem os 6 pseudo-clubes: Without Club, Unknown, Retired, Career break, Ban e Own Youth</li>
+<li>Sem self-loops (origem igual ao destino)</li>
+<li>Sem empréstimos: fee = 0 em ida e volta consecutiva do mesmo jogador (heurística)</li>
+</ul>
+</div>
+</div>
+<p style="position:absolute; left:128px; bottom:64px; width:1664px; font-size:24px; color:#4A5568">Fonte: Transfermarkt Datasets, snapshot de 05/09/2026 · filtros de scripts/ficha_transfermarkt.py</p>
+</section>
+<section id="modelo" data-transition="fade" style="background:#F7F5F0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">02 · Grafo</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Modelagem do grafo</h2>
+</div>
+<div style="flex:1; display:flex; gap:64px; align-items:center">
+<div style="position:relative; width:760px; height:520px; flex:none; background:#EDE9E0; border-radius:24px">
+<p style="position:absolute; left:60px; top:64px; width:640px; font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; text-align:center; color:#4A5568">Um arco por par ordenado</p>
+<div style="position:absolute; left:60px; top:170px; width:240px; height:140px; background:#FCFBF7; border:2px solid #14213D; border-radius:70px; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:4px">
+<p style="font-size:30px; font-weight:700; color:#14213D">Clube A</p>
+<p style="font-size:24px; color:#4A5568">origem</p>
+</div>
+<div style="position:absolute; left:460px; top:170px; width:240px; height:140px; background:#FCFBF7; border:2px solid #14213D; border-radius:70px; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:4px">
+<p style="font-size:30px; font-weight:700; color:#14213D">Clube B</p>
+<p style="font-size:24px; color:#4A5568">destino</p>
+</div>
+<x-connector x1="300" y1="240" x2="460" y2="240" style="color:#A93B1A; border-width:4px"></x-connector>
+<p style="position:absolute; left:308px; top:186px; width:144px; font-size:24px; text-align:center; color:#A93B1A">jogador</p>
+<p style="position:absolute; left:60px; top:372px; width:640px; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:24px; line-height:1.4; text-align:center; color:#14213D">w(A→B) = Σ (transfer_fee − market_value_in_eur)</p>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:28px">
+<div style="display:flex; gap:32px; border-top:1px solid #E2DDD2; padding-top:24px">
+<p style="width:150px; flex:none; font-family:'Oswald', Arial, sans-serif; font-size:30px; font-weight:500; letter-spacing:2px; text-transform:uppercase; color:#1F5F8B">Nó</p>
+<p style="flex:1; font-size:30px; line-height:1.35; color:#14213D">Clube (club_id), sem 6 pseudo-clubes como Without Club e Retired.</p>
+</div>
+<div style="display:flex; gap:32px; border-top:1px solid #E2DDD2; padding-top:24px">
+<p style="width:150px; flex:none; font-family:'Oswald', Arial, sans-serif; font-size:30px; font-weight:500; letter-spacing:2px; text-transform:uppercase; color:#1F5F8B">Arco</p>
+<p style="flex:1; font-size:30px; line-height:1.35; color:#14213D">Clube de origem → clube de destino do jogador: direção nativa da fonte.</p>
+</div>
+<div style="display:flex; gap:32px; border-top:1px solid #E2DDD2; padding-top:24px">
+<p style="width:150px; flex:none; font-family:'Oswald', Arial, sans-serif; font-size:30px; font-weight:500; letter-spacing:2px; text-transform:uppercase; color:#1F5F8B">Peso</p>
+<p style="flex:1; font-size:30px; line-height:1.35; color:#14213D">Soma, em EUR, de valor pago − valor de mercado das transferências do par.</p>
+</div>
+<div style="display:flex; gap:32px; border-top:1px solid #E2DDD2; padding-top:24px">
+<p style="width:150px; flex:none; font-family:'Oswald', Arial, sans-serif; font-size:30px; font-weight:500; letter-spacing:2px; text-transform:uppercase; color:#1F5F8B">Tipo</p>
+<p style="flex:1; font-size:30px; line-height:1.35; color:#14213D">Dirigido e ponderado, com pesos positivos e negativos.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="formal" data-transition="fade" style="background:#F7F5F0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">02 · Grafo</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Definição formal</h2>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; justify-content:space-between">
+<div style="display:flex; align-items:baseline; gap:32px; border-top:1px solid #E2DDD2; padding-top:18px">
+<p style="width:420px; flex:none; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; font-weight:600; color:#1F5F8B">G = (V, E, w)</p>
+<p style="flex:1; font-size:30px; line-height:1.35; color:#14213D">Grafo dirigido e ponderado.</p>
+</div>
+<div style="display:flex; align-items:baseline; gap:32px; border-top:1px solid #E2DDD2; padding-top:18px">
+<p style="width:420px; flex:none; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; font-weight:600; color:#1F5F8B">V</p>
+<p style="flex:1; font-size:30px; line-height:1.35; color:#14213D">Clubes do recorte: |V| = 4.739.</p>
+</div>
+<div style="display:flex; align-items:baseline; gap:32px; border-top:1px solid #E2DDD2; padding-top:18px">
+<p style="width:420px; flex:none; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; font-weight:600; color:#1F5F8B">E ⊆ V × V</p>
+<p style="flex:1; font-size:30px; line-height:1.35; color:#14213D">(u, v) ∈ E se ao menos um jogador foi de u para v; sem laços: |E| = 31.626.</p>
+</div>
+<div style="display:flex; align-items:baseline; gap:32px; border-top:1px solid #E2DDD2; padding-top:18px">
+<p style="width:420px; flex:none; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; font-weight:600; color:#1F5F8B">w : E → ℝ</p>
+<p style="flex:1; font-size:30px; line-height:1.35; color:#14213D">w(u, v) = Σ (valor pago − valor de mercado) das transferências de u para v, em EUR.</p>
+</div>
+<div style="display:flex; align-items:baseline; gap:32px; border-top:1px solid #E2DDD2; padding-top:18px">
+<p style="width:420px; flex:none; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; font-weight:600; color:#1F5F8B">c(P) = Σ w(e)</p>
+<p style="flex:1; font-size:30px; line-height:1.35; color:#14213D">Custo de um caminho P: soma dos pesos dos seus arcos.</p>
+</div>
+<div style="display:flex; align-items:baseline; gap:32px; border-top:1px solid #E2DDD2; padding-top:18px">
+<p style="width:420px; flex:none; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; font-weight:600; color:#1F5F8B">d(s, t) = min c(P)</p>
+<p style="flex:1; font-size:30px; line-height:1.35; color:#14213D">Distância: menor custo entre os caminhos de s a t.</p>
+</div>
+<div style="display:flex; align-items:baseline; gap:32px; border-top:1px solid #E2DDD2; padding-top:18px">
+<p style="width:420px; flex:none; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; font-weight:600; color:#A93B1A">c(C) &lt; 0</p>
+<p style="flex:1; font-size:30px; line-height:1.35; color:#14213D">Ciclo negativo. Se C é alcançável de s e alcança t, então d(s, t) = −∞.</p>
+</div>
+</div>
+</section>
+<section id="tamanho" data-transition="fade" style="background:#EDE9E0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">02 · Grafo</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Tamanho do grafo</h2>
+</div>
+<div style="flex:1; display:grid; grid-template-columns:repeat(3, 1fr); gap:32px">
+<div style="background:#FCFBF7; border:1px solid #DDD7CA; border-radius:16px; padding:32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">|V| · nós</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:120px; font-weight:500; line-height:1; color:#14213D">4.739</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">clubes com ao menos uma transferência no recorte</p>
+</div>
+<div style="background:#FCFBF7; border:1px solid #DDD7CA; border-radius:16px; padding:32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">|E| · arcos</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:120px; font-weight:500; line-height:1; color:#14213D">31.626</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">pares ordenados origem → destino</p>
+</div>
+<div style="background:#FCFBF7; border:1px solid #DDD7CA; border-radius:16px; padding:32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Transferências</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:120px; font-weight:500; line-height:1; color:#14213D">36.442</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">usadas no grafo: 20,8% das 175.165 brutas</p>
+</div>
+<div style="background:#FCFBF7; border:1px solid #DDD7CA; border-radius:16px; padding:32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Densidade</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#14213D">0,14%</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">|E| / (|V| (|V| − 1)) = 0,001409: grafo esparso</p>
+</div>
+<div style="background:#FCFBF7; border:1px solid #DDD7CA; border-radius:16px; padding:32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Grau médio</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#14213D">6,67</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">|E| / |V|, o mesmo para entrada e saída</p>
+</div>
+<div style="background:#FCFBF7; border:1px solid #DDD7CA; border-radius:16px; padding:32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Período</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#14213D">2005–2026</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">de 01/01/2005 a 02/07/2026</p>
+</div>
+</div>
+<p style="position:absolute; left:128px; bottom:64px; width:1664px; font-size:24px; color:#4A5568">Fonte: Transfermarkt Datasets, snapshot de 05/09/2026 · números de scripts/ficha_transfermarkt.py</p>
+</section>
+<section id="representacao" data-transition="fade" style="background:#F7F5F0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">02 · Grafo</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Representação: lista de adjacência</h2>
+</div>
+<div style="flex:1; display:flex; gap:64px; align-items:center">
+<div style="flex:1; display:flex; flex-direction:column; gap:32px">
+<div style="display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Lista de adjacência · O(|V| + |E|)</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:120px; font-weight:500; line-height:1; color:#1F5F8B">36.365</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">entradas: uma por clube e uma por arco</p>
+</div>
+<div style="display:flex; flex-direction:column; gap:8px; border-top:1px solid #E2DDD2; padding-top:24px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">Matriz de adjacência · O(|V|²)</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:120px; font-weight:500; line-height:1; color:#A93B1A">22,5 milhões</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">de células, 99,86% delas vazias: a densidade é 0,14%</p>
+</div>
+</div>
+<div style="width:760px; flex:none; background:#EDE9E0; border-radius:24px; padding:40px; display:flex; flex-direction:column; gap:20px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#4A5568">Na prática: clube → lista de (destino, peso)</p>
+<div style="display:flex; flex-direction:column; gap:4px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:24px; line-height:1.4; white-space:nowrap; color:#14213D">adj = {</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:24px; line-height:1.4; white-space:nowrap; color:#14213D">&#160;&#160;"Real Madrid": [("PSG", −30 mi), …],</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:24px; line-height:1.4; white-space:nowrap; color:#14213D">&#160;&#160;"PSG": [("Real Madrid", −180 mi), …],</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:24px; line-height:1.4; white-space:nowrap; color:#14213D">&#160;&#160;…</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:24px; line-height:1.4; white-space:nowrap; color:#14213D">}</p>
+</div>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">Percorrer os vizinhos de um clube custa O(grau de saída). É a estrutura que o enunciado pede em graph.py: lista de adjacência dirigida.</p>
+</div>
+</div>
+<p style="position:absolute; left:128px; bottom:64px; width:1664px; font-size:24px; color:#4A5568">|V| = 4.739 e |E| = 31.626 · matriz: |V|² = 22.458.121 células · fonte: scripts/ficha_transfermarkt.py</p>
+</section>
+<section id="metricas" data-transition="fade" style="background:#F7F5F0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">02 · Grafo</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Estrutura do grafo</h2>
+</div>
+<div style="flex:1; display:grid; grid-template-columns:repeat(3, 1fr); gap:32px">
+<div style="background:#FCFBF7; border:1px solid #E2DDD2; border-radius:16px; padding:32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Fontes</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#14213D">1.119</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">clubes com grau de entrada 0: só aparecem como origem</p>
+</div>
+<div style="background:#FCFBF7; border:1px solid #E2DDD2; border-radius:16px; padding:32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Sumidouros</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#14213D">485</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">clubes com grau de saída 0: só aparecem como destino</p>
+</div>
+<div style="background:#FCFBF7; border:1px solid #E2DDD2; border-radius:16px; padding:32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Arcos paralelos</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#14213D">4.816</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">transferências somadas a um arco que já existia</p>
+</div>
+<div style="background:#FCFBF7; border:1px solid #E2DDD2; border-radius:16px; padding:32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Reciprocidade</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#14213D">0,148</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">fração dos arcos que têm arco de volta</p>
+</div>
+<div style="background:#FCFBF7; border:1px solid #E2DDD2; border-radius:16px; padding:32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">Arcos negativos</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#A93B1A">25.029</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">79,14% dos arcos</p>
+</div>
+<div style="background:#FCFBF7; border:1px solid #E2DDD2; border-radius:16px; padding:32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Arcos positivos</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#1F5F8B">5.855</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">e 742 arcos com peso zero</p>
+</div>
+</div>
+<p style="position:absolute; left:128px; bottom:64px; width:1664px; font-size:24px; color:#4A5568">Fonte: scripts/ficha_transfermarkt.py, seção de métricas do grafo · contagens com pandas</p>
+</section>
+<section id="graus" data-transition="fade" style="background:#EDE9E0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">02 · Grafo</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Graus de entrada e de saída</h2>
+</div>
+<div style="flex:1; display:flex; gap:64px">
+<div style="width:640px; flex:none; display:flex; flex-direction:column; gap:24px">
+<table style="font-size:30px; color:#14213D">
+<tr style="background:#DDD7CA"><th style="width:40%">Grau</th><th style="width:30%; text-align:right">Saída</th><th style="width:30%; text-align:right">Entrada</th></tr>
+<tr><td>Mediana</td><td style="text-align:right">2</td><td style="text-align:right">1</td></tr>
+<tr><td>Percentil 90</td><td style="text-align:right">20</td><td style="text-align:right">23</td></tr>
+<tr><td>Percentil 99</td><td style="text-align:right">49</td><td style="text-align:right">58</td></tr>
+<tr><td>Máximo</td><td style="text-align:right">87</td><td style="text-align:right">84</td></tr>
+</table>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">Grau de saída: clubes de destino distintos. Grau de entrada: clubes de origem distintos. Quantis sobre os 4.739 clubes.</p>
+</div>
+<div style="flex:1; display:flex; gap:48px">
+<div style="flex:1; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Maior grau de saída</p>
+<div style="display:flex; justify-content:space-between; gap:16px; border-bottom:1px solid #D5CEC0; padding:10px 0"><p style="font-size:30px; color:#14213D">Benfica</p><p style="font-family:'Oswald', Arial, sans-serif; font-size:30px; font-weight:500; color:#14213D">87</p></div>
+<div style="display:flex; justify-content:space-between; gap:16px; border-bottom:1px solid #D5CEC0; padding:10px 0"><p style="font-size:30px; color:#14213D">Red Star</p><p style="font-family:'Oswald', Arial, sans-serif; font-size:30px; font-weight:500; color:#14213D">78</p></div>
+<div style="display:flex; justify-content:space-between; gap:16px; border-bottom:1px solid #D5CEC0; padding:10px 0"><p style="font-size:30px; color:#14213D">Lyon</p><p style="font-family:'Oswald', Arial, sans-serif; font-size:30px; font-weight:500; color:#14213D">75</p></div>
+<div style="display:flex; justify-content:space-between; gap:16px; border-bottom:1px solid #D5CEC0; padding:10px 0"><p style="font-size:30px; color:#14213D">Stade Rennais</p><p style="font-family:'Oswald', Arial, sans-serif; font-size:30px; font-weight:500; color:#14213D">74</p></div>
+<div style="display:flex; justify-content:space-between; gap:16px; border-bottom:1px solid #D5CEC0; padding:10px 0"><p style="font-size:30px; color:#14213D">Olympiacos</p><p style="font-family:'Oswald', Arial, sans-serif; font-size:30px; font-weight:500; color:#14213D">71</p></div>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Maior grau de entrada</p>
+<div style="display:flex; justify-content:space-between; gap:16px; border-bottom:1px solid #D5CEC0; padding:10px 0"><p style="font-size:30px; color:#14213D">Fenerbahçe</p><p style="font-family:'Oswald', Arial, sans-serif; font-size:30px; font-weight:500; color:#14213D">84</p></div>
+<div style="display:flex; justify-content:space-between; gap:16px; border-bottom:1px solid #D5CEC0; padding:10px 0"><p style="font-size:30px; color:#14213D">Olympiacos</p><p style="font-family:'Oswald', Arial, sans-serif; font-size:30px; font-weight:500; color:#14213D">82</p></div>
+<div style="display:flex; justify-content:space-between; gap:16px; border-bottom:1px solid #D5CEC0; padding:10px 0"><p style="font-size:30px; color:#14213D">Udinese</p><p style="font-family:'Oswald', Arial, sans-serif; font-size:30px; font-weight:500; color:#14213D">81</p></div>
+<div style="display:flex; justify-content:space-between; gap:16px; border-bottom:1px solid #D5CEC0; padding:10px 0"><p style="font-size:30px; color:#14213D">Roma</p><p style="font-family:'Oswald', Arial, sans-serif; font-size:30px; font-weight:500; color:#14213D">79</p></div>
+<div style="display:flex; justify-content:space-between; gap:16px; border-bottom:1px solid #D5CEC0; padding:10px 0"><p style="font-size:30px; color:#14213D">Benfica</p><p style="font-family:'Oswald', Arial, sans-serif; font-size:30px; font-weight:500; color:#14213D">79</p></div>
+</div>
+</div>
+</div>
+<p style="position:absolute; left:128px; bottom:64px; width:1664px; font-size:24px; color:#4A5568">Fonte: scripts/ficha_transfermarkt.py, seção de métricas do grafo</p>
+</section>
+<section id="conectividade" data-transition="fade" style="background:#EDE9E0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">02 · Grafo</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Conectividade</h2>
+</div>
+<div style="flex:1; display:flex; gap:64px">
+<div style="flex:1.1; display:flex; flex-direction:column; gap:32px">
+<div style="display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Componente fraca gigante</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:120px; font-weight:500; line-height:1; color:#14213D">96,81%</p>
+<p style="font-size:30px; line-height:1.35; color:#14213D">dos clubes (4.588 de 4.739) estão na maior componente fracamente conexa</p>
+</div>
+<div style="display:flex; gap:48px; border-top:1px solid #D5CEC0; padding-top:24px">
+<div style="flex:1; display:flex; flex-direction:column; gap:8px">
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#14213D">68</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">componentes fracamente conexas</p>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:8px">
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#14213D">57</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">delas com só 2 clubes</p>
+</div>
+</div>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:32px">
+<div style="background:#FCFBF7; border:1px solid #DDD7CA; border-radius:16px; padding:36px; display:flex; flex-direction:column; gap:12px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Alcance da BFS e da DFS</p>
+<p style="font-size:30px; line-height:1.35; color:#14213D">O que uma fonte alcança cabe na sua componente fraca. Uma fonte fora da componente gigante alcança no máximo o próprio componente.</p>
+</div>
+<div style="background:#FCFBF7; border:1px solid #DDD7CA; border-radius:16px; padding:36px; display:flex; flex-direction:column; gap:12px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">Onde ficam os ciclos</p>
+<p style="font-size:30px; line-height:1.35; color:#14213D">Todo ciclo, inclusive os negativos, fica dentro de uma componente fortemente conexa. A DFS do projeto vai relatar os ciclos a partir de cada fonte.</p>
+</div>
+</div>
+</div>
+<p style="position:absolute; left:128px; bottom:64px; width:1664px; font-size:24px; color:#4A5568">Componentes contadas por propagação de rótulos com pandas, ignorando a direção dos arcos · fonte: scripts/ficha_transfermarkt.py</p>
+</section>
+<section id="destaque" data-transition="fade" style="background:#A93B1A; color:#F7F5F0; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px; display:flex; flex-direction:column; justify-content:center; gap:28px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#FFF1E8">03 · Pesos negativos</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:200px; font-weight:600; line-height:1; color:#F7F5F0">79,14%</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:400; line-height:1.1; color:#F7F5F0; width:1400px">dos 31.626 arcos têm peso negativo, vindo dos próprios dados</p>
+<p style="font-size:30px; line-height:1.35; color:#FFF1E8; width:1100px">Mesmo entre as vendas pagas (fee &gt; 0), 51,41% saíram abaixo do valor de mercado.</p>
+</section>
+<section id="pesos" data-transition="fade" style="background:#F7F5F0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">03 · Pesos negativos</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Origem dos pesos negativos</h2>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:32px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; color:#14213D; background:#EDE9E0; border-radius:12px; padding:20px 32px">w = transfer_fee − market_value_in_eur</p>
+<div style="display:flex; gap:32px">
+<div style="flex:1; background:#FCFBF7; border:1px solid #E2DDD2; border-radius:16px; padding:36px; display:flex; flex-direction:column; gap:12px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Venda paga · fee &gt; 0</p>
+<h3 style="font-size:30px; font-weight:700; line-height:1.3; color:#14213D">w = valor pago − valor de mercado</h3>
+<p style="font-size:30px; line-height:1.35; color:#4A5568">Negativo quando o jogador saiu por menos que o valor de mercado: 51,41% das vendas pagas.</p>
+</div>
+<div style="flex:1; background:#FCFBF7; border:1px solid #E2DDD2; border-radius:16px; padding:36px; display:flex; flex-direction:column; gap:12px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">Saída sem compensação · fee = 0</p>
+<h3 style="font-size:30px; font-weight:700; line-height:1.3; color:#14213D">w = −valor de mercado</h3>
+<p style="font-size:30px; line-height:1.35; color:#4A5568">O jogador sai sem pagamento, e o peso é o valor de mercado com sinal negativo.</p>
+</div>
+</div>
+<div style="flex:1"></div>
+<div style="display:flex; gap:32px">
+<div style="flex:1; display:flex; flex-direction:column; gap:8px; border-top:2px solid #14213D; padding-top:20px">
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#A93B1A">−180 mi</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">menor peso de um arco (EUR)</p>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:8px; border-top:2px solid #14213D; padding-top:20px">
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#14213D">−250 mil</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">mediana dos pesos dos arcos (EUR)</p>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:8px; border-top:2px solid #14213D; padding-top:20px">
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#1F5F8B">+115 mi</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">maior peso de um arco (EUR)</p>
+</div>
+</div>
+</div>
+<p style="position:absolute; left:128px; bottom:64px; width:1664px; font-size:24px; color:#4A5568">Nenhum valor é sorteado ou inventado: o peso sai de duas colunas observadas · fonte: scripts/ficha_transfermarkt.py</p>
+</section>
+<section id="caminho" data-transition="fade" style="background:#F7F5F0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">03 · Pesos negativos</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Caminho mínimo no domínio</h2>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:48px">
+<div style="position:relative; width:1664px; height:300px; flex:none; background:#EDE9E0; border-radius:24px">
+<div style="position:absolute; left:96px; top:90px; width:320px; height:120px; background:#FCFBF7; border:2px solid #14213D; border-radius:60px; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:2px">
+<p style="font-size:30px; font-weight:700; color:#14213D">Clube A</p>
+<p style="font-size:24px; color:#4A5568">origem</p>
+</div>
+<div style="position:absolute; left:672px; top:90px; width:320px; height:120px; background:#FCFBF7; border:2px solid #14213D; border-radius:60px; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:2px">
+<p style="font-size:30px; font-weight:700; color:#14213D">Clube B</p>
+<p style="font-size:24px; color:#4A5568">intermediário</p>
+</div>
+<div style="position:absolute; left:1248px; top:90px; width:320px; height:120px; background:#FCFBF7; border:2px solid #14213D; border-radius:60px; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:2px">
+<p style="font-size:30px; font-weight:700; color:#14213D">Clube C</p>
+<p style="font-size:24px; color:#4A5568">destino</p>
+</div>
+<x-connector x1="416" y1="150" x2="672" y2="150" style="color:#A93B1A; border-width:4px"></x-connector>
+<x-connector x1="992" y1="150" x2="1248" y2="150" style="color:#A93B1A; border-width:4px"></x-connector>
+<p style="position:absolute; left:424px; top:96px; width:240px; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:24px; text-align:center; color:#A93B1A">w(A→B)</p>
+<p style="position:absolute; left:1000px; top:96px; width:240px; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:24px; text-align:center; color:#A93B1A">w(B→C)</p>
+<p style="position:absolute; left:96px; top:236px; width:1472px; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:24px; text-align:center; color:#14213D">custo(A → B → C) = w(A→B) + w(B→C)</p>
+</div>
+<div style="display:flex; gap:64px">
+<div style="flex:1.3; display:flex; flex-direction:column; gap:12px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Definição do grupo</p>
+<p style="font-size:30px; line-height:1.4; color:#14213D">O caminho mínimo entre dois clubes não é a sequência com os menores valores de transferência, e sim aquela em que a diferença entre valor pago e valor de mercado resulta no menor custo acumulado.</p>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:12px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">Com pesos negativos</p>
+<p style="font-size:30px; line-height:1.4; color:#4A5568">Um caminho pode ter custo total menor mesmo passando por várias transferências.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="ciclo" data-transition="fade" style="background:#F7F5F0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">03 · Pesos negativos</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Ciclo negativo no domínio</h2>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:40px">
+<div style="position:relative; width:1664px; height:340px; flex:none; background:#EDE9E0; border-radius:24px">
+<div style="position:absolute; left:96px; top:90px; width:360px; height:160px; background:#FCFBF7; border:2px solid #14213D; border-radius:24px; display:flex; flex-direction:column; justify-content:center; align-items:center">
+<p style="font-size:30px; font-weight:700; color:#14213D">Real Madrid</p>
+</div>
+<div style="position:absolute; left:1208px; top:90px; width:360px; height:160px; background:#FCFBF7; border:2px solid #14213D; border-radius:24px; display:flex; flex-direction:column; justify-content:center; align-items:center">
+<p style="font-size:30px; font-weight:700; color:#14213D">PSG</p>
+</div>
+<x-connector x1="456" y1="130" x2="1208" y2="130" style="color:#A93B1A; border-width:4px"></x-connector>
+<x-connector x1="1208" y1="210" x2="456" y2="210" style="color:#A93B1A; border-width:4px"></x-connector>
+<p style="position:absolute; left:480px; top:70px; width:704px; font-size:24px; text-align:center; color:#14213D">Real Madrid → PSG: −30 mi (Ramos, Navas, Asensio)</p>
+<p style="position:absolute; left:480px; top:236px; width:704px; font-size:24px; text-align:center; color:#14213D">PSG → Real Madrid: −180 mi (Mbappé, sem compensação)</p>
+</div>
+<div style="display:flex; gap:64px; align-items:flex-start">
+<div style="width:380px; flex:none; display:flex; flex-direction:column; gap:8px">
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#A93B1A">−210 mi</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">soma do ciclo Real Madrid → PSG → Real Madrid</p>
+</div>
+<div style="width:380px; flex:none; display:flex; flex-direction:column; gap:8px">
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#14213D">1.780</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">pares de clubes com arcos nos dois sentidos e soma negativa</p>
+</div>
+<p style="flex:1; font-size:30px; line-height:1.4; color:#14213D">A cada volta o custo diminui: para os clubes alcançáveis a partir do ciclo, o caminho mínimo fica indefinido. O Bellman-Ford detecta e exibe esse ciclo.</p>
+</div>
+</div>
+<p style="position:absolute; left:128px; bottom:64px; width:1664px; font-size:24px; color:#4A5568">Exemplo nos dados: Navas (2019), Ramos (2021), Asensio (2023) e Mbappé (2024), com os filtros de scripts/ficha_transfermarkt.py</p>
+</section>
+<section id="bellman" data-transition="fade" style="background:#EDE9E0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">04 · Algoritmos</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Dois grafos para o Bellman-Ford</h2>
+</div>
+<div style="flex:1; display:flex; gap:32px">
+<div style="flex:1; background:#FCFBF7; border:1px solid #DDD7CA; border-radius:20px; padding:48px; display:flex; flex-direction:column; gap:20px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">Com ciclo negativo</p>
+<h3 style="font-size:30px; font-weight:700; line-height:1.3; color:#14213D">Grafo estático completo</h3>
+<p style="font-size:30px; line-height:1.35; color:#4A5568">Nó = clube. Os 1.780 pares com soma negativa já são ciclos negativos: o Bellman-Ford deve detectar e exibir um deles.</p>
+<div style="flex:1"></div>
+<div style="display:flex; align-items:center; gap:12px">
+<p style="font-size:24px; font-weight:600; color:#14213D; background:#EDE9E0; border-radius:28px; padding:12px 20px; white-space:nowrap">Clube A</p>
+<x-connector style="width:48px; color:#A93B1A; border-width:3px"></x-connector>
+<p style="font-size:24px; font-weight:600; color:#14213D; background:#EDE9E0; border-radius:28px; padding:12px 20px; white-space:nowrap">Clube B</p>
+<x-connector style="width:48px; color:#A93B1A; border-width:3px"></x-connector>
+<p style="font-size:24px; font-weight:600; color:#14213D; background:#EDE9E0; border-radius:28px; padding:12px 20px; white-space:nowrap">Clube A</p>
+</div>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">a sequência volta ao início com soma negativa</p>
+</div>
+<div style="flex:1; background:#FCFBF7; border:1px solid #DDD7CA; border-radius:20px; padding:48px; display:flex; flex-direction:column; gap:20px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Peso negativo, sem ciclo negativo</p>
+<h3 style="font-size:30px; font-weight:700; line-height:1.3; color:#14213D">Grafo expandido no tempo</h3>
+<p style="font-size:30px; line-height:1.35; color:#4A5568">Nó = (clube, temporada). Transferência: (A, s) → (B, s+1); espera: (X, s) → (X, temporada seguinte), com peso 0. Todo arco avança no tempo, então o grafo é acíclico (DAG).</p>
+<div style="flex:1"></div>
+<div style="display:flex; align-items:center; gap:12px">
+<p style="font-size:24px; font-weight:600; color:#14213D; background:#EDE9E0; border-radius:28px; padding:12px 20px; white-space:nowrap">(A, 23/24)</p>
+<x-connector style="width:48px; color:#1F5F8B; border-width:3px"></x-connector>
+<p style="font-size:24px; font-weight:600; color:#14213D; background:#EDE9E0; border-radius:28px; padding:12px 20px; white-space:nowrap">(B, 24/25)</p>
+<x-connector style="width:48px; color:#1F5F8B; border-width:3px"></x-connector>
+<p style="font-size:24px; font-weight:600; color:#14213D; background:#EDE9E0; border-radius:28px; padding:12px 20px; white-space:nowrap">(C, 25/26)</p>
+</div>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">o tempo só avança: não há como voltar ao início</p>
+</div>
+</div>
+</section>
+<section id="dag" data-transition="fade" style="background:#F7F5F0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">04 · Algoritmos</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Grafo expandido no tempo em números</h2>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:40px">
+<div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:32px">
+<div style="background:#FCFBF7; border:1px solid #E2DDD2; border-radius:16px; padding:32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Nós</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#14213D">21.703</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">pares (clube, temporada), em 24 temporadas</p>
+</div>
+<div style="background:#FCFBF7; border:1px solid #E2DDD2; border-radius:16px; padding:32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Arcos de transferência</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#14213D">35.326</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">(A, s) → (B, s+1); 78,17% com peso negativo</p>
+</div>
+<div style="background:#FCFBF7; border:1px solid #E2DDD2; border-radius:16px; padding:32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Arcos de espera</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#14213D">16.964</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">peso 0, de uma temporada do clube para a seguinte</p>
+</div>
+</div>
+<div style="display:flex; align-items:flex-start; gap:40px">
+<div style="flex:1; display:flex; flex-direction:column; gap:8px; border-top:2px solid #14213D; padding-top:20px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">Bellman-Ford ingênuo</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#A93B1A">≈ 1,1 bilhão</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">de relaxações: |V| − 1 passadas sobre os 52.290 arcos</p>
+</div>
+<div style="align-self:center; display:flex"><x-connector style="width:96px; color:#14213D; border-width:4px"></x-connector></div>
+<div style="flex:1; display:flex; flex-direction:column; gap:8px; border-top:2px solid #14213D; padding-top:20px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Com parada antecipada</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#1F5F8B">≤ 1,25 milhão</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">no máximo 24 passadas: com 24 temporadas, nenhum caminho tem mais de 23 arcos</p>
+</div>
+</div>
+</div>
+<p style="position:absolute; left:128px; bottom:64px; width:1664px; font-size:24px; color:#4A5568">Fonte: scripts/ficha_transfermarkt.py, seção do grafo expandido no tempo · 52.290 = 35.326 + 16.964 arcos</p>
+</section>
+<section id="dijkstra" data-transition="fade" style="background:#F7F5F0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">04 · Algoritmos</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Dijkstra e pesos negativos</h2>
+</div>
+<div style="flex:1; display:flex; gap:64px">
+<div style="width:700px; flex:none; display:flex; flex-direction:column; gap:20px">
+<div style="position:relative; width:700px; height:360px; background:#EDE9E0; border-radius:24px">
+<div style="position:absolute; left:40px; top:120px; width:120px; height:120px; border-radius:60px; background:#FCFBF7; border:2px solid #14213D; display:flex; justify-content:center; align-items:center"><p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; font-weight:600; color:#14213D">s</p></div>
+<div style="position:absolute; left:540px; top:20px; width:120px; height:120px; border-radius:60px; background:#FCFBF7; border:2px solid #14213D; display:flex; justify-content:center; align-items:center"><p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; font-weight:600; color:#14213D">a</p></div>
+<div style="position:absolute; left:540px; top:220px; width:120px; height:120px; border-radius:60px; background:#FCFBF7; border:2px solid #14213D; display:flex; justify-content:center; align-items:center"><p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; font-weight:600; color:#14213D">b</p></div>
+<x-connector x1="159" y1="168" x2="541" y2="92" style="color:#14213D; border-width:3px"></x-connector>
+<x-connector x1="159" y1="192" x2="541" y2="268" style="color:#14213D; border-width:3px"></x-connector>
+<x-connector x1="600" y1="220" x2="600" y2="140" style="color:#A93B1A; border-width:4px"></x-connector>
+<p style="position:absolute; left:320px; top:70px; width:60px; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; font-weight:600; text-align:center; color:#14213D">2</p>
+<p style="position:absolute; left:320px; top:250px; width:60px; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; font-weight:600; text-align:center; color:#14213D">5</p>
+<p style="position:absolute; left:616px; top:159px; width:70px; font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; font-weight:600; color:#A93B1A">−4</p>
+</div>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">O Dijkstra fecha a com custo 2 antes de ver b; depois, s → b → a custa 5 − 4 = 1, e a distância fechada fica errada.</p>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:24px">
+<p style="font-size:30px; line-height:1.4; color:#14213D">Com 79,14% dos arcos negativos, o Dijkstra roda sobre pesos transformados. Opções em avaliação:</p>
+<div style="background:#FCFBF7; border:1px solid #E2DDD2; border-radius:16px; padding:28px 32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">Deslocamento</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; color:#14213D">w′ = w − mín(w) = w + 180 mi</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">Pesos não negativos, mas cada arco soma 180 mi: favorece caminhos com menos arcos e pode mudar o caminho mínimo.</p>
+</div>
+<div style="background:#FCFBF7; border:1px solid #E2DDD2; border-radius:16px; padding:28px 32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Repesagem de Johnson</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; color:#14213D">w′(u, v) = w(u, v) + h(u) − h(v)</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">h vem de um Bellman-Ford; preserva os caminhos mínimos, mas exige grafo sem ciclo negativo, como o grafo expandido no tempo.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="complexidade" data-transition="fade" style="background:#EDE9E0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">04 · Algoritmos</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Complexidade no tamanho deste grafo</h2>
+</div>
+<div style="flex:1; display:flex; flex-direction:column; gap:40px">
+<div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:32px">
+<div style="background:#FCFBF7; border:1px solid #DDD7CA; border-radius:16px; padding:32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">BFS e DFS</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; color:#14213D">O(|V| + |E|)</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#14213D">≈ 36 mil</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">vértices e arcos, cada um visitado uma vez</p>
+</div>
+<div style="background:#FCFBF7; border:1px solid #DDD7CA; border-radius:16px; padding:32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Dijkstra com heap</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; color:#14213D">O((|V| + |E|) log |V|)</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#14213D">≈ 440 mil</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">operações, com heapq (heap binário)</p>
+</div>
+<div style="background:#FCFBF7; border:1px solid #DDD7CA; border-radius:16px; padding:32px; display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">Bellman-Ford</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:30px; color:#14213D">O(|V| · |E|)</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1; color:#A93B1A">≈ 150 milhões</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">relaxações no pior caso: |V| − 1 passadas sobre os |E| arcos</p>
+</div>
+</div>
+<div style="display:flex; gap:64px">
+<p style="flex:1; font-size:30px; line-height:1.4; color:#14213D">Com ciclo negativo, o Bellman-Ford executa todas as |V| − 1 passadas. Sem ciclo, pode parar na primeira passada em que nada relaxa.</p>
+<p style="flex:1; font-size:30px; line-height:1.4; color:#4A5568">Na escalabilidade (10%, 50% e 100% do grafo), os tempos medidos serão comparados com essas curvas.</p>
+</div>
+</div>
+<p style="position:absolute; left:128px; bottom:64px; width:1664px; font-size:24px; color:#4A5568">Contas com |V| = 4.739 e |E| = 31.626; log de |V| na base 2 ≈ 12,2</p>
+</section>
+<section id="atributos" data-transition="fade" style="background:#F7F5F0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">05 · Atributos e requisitos</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Principais atributos</h2>
+</div>
+<table style="font-size:30px; color:#14213D">
+<tr style="background:#EDE9E0"><th style="width:46%">Atributo</th><th style="width:30%">Tipo</th><th style="width:24%; text-align:right">% faltante</th></tr>
+<tr><td>transfer_fee (valor pago, EUR)</td><td>numérico</td><td style="text-align:right">35,12%</td></tr>
+<tr><td>market_value_in_eur (valor de mercado)</td><td>numérico</td><td style="text-align:right">38,91%</td></tr>
+<tr><td>transfer_date · transfer_season</td><td>data · categórico</td><td style="text-align:right">0%</td></tr>
+<tr><td>idade na transferência (via players)</td><td>numérico</td><td style="text-align:right">0,02%</td></tr>
+<tr><td>posição · pé · altura (players)</td><td>categórico · categórico · numérico</td><td style="text-align:right">0,17% · 5,57% · 2,84%</td></tr>
+<tr><td>nacionalidade · empresário (players)</td><td>categórico</td><td style="text-align:right">0% · 32,79%</td></tr>
+<tr><td>liga do clube de destino (clubs)</td><td>categórico</td><td style="text-align:right">52,95%</td></tr>
+</table>
+<p style="position:absolute; left:128px; bottom:64px; width:1664px; font-size:24px; color:#4A5568">% faltante sobre as 175.165 transferências brutas · fonte: scripts/ficha_transfermarkt.py</p>
+</section>
+<section id="requisitos" data-transition="fade" style="background:#EDE9E0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">05 · Atributos e requisitos</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Requisitos do enunciado</h2>
+</div>
+<div style="display:flex; flex-direction:column; background:#FCFBF7; border:1px solid #DDD7CA; border-radius:20px; padding:16px 32px">
+<div style="display:flex; gap:32px; padding:16px 0; border-bottom:2px solid #14213D">
+<p style="width:500px; flex:none; font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#4A5568">Requisito</p>
+<p style="flex:1; font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#4A5568">Como a proposta atende</p>
+<p style="width:170px; flex:none; font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#4A5568">Situação</p>
+</div>
+<div style="display:flex; align-items:center; gap:32px; padding:12px 0; border-bottom:1px solid #E2DDD2">
+<p style="width:500px; flex:none; font-size:30px; font-weight:600; color:#14213D">Dirigido e ponderado</p>
+<p style="flex:1; font-size:30px; color:#4A5568">Direção nativa: clube de origem → clube de destino</p>
+<div style="width:170px; flex:none; display:flex; align-items:center; gap:12px"><x-icon name="Check" style="color:#1F5F8B; width:48px; height:48px"></x-icon><p style="font-size:24px; font-weight:600; color:#1F5F8B">Atende</p></div>
+</div>
+<div style="display:flex; align-items:center; gap:32px; padding:12px 0; border-bottom:1px solid #E2DDD2">
+<p style="width:500px; flex:none; font-size:30px; font-weight:600; color:#14213D">Pelo menos 20 mil arestas</p>
+<p style="flex:1; font-size:30px; color:#4A5568">31.626 arcos, sem amostragem</p>
+<div style="width:170px; flex:none; display:flex; align-items:center; gap:12px"><x-icon name="Check" style="color:#1F5F8B; width:48px; height:48px"></x-icon><p style="font-size:24px; font-weight:600; color:#1F5F8B">Atende</p></div>
+</div>
+<div style="display:flex; align-items:center; gap:32px; padding:12px 0; border-bottom:1px solid #E2DDD2">
+<p style="width:500px; flex:none; font-size:30px; font-weight:600; color:#14213D">Negativos vindos dos dados</p>
+<p style="flex:1; font-size:30px; color:#4A5568">79,14% dos arcos; valor pago − valor de mercado</p>
+<div style="width:170px; flex:none; display:flex; align-items:center; gap:12px"><x-icon name="Check" style="color:#1F5F8B; width:48px; height:48px"></x-icon><p style="font-size:24px; font-weight:600; color:#1F5F8B">Atende</p></div>
+</div>
+<div style="display:flex; align-items:center; gap:32px; padding:12px 0; border-bottom:1px solid #E2DDD2">
+<p style="width:500px; flex:none; font-size:30px; font-weight:600; color:#14213D">Caminho e ciclo com sentido</p>
+<p style="flex:1; font-size:30px; color:#4A5568">Custo acumulado; ciclos com soma negativa</p>
+<div style="width:170px; flex:none; display:flex; align-items:center; gap:12px"><x-icon name="Check" style="color:#1F5F8B; width:48px; height:48px"></x-icon><p style="font-size:24px; font-weight:600; color:#1F5F8B">Atende</p></div>
+</div>
+<div style="display:flex; align-items:center; gap:32px; padding:12px 0; border-bottom:1px solid #E2DDD2">
+<p style="width:500px; flex:none; font-size:30px; font-weight:600; color:#14213D">Não é malha aérea nem grade</p>
+<p style="flex:1; font-size:30px; color:#4A5568">Transferências entre clubes (tabela transfers)</p>
+<div style="width:170px; flex:none; display:flex; align-items:center; gap:12px"><x-icon name="Check" style="color:#1F5F8B; width:48px; height:48px"></x-icon><p style="font-size:24px; font-weight:600; color:#1F5F8B">Atende</p></div>
+</div>
+<div style="display:flex; align-items:center; gap:32px; padding:12px 0; border-bottom:1px solid #E2DDD2">
+<p style="width:500px; flex:none; font-size:30px; font-weight:600; color:#14213D">Pergunta de pesquisa</p>
+<p style="flex:1; font-size:30px; color:#4A5568">Formulada pelo grupo</p>
+<div style="width:170px; flex:none; display:flex; align-items:center; gap:12px"><x-icon name="Check" style="color:#1F5F8B; width:48px; height:48px"></x-icon><p style="font-size:24px; font-weight:600; color:#1F5F8B">Atende</p></div>
+</div>
+<div style="display:flex; align-items:center; gap:32px; padding:12px 0">
+<p style="width:500px; flex:none; font-size:30px; font-weight:600; color:#14213D">Base para a AVD</p>
+<p style="flex:1; font-size:30px; color:#4A5568">Jogador, clube, liga, temporada; faltantes reais</p>
+<div style="width:170px; flex:none; display:flex; align-items:center; gap:12px"><x-icon name="Check" style="color:#1F5F8B; width:48px; height:48px"></x-icon><p style="font-size:24px; font-weight:600; color:#1F5F8B">Atende</p></div>
+</div>
+</div>
+</section>
+<section id="plano" data-transition="fade" style="background:#F7F5F0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">06 · Próximos passos</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Plano para a Parte 2</h2>
+</div>
+<div style="flex:1; display:grid; grid-template-columns:repeat(2, 1fr); gap:32px">
+<div style="background:#FCFBF7; border:1px solid #E2DDD2; border-radius:20px; padding:40px; display:flex; gap:28px">
+<div style="width:72px; height:72px; flex:none; border-radius:36px; background:#14213D; display:flex; align-items:center; justify-content:center"><x-icon name="Search" style="color:#F7F5F0; width:40px; height:40px"></x-icon></div>
+<div style="flex:1; display:flex; flex-direction:column; gap:12px">
+<h3 style="font-size:30px; font-weight:700; line-height:1.3; color:#14213D">BFS e DFS</h3>
+<p style="font-size:30px; line-height:1.35; color:#4A5568">A partir de pelo menos 3 clubes: ordem de visita, camadas e ciclos.</p>
+</div>
+</div>
+<div style="background:#FCFBF7; border:1px solid #E2DDD2; border-radius:20px; padding:40px; display:flex; gap:28px">
+<div style="width:72px; height:72px; flex:none; border-radius:36px; background:#14213D; display:flex; align-items:center; justify-content:center"><x-icon name="Lightning" style="color:#F7F5F0; width:40px; height:40px"></x-icon></div>
+<div style="flex:1; display:flex; flex-direction:column; gap:12px">
+<h3 style="font-size:30px; font-weight:700; line-height:1.3; color:#14213D">Dijkstra</h3>
+<p style="font-size:30px; line-height:1.35; color:#4A5568">Pelo menos 5 pares origem–destino, com os pesos transformados para valores não negativos e a transformação documentada.</p>
+</div>
+</div>
+<div style="background:#FCFBF7; border:1px solid #E2DDD2; border-radius:20px; padding:40px; display:flex; gap:28px">
+<div style="width:72px; height:72px; flex:none; border-radius:36px; background:#14213D; display:flex; align-items:center; justify-content:center"><x-icon name="Link" style="color:#F7F5F0; width:40px; height:40px"></x-icon></div>
+<div style="flex:1; display:flex; flex-direction:column; gap:12px">
+<h3 style="font-size:30px; font-weight:700; line-height:1.3; color:#14213D">Bellman-Ford</h3>
+<p style="font-size:30px; line-height:1.35; color:#4A5568">Peso negativo sem ciclo no grafo expandido no tempo; ciclo negativo detectado e exibido no grafo completo.</p>
+</div>
+</div>
+<div style="background:#FCFBF7; border:1px solid #E2DDD2; border-radius:20px; padding:40px; display:flex; gap:28px">
+<div style="width:72px; height:72px; flex:none; border-radius:36px; background:#14213D; display:flex; align-items:center; justify-content:center"><x-icon name="Clock" style="color:#F7F5F0; width:40px; height:40px"></x-icon></div>
+<div style="flex:1; display:flex; flex-direction:column; gap:12px">
+<h3 style="font-size:30px; font-weight:700; line-height:1.3; color:#14213D">Desempenho</h3>
+<p style="font-size:30px; line-height:1.35; color:#4A5568">Tempo médio de pelo menos 5 execuções, em 3 tamanhos do grafo: 10%, 50% e 100%.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="pergunta" data-transition="fade" style="background:#14213D; color:#F7F5F0; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px; display:flex; flex-direction:column; justify-content:center; gap:32px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#F28C5B">06 · Pergunta de pesquisa</p>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:400; line-height:1.15; color:#F7F5F0; width:1560px">Em uma rede de transferências entre clubes, como os valores pagos em relação ao valor de mercado dos jogadores influenciam os caminhos do grafo e quais relações podem ser identificadas pelos algoritmos de caminhos mínimos e ciclos negativos?</p>
+<p style="font-size:24px; line-height:1.4; color:#C9D3E0">Pergunta formulada pelo grupo</p>
+</section>
+<section id="reprodutibilidade" data-transition="fade" style="background:#EDE9E0; color:#14213D; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px 128px 160px; display:flex; flex-direction:column; gap:56px">
+<div style="display:flex; flex-direction:column; gap:16px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">06 · Próximos passos</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:500; line-height:1.1; color:#14213D">Reprodutibilidade e reservas</h2>
+</div>
+<div style="flex:1; display:flex; gap:64px">
+<div style="flex:1.2; display:flex; flex-direction:column; gap:24px">
+<h3 style="font-size:30px; font-weight:700; line-height:1.3; color:#14213D">Números que qualquer integrante reproduz</h3>
+<ol style="font-size:30px; line-height:1.45; color:#14213D">
+<li>scripts/ficha_transfermarkt.py baixa o snapshot e confere o SHA-256.</li>
+<li>Recalcula |V|, |E|, % de pesos negativos e faltantes com pandas.</li>
+<li>Testado do zero, numa pasta limpa: mesma saída.</li>
+<li>No Windows, rodar_fichas.bat roda as fichas com duplo clique.</li>
+</ol>
+<div style="flex:1"></div>
+<div style="display:flex; flex-direction:column; gap:8px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#A93B1A">Repositório</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:24px; color:#14213D">github.com/joaovictorgcu/projeto-grafos-g2</p>
+</div>
+</div>
+<div style="flex:1; background:#FCFBF7; border:1px solid #DDD7CA; border-radius:20px; padding:48px; display:flex; flex-direction:column; gap:24px">
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#1F5F8B">Reservas</p>
+<h3 style="font-size:30px; font-weight:700; line-height:1.3; color:#14213D">Se outro grupo já tiver o mesmo dataset</h3>
+<div style="display:flex; flex-direction:column; gap:8px; border-top:1px solid #E2DDD2; padding-top:20px">
+<p style="font-size:30px; font-weight:600; color:#14213D">Lichess 2013-01, partidas Blitz</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">3.310 nós · 32.594 arcos · brancas → pretas</p>
+</div>
+<div style="display:flex; flex-direction:column; gap:8px; border-top:1px solid #E2DDD2; padding-top:20px">
+<p style="font-size:30px; font-weight:600; color:#14213D">Tênis ATP 1991–2026</p>
+<p style="font-size:24px; line-height:1.4; color:#4A5568">3.712 nós · 124.936 arcos · saldo de games</p>
+</div>
+</div>
+</div>
+</section>
+<section id="fim" data-transition="fade" style="background:#14213D; color:#F7F5F0; font-family:'IBM Plex Sans', Arial, sans-serif; padding:128px; display:flex; flex-direction:column; justify-content:center; gap:32px">
+<svg aria-label="Desenho decorativo de uma rede dirigida de clubes, com dois arcos destacados em laranja" style="position:absolute; left:1100px; top:170px" width="690" height="320" viewBox="0 0 690 320">
+<defs>
+<marker id="fc" orient="auto" markerWidth="5" markerHeight="5" refX="0.8" refY="2" overflow="visible"><path d="M-3.2 -1.7 L0.8 0 L-3.2 1.7" transform="translate(0 2)" fill="none" stroke="#8FA0B8" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></marker>
+<marker id="fo" orient="auto" markerWidth="5" markerHeight="5" refX="0.8" refY="2" overflow="visible"><path d="M-3.2 -1.7 L0.8 0 L-3.2 1.7" transform="translate(0 2)" fill="none" stroke="#F28C5B" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+<path d="M 58 66 L 186 36" fill="none" stroke="#8FA0B8" stroke-width="2" stroke-linecap="round" marker-end="url(#fc)"/>
+<path d="M 229 40 L 354 106" fill="none" stroke="#8FA0B8" stroke-width="2" stroke-linecap="round" marker-end="url(#fc)"/>
+<path d="M 404 111 L 550 57" fill="none" stroke="#F28C5B" stroke-width="3" stroke-linecap="round" marker-end="url(#fo)"/>
+<path d="M 48 86 L 110 219" fill="none" stroke="#8FA0B8" stroke-width="2" stroke-linecap="round" marker-end="url(#fc)"/>
+<path d="M 140 244 L 280 275" fill="none" stroke="#8FA0B8" stroke-width="2" stroke-linecap="round" marker-end="url(#fc)"/>
+<path d="M 308 264 L 367 146" fill="none" stroke="#8FA0B8" stroke-width="2" stroke-linecap="round" marker-end="url(#fc)"/>
+<path d="M 317 276 L 476 236" fill="none" stroke="#8FA0B8" stroke-width="2" stroke-linecap="round" marker-end="url(#fc)"/>
+<path d="M 508 209 L 562 70" fill="none" stroke="#8FA0B8" stroke-width="2" stroke-linecap="round" marker-end="url(#fc)"/>
+<path d="M 520 238 L 632 283" fill="none" stroke="#8FA0B8" stroke-width="2" stroke-linecap="round" marker-end="url(#fc)"/>
+<path d="M 399 138 L 482 213" fill="none" stroke="#F28C5B" stroke-width="3" stroke-linecap="round" marker-end="url(#fo)"/>
+<path d="M 138 232 L 354 132" fill="none" stroke="#8FA0B8" stroke-width="2" stroke-linecap="round" marker-end="url(#fc)"/>
+<circle cx="40" cy="70" r="14" fill="#C9D3E0"/>
+<circle cx="210" cy="30" r="18" fill="#C9D3E0"/>
+<circle cx="380" cy="120" r="22" fill="#F28C5B"/>
+<circle cx="570" cy="50" r="14" fill="#C9D3E0"/>
+<circle cx="120" cy="240" r="16" fill="#C9D3E0"/>
+<circle cx="300" cy="280" r="14" fill="#C9D3E0"/>
+<circle cx="500" cy="230" r="18" fill="#C9D3E0"/>
+<circle cx="650" cy="290" r="12" fill="#C9D3E0"/>
+</svg>
+<p style="font-size:24px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#F28C5B">Turma 5A · Grupo 2</p>
+<h2 style="font-family:'Oswald', Arial, sans-serif; font-size:120px; font-weight:600; line-height:1.05; color:#F7F5F0">Obrigado</h2>
+<p style="font-family:'Oswald', Arial, sans-serif; font-size:72px; font-weight:400; line-height:1.1; color:#C9D3E0">Perguntas?</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace; font-size:24px; color:#F7F5F0">github.com/joaovictorgcu/projeto-grafos-g2</p>
+<p style="font-size:24px; line-height:1.4; color:#C9D3E0">João Victor Uchôa · Luís Eduardo Bérard · Caio Leimig · Guilherme Burle · Gabriel França</p>
+</section>
+</div>
+<div id="barra"><span id="contador"></span> · ← → navegar · F tela cheia · Ctrl+P salva em PDF</div>
+<script>
+(() => {
+  const NS = "http://www.w3.org/2000/svg";
+  const px = v => parseFloat(v) || 0;
+  let seq = 0;
+
+  function novo(tag, attrs) {
+    const el = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+    return el;
+  }
+
+  function ponta(svg, cor) {
+    const id = "ponta" + (++seq);
+    const m = novo("marker", { id, orient: "auto-start-reverse", markerWidth: 5, markerHeight: 5,
+                               refX: 0.8, refY: 2, overflow: "visible" });
+    m.appendChild(novo("path", { d: "M-3.2 -1.7 L0.8 0 L-3.2 1.7", transform: "translate(0 2)", fill: "none",
+                                 stroke: cor, "stroke-width": 1, "stroke-linecap": "round",
+                                 "stroke-linejoin": "round" }));
+    const defs = novo("defs", {});
+    defs.appendChild(m);
+    svg.appendChild(defs);
+    return `url(#${id})`;
+  }
+
+  function conector(el) {
+    const cor = el.style.color || "#14213D";
+    const esp = px(el.style.borderWidth) || 2;
+    const cabeca = el.getAttribute("head") || "end";
+    let svg, x1, y1, x2, y2;
+    if (el.hasAttribute("x1")) {
+      const pai = el.parentElement;
+      svg = novo("svg", { width: pai.offsetWidth || 1920, height: pai.offsetHeight || 1080 });
+      svg.style.cssText = "position:absolute; left:0; top:0; overflow:visible; pointer-events:none";
+      [x1, y1, x2, y2] = ["x1", "y1", "x2", "y2"].map(a => px(el.getAttribute(a)));
+    } else {
+      const w = px(el.style.width), h = px(el.style.height), folga = esp * 3;
+      svg = novo("svg", { width: Math.max(w, 2 * folga), height: Math.max(h, 2 * folga) });
+      svg.style.cssText = "flex:none; overflow:visible";
+      if (!h) { [x1, y1, x2, y2] = [0, folga, w, folga]; }
+      else if (!w) { [x1, y1, x2, y2] = [folga, 0, folga, h]; }
+      else { [x1, y1, x2, y2] = [0, 0, w, h]; }
+    }
+    const linha = novo("line", { x1, y1, x2, y2, stroke: cor, "stroke-width": esp, "stroke-linecap": "round" });
+    if (el.style.borderStyle === "dashed") linha.setAttribute("stroke-dasharray", `${esp * 4} ${esp * 3}`);
+    if (cabeca !== "none") {
+      const url = ponta(svg, cor);
+      linha.setAttribute("marker-end", url);
+      if (cabeca === "both") linha.setAttribute("marker-start", url);
+    }
+    svg.appendChild(linha);
+    el.replaceWith(svg);
+  }
+
+  const ICONES = {
+    Check: '<polyline points="4.5 12.5 9.5 17.5 19.5 7"/>',
+    Search: '<circle cx="10.5" cy="10.5" r="6"/><line x1="15" y1="15" x2="20" y2="20"/>',
+    Lightning: '<polygon points="13 3 5 13.5 11 13.5 10 21 19 10 13 10 13 3"/>',
+    Link: '<path d="M10 14a4.2 4.2 0 0 0 6 0l3-3a4.2 4.2 0 0 0-6-6l-1 1"/>' +
+          '<path d="M14 10a4.2 4.2 0 0 0-6 0l-3 3a4.2 4.2 0 0 0 6 6l1-1"/>',
+    Clock: '<circle cx="12" cy="12" r="8.5"/><polyline points="12 7.5 12 12 15 14"/>',
+  };
+  function icone(el) {
+    const svg = novo("svg", { viewBox: "-4 -4 32 32", width: px(el.style.width) || 48,
+                              height: px(el.style.height) || 48, fill: "none",
+                              stroke: el.style.color || "currentColor", "stroke-width": 2,
+                              "stroke-linecap": "round", "stroke-linejoin": "round" });
+    svg.style.flex = "none";
+    svg.innerHTML = ICONES[el.getAttribute("name")] || "";
+    el.replaceWith(svg);
+  }
+
+  function forma(el) {
+    const div = document.createElement("div");
+    div.style.cssText = el.style.cssText;
+    const tipo = el.getAttribute("kind");
+    if (tipo === "ellipse") div.style.borderRadius = "50%";
+    if (tipo === "diamond") div.style.clipPath = "polygon(50% 0, 100% 50%, 50% 100%, 0 50%)";
+    el.replaceWith(div);
+  }
+
+  const palco = document.getElementById("palco");
+  const slides = [...palco.children].filter(el => el.tagName === "SECTION");
+  const contador = document.getElementById("contador");
+  let atual = 0;
+
+  function ajustar() {
+    const s = Math.min(innerWidth / 1920, innerHeight / 1080);
+    palco.style.transform = `translate(${(innerWidth - 1920 * s) / 2}px, ${(innerHeight - 1080 * s) / 2}px) scale(${s})`;
+  }
+  function mostrar(i) {
+    atual = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach((sl, k) => sl.classList.toggle("ativo", k === atual));
+    contador.textContent = `${atual + 1} / ${slides.length}`;
+    history.replaceState(null, "", "#" + (atual + 1));
+  }
+
+  document.querySelectorAll("x-connector").forEach(conector);
+  document.querySelectorAll("x-icon").forEach(icone);
+  document.querySelectorAll("x-shape").forEach(forma);
+
+  addEventListener("keydown", e => {
+    if (["ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) { e.preventDefault(); mostrar(atual + 1); }
+    else if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) { e.preventDefault(); mostrar(atual - 1); }
+    else if (e.key === "Home") mostrar(0);
+    else if (e.key === "End") mostrar(slides.length - 1);
+    else if (e.key === "f" || e.key === "F") document.documentElement.requestFullscreen?.();
+  });
+  addEventListener("click", e => mostrar(atual + (e.clientX < innerWidth / 3 ? -1 : 1)));
+  addEventListener("resize", ajustar);
+  ajustar();
+  mostrar((parseInt(location.hash.slice(1), 10) || 1) - 1);
+})();
+</script>
+</body>
+</html>
