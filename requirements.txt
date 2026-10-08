@@ -1,0 +1,15 @@
+# Leitura e manipulação de dados (IO da Parte 2)
+pandas>=2.0
+
+# Figuras da Parte 1 e visualizações da Parte 2
+matplotlib>=3.8
+
+# Testes
+pytest>=8.0
+
+# Oráculo dos testes: conferir BFS/DFS/Dijkstra/Bellman-Ford contra uma
+# implementação conhecida. O enunciado permite networkx SOMENTE dentro de tests/.
+networkx>=3.0
+
+# P5 acrescenta aqui a biblioteca que escolher para o labirinto interativo
+# e para as visualizações de AVD (plotly, pyvis, streamlit ou seaborn).

@@ -3,19 +3,26 @@
 Labirinto com chaves (grafo de estados) + comparação de BFS, DFS, Dijkstra e Bellman-Ford num dataset maior.
 Teoria dos Grafos + Análise e Visualização de Dados, CESAR School, 2026.2.
 
-## Integrantes
+## Integrantes e pacotes de trabalho
 
-- João Victor Uchôa
-- Luís Eduardo Bérard
-- Caio Leimig
-- Guilherme Burle
-- Gabriel França
+Cada pacote tem um dono e um revisor. A revisão é em anel: cada um revisa o pacote do seguinte,
+e revisar significa commitar alguma coisa lá — um teste, uma correção, uma documentação.
+
+| Integrante | Pacote | Revisa |
+|---|---|---|
+| Gabriel França | **P1** — modelagem e grafo de estados | P2 |
+| Luís Eduardo Bérard | **P2** — algoritmos e testes | P3 |
+| Guilherme Burle | **P3** — análises da Parte 1 | P4 |
+| João Victor Uchôa | **P4** — Parte 2: dados e experimentos | P5 |
+| Caio Leimig | **P5** — visualização e comunicação | P1 |
 
 ## Andamento
 
 - [x] Checkpoint de 12/10: proposta do dataset da Parte 2 e apresentação (`docs/checkpoint_12-10/`)
+- [x] Mapas fornecidos (m01 a m08) em `data/mapas/`
 - [ ] Parte 1: labirintos com chaves e portas (grafo de estados)
 - [ ] Parte 2: rede de transferências entre clubes
+- [ ] Declaração de Uso de IA assinada (`docs/DECLARACAO_IA.pdf`)
 - [ ] Entrega final (26/11/2026)
 
 ## Dataset da Parte 2
@@ -36,30 +43,70 @@ Abra `docs/checkpoint_12-10/apresentacao/index.html` no navegador. As setas ← 
 projeto-grafos-g2/
 ├─ README.md
 ├─ requirements.txt
-├─ docs/                 # declaração e material do checkpoint
+├─ docs/
+│  ├─ DECLARACAO_IA.pdf  # declaração de uso de IA assinada por todos
+│  └─ checkpoint_12-10/  # material do checkpoint
 ├─ data/
 │  ├─ mapas/             # m01 a m08
 │  ├─ mapas_grupo/       # os 2 mapas do grupo
-│  └─ dataset_parte2/
+│  └─ dataset_parte2/    # dataset maior (Parte 2)
 ├─ out/
 │  ├─ parte1/
 │  └─ parte2/
+├─ scripts/              # download e ficha do dataset da Parte 2
 ├─ src/
 │  ├─ cli.py
 │  ├─ solve.py
-│  ├─ graphs/            # io.py, estados.py, graph.py, algorithms.py
-│  └─ viz.py
+│  ├─ graphs/
+│  │  ├─ io.py           # ler/validar os mapas e o dataset
+│  │  ├─ estados.py      # grafo de posições e grafo de estados
+│  │  ├─ graph.py        # lista de adjacência DIRIGIDA
+│  │  └─ algorithms.py   # BFS, DFS, Dijkstra, Bellman-Ford (próprios)
+│  └─ viz.py             # visualizações/UX
 └─ tests/
+   ├─ test_bfs.py
+   ├─ test_dfs.py
+   ├─ test_dijkstra.py
+   ├─ test_bellman_ford.py
+   ├─ test_estados.py
+   └─ test_io.py
 ```
 
-Por enquanto só existem este README e `docs/checkpoint_12-10/`. O resto entra conforme o projeto andar.
+Hoje existem o README, `docs/checkpoint_12-10/` e `data/mapas/`. O resto entra conforme o projeto andar.
+
+## Instalação
+
+Precisa de Python 3.11+.
+
+```
+python -m venv .venv
+.venv\Scripts\activate        # Windows
+source .venv/bin/activate     # Linux e macOS
+pip install -r requirements.txt
+```
+
+Os algoritmos (BFS, DFS, Dijkstra e Bellman-Ford) são implementação própria: nenhuma
+biblioteca de grafos é usada fora de `tests/`, onde `networkx` entra só como oráculo
+para conferir os resultados.
 
 ## Como executar
 
-Precisa de Python 3.11+. Os comandos seguem o enunciado e passam a funcionar quando o `src/` estiver pronto:
+Os comandos seguem o enunciado e passam a funcionar quando o `src/` estiver pronto:
 
 ```
 python -m src.cli --mapa ./data/mapas/m03_tres_chaves.txt --alg BFS --out ./out/parte1/
+python -m src.cli --mapa ./data/mapas/m03_tres_chaves.txt --alg DIJKSTRA --out ./out/parte1/
+python -m src.cli --mapa ./data/mapas/m05_bonus.txt --alg BELLMAN_FORD --out ./out/parte1/
 python -m src.cli --mapa ./data/mapas/m06_fonte.txt --alg BELLMAN_FORD --fonte-consumivel --out ./out/parte1/
+python -m src.cli --mapa ./data/mapas/m04_esteiras.txt --armadilhas --out ./out/parte1/
+python -m src.cli --mapa ./data/mapas/m03_tres_chaves.txt --interactive --out ./out/parte1/
+
+python -m src.cli --dataset ./data/dataset_parte2/ --alg DIJKSTRA --source A --target Z --out ./out/parte2/
 python -m src.cli --dataset ./data/dataset_parte2/ --benchmark --out ./out/parte2/
+```
+
+## Testes
+
+```
+pytest
 ```
