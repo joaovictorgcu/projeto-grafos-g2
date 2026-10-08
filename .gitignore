@@ -1,5 +1,11 @@
-# Documento interno do grupo: não vai para o GitHub
+# [IA] Claude Code (Claude Opus 5) – regras de exclusão sugeridas pela IA, revisadas pelo grupo
+# Documentos internos do grupo: não vão para o GitHub
 docs/divisao_pacotes.pdf
+
+# Rascunho da declaração de IA. Ignorado SÓ ENQUANTO está sendo preenchido —
+# a versão final, assinada pelos cinco, entra como docs/DECLARACAO_IA.pdf e
+# essa sim é entrega obrigatória.
+docs/DECLARACAO_IA_rascunho.pdf
 
 # Dados brutos do Transfermarkt: os termos de uso não permitem redistribuir.
 # Vai só o script de download em scripts/.
