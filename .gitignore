@@ -1,0 +1,26 @@
+# Documento interno do grupo: não vai para o GitHub
+docs/divisao_pacotes.pdf
+
+# Dados brutos do Transfermarkt: os termos de uso não permitem redistribuir.
+# Vai só o script de download em scripts/.
+data/dataset_parte2/*.csv
+data/dataset_parte2/*.csv.gz
+data/dataset_parte2/*.parquet
+data/dataset_parte2/*.zip
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
+
+# Editor e sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ATENÇÃO: out/ NÃO entra aqui. Os arquivos de out/parte1/ e out/parte2/
+# são entrega obrigatória do enunciado e precisam estar no repositório.
