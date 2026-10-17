@@ -1,4 +1,6 @@
+import heapq
 from collections import deque
+from itertools import count
 
 # — [IA] Claude – Ajuda na implementação do BFS e da reconstrução de caminho.
 def bfs(grafo, origem):
@@ -64,3 +66,31 @@ def dfs(grafo, origens=None):
                 f[u] = tempo
                 cor[u] = 2
     return tipo, d, f, "retorno" in tipo.values()
+
+# — [IA] Claude – Dijkstra com recusa de pesos negativos gerado pela IA; testado por mim.
+def dijkstra(grafo, origem):
+    """Retorna (dist, pai). Lança ValueError se algum arco tiver peso negativo."""
+    for u in grafo.nos():
+        for v, peso in grafo.arcos(u):
+            if peso < 0:
+                raise ValueError(
+                    f"Dijkstra não aceita pesos negativos: arco {u} -> {v} "
+                    f"tem peso {peso}. Use Bellman-Ford."
+                )
+    dist = {origem: 0}
+    pai = {origem: None}
+    cont = count()  # desempate no heap, para nunca comparar nós entre si
+    heap = [(0, next(cont), origem)]
+    feito = set()
+    while heap:
+        d, _, u = heapq.heappop(heap)
+        if u in feito:
+            continue
+        feito.add(u)
+        for v, peso in grafo.arcos(u):
+            nd = d + peso
+            if v not in dist or nd < dist[v]:
+                dist[v] = nd
+                pai[v] = u
+                heapq.heappush(heap, (nd, next(cont), v))
+    return dist, pai
