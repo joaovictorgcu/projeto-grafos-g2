@@ -94,3 +94,46 @@ def dijkstra(grafo, origem):
                 pai[v] = u
                 heapq.heappush(heap, (nd, next(cont), v))
     return dist, pai
+
+# — [IA] Claude – Bellman-Ford com detecção e exibição de ciclo negativo gerado pela IA; foi testado por mim.
+def bellman_ford(grafo, origem):
+    """Retorna (dist, pai, ciclo).
+    ciclo = None se não há ciclo negativo alcançável a partir da origem;
+    caso contrário, (lista_de_nos, custo), com o primeiro nó repetido no fim.
+    """
+    nos = list(grafo.nos())
+    arcos = [(u, v, p) for u in nos for v, p in grafo.arcos(u)]
+    dist = {origem: 0}
+    pai = {origem: None}
+
+    for _ in range(len(nos) - 1):
+        mudou = False
+        for u, v, p in arcos:
+            if u in dist and (v not in dist or dist[u] + p < dist[v]):
+                dist[v] = dist[u] + p
+                pai[v] = u
+                mudou = True
+        if not mudou:
+            break
+
+    # rodada extra: se ainda relaxa, há ciclo negativo alcançável
+    for u, v, p in arcos:
+        if u in dist and dist[u] + p < dist[v]:
+            pai[v] = u
+            x = v
+            for _ in range(len(nos)):  # recua até cair dentro do ciclo
+                x = pai[x]
+            ciclo = [x]
+            y = pai[x]
+            while y != x:
+                ciclo.append(y)
+                y = pai[y]
+            ciclo.append(x)
+            ciclo.reverse()
+            custo = sum(
+                next(p for w, p in grafo.arcos(a) if w == b)
+                for a, b in zip(ciclo, ciclo[1:])
+            )
+            return dist, pai, (ciclo, custo)
+
+    return dist, pai, None
