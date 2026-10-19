@@ -1,22 +1,8 @@
-from collections import defaultdict
 import pytest
 from src.graphs.algorithms import dijkstra, caminho
+from src.graphs.graph import Grafo
 
 # — [IA] Claude – casos de teste do Dijkstra.
-
-class Grafo:  # provisório, trocar pelo graph.py do grupo
-    def __init__(self):
-        self.adj = defaultdict(list)
-
-    def adicionar_arco(self, u, v, peso=1):
-        self.adj[u].append((v, peso))
-        self.adj[v]
-
-    def arcos(self, u):
-        return self.adj[u]
-
-    def nos(self):
-        return list(self.adj)
 
 
 def montar(arcos):
