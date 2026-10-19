@@ -1,8 +1,4 @@
 # [IA] Claude Code (Claude Opus 5.5) – gera o index.html da apresentação
-"""Junta os slides (na ordem do deck.json) num index.html que abre direto no navegador.
-
-Uso: python gerar_index.py
-"""
 import json
 import sys
 from pathlib import Path
