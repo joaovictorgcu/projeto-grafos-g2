@@ -1,6 +1,7 @@
 from collections import defaultdict
 from src.graphs.algorithms import dfs
 
+# — [IA] Claude – casos de teste do DFS.
 
 class Grafo:  # provisório, trocar pelo graph.py do grupo
     def __init__(self):

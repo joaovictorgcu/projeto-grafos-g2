@@ -1,6 +1,7 @@
 from collections import defaultdict
 from src.graphs.algorithms import bellman_ford, caminho
 
+# — [IA] Claude – casos de teste do Bellman-Ford.
 
 class Grafo:  # provisório, trocar pelo graph.py do grupo
     def __init__(self):

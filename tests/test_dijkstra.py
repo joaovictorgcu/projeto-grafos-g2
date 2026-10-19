@@ -2,6 +2,7 @@ from collections import defaultdict
 import pytest
 from src.graphs.algorithms import dijkstra, caminho
 
+# — [IA] Claude – casos de teste do Dijkstra.
 
 class Grafo:  # provisório, trocar pelo graph.py do grupo
     def __init__(self):
