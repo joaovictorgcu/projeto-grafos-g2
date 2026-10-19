@@ -1,0 +1,82 @@
+# [IA] Claude Code (Claude Opus 5.5) – leitura do mapa .txt e localização de S, G, chaves, portas, bônus, fontes e esteiras
+from dataclasses import dataclass, field
+from pathlib import Path
+
+PAREDE = "#"
+CHAVES = "abcd"
+PORTAS = "ABCD"
+ESTEIRAS = "><^v"
+
+
+@dataclass
+class Mapa:
+    nome: str
+    grade: list[str]
+    inicios: list[tuple[int, int]] = field(default_factory=list)
+    saidas: list[tuple[int, int]] = field(default_factory=list)
+    chaves: dict[str, list[tuple[int, int]]] = field(default_factory=dict)
+    portas: dict[str, list[tuple[int, int]]] = field(default_factory=dict)
+    bonus: dict[tuple[int, int], int] = field(default_factory=dict)
+    fontes: list[tuple[int, int]] = field(default_factory=list)
+    esteiras: dict[tuple[int, int], str] = field(default_factory=dict)
+
+    @property
+    def altura(self) -> int:
+        return len(self.grade)
+
+    @property
+    def largura(self) -> int:
+        return len(self.grade[0]) if self.grade else 0
+
+    @property
+    def inicio(self) -> tuple[int, int] | None:
+        return self.inicios[0] if self.inicios else None
+
+    @property
+    def livres(self) -> int:
+        return sum(1 for linha in self.grade for casa in linha if casa != PAREDE)
+
+    @property
+    def tipos_de_chave(self) -> list[str]:
+        return sorted(self.chaves)
+
+    def casa(self, l: int, c: int) -> str:
+        return self.grade[l][c]
+
+    def dentro(self, l: int, c: int) -> bool:
+        return 0 <= l < self.altura and 0 <= c < len(self.grade[l])
+
+
+def interpretar_mapa(texto: str, nome: str = "") -> Mapa:
+    texto = texto.removeprefix("﻿")
+    linhas = [l for l in texto.splitlines() if not l.startswith(";")]
+    while linhas and not linhas[0].strip():
+        linhas.pop(0)
+    while linhas and not linhas[-1].strip():
+        linhas.pop()
+
+    mapa = Mapa(nome=nome, grade=linhas)
+    for l, linha in enumerate(linhas):
+        for c, casa in enumerate(linha):
+            pos = (l, c)
+            if casa == "S":
+                mapa.inicios.append(pos)
+            elif casa == "G":
+                mapa.saidas.append(pos)
+            elif casa in CHAVES:
+                mapa.chaves.setdefault(casa, []).append(pos)
+            elif casa in PORTAS:
+                mapa.portas.setdefault(casa, []).append(pos)
+            elif casa == "+":
+                mapa.bonus[pos] = len(mapa.bonus)
+            elif casa == "*":
+                mapa.fontes.append(pos)
+            elif casa in ESTEIRAS:
+                mapa.esteiras[pos] = casa
+    return mapa
+
+
+def ler_mapa(caminho) -> Mapa:
+    caminho = Path(caminho)
+    texto = caminho.read_text(encoding="utf-8-sig")
+    return interpretar_mapa(texto, nome=caminho.stem)
