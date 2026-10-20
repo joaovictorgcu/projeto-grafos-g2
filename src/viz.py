@@ -322,6 +322,53 @@ def _ler_percurso(caminho):
     return dados
 
 
+# [IA] Claude Code (Claude Opus 5.5) – gerador do labirinto interativo: monta os dados no formato do modelo e grava o HTML
+ALGORITMOS_INTERATIVO = ("BFS", "DIJKSTRA", "BELLMAN_FORD")
+MODELO_INTERATIVO = Path(__file__).with_name("labirinto_template.html")
+
+
+def dados_do_mapa(mapa, grafo, caminhos, armadilhas=(), titulo=None, origem="enunciado", nota=""):
+    camadas = {}
+    for no in grafo.nos():
+        if no == "ALVO":
+            continue
+        _, chaves, _ = ler_rotulo(no)
+        camadas.setdefault(chaves or "-", []).append(no)
+
+    algoritmos = {}
+    for alg in ALGORITMOS_INTERATIVO:
+        info = caminhos.get(alg, {})
+        caminho = [no for no in (info.get("caminho") or []) if no != "ALVO"]
+        algoritmos[alg] = {
+            "caminho": caminho,
+            "status": info.get("status", "OK" if caminho else "SEM_SOLUCAO"),
+            "motivo": info.get("motivo", ""),
+        }
+
+    return {
+        "id": mapa.nome,
+        "titulo": titulo or mapa.nome,
+        "origem": origem,
+        "grade": list(mapa.grade),
+        "camadas": camadas,
+        "armadilhas": [no for no in armadilhas if no != "ALVO"],
+        "algoritmos": algoritmos,
+        "nota": nota,
+    }
+
+
+def gerar_labirinto_interativo(mapas, saida, selo=""):
+    modelo = MODELO_INTERATIVO.read_text(encoding="utf-8")
+    dados = {"mapas": list(mapas)}
+    if selo:
+        dados["selo"] = selo
+    texto = json.dumps(dados, ensure_ascii=False).replace("</", "<\\/")
+    saida = Path(saida)
+    saida.parent.mkdir(parents=True, exist_ok=True)
+    saida.write_text(modelo.replace("/*__DADOS__*/null", texto), encoding="utf-8")
+    return saida
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description="Desenha um percurso sobre o mapa.")
     p.add_argument("--mapa", required=True, help="arquivo .txt do mapa")
