@@ -6,6 +6,11 @@ PAREDE = "#"
 CHAVES = "abcd"
 PORTAS = "ABCD"
 ESTEIRAS = "><^v"
+SIMBOLOS = set("#.SG,~+*") | set(CHAVES) | set(PORTAS) | set(ESTEIRAS)
+
+
+class MapaInvalido(ValueError):
+    pass
 
 
 @dataclass
@@ -47,8 +52,42 @@ class Mapa:
         return 0 <= l < self.altura and 0 <= c < len(self.grade[l])
 
 
+def validar_mapa(mapa: Mapa) -> None:
+    nome = f"{mapa.nome}: " if mapa.nome else ""
+    if not mapa.grade:
+        raise MapaInvalido(f"{nome}o mapa está vazio.")
+
+    largura = len(mapa.grade[0])
+    for l, linha in enumerate(mapa.grade):
+        if not linha:
+            raise MapaInvalido(f"{nome}a linha {l} está vazia. O mapa precisa ser retangular.")
+        if len(linha) != largura:
+            raise MapaInvalido(
+                f"{nome}o mapa não é retangular: a linha {l} tem {len(linha)} casas, "
+                f"mas a linha 0 tem {largura}."
+            )
+
+    for l, linha in enumerate(mapa.grade):
+        for c, casa in enumerate(linha):
+            if casa not in SIMBOLOS:
+                raise MapaInvalido(
+                    f"{nome}símbolo desconhecido {casa!r} na posição ({l},{c}). "
+                    f"Os símbolos válidos são: # . S G , ~ + * a-d A-D > < ^ v"
+                )
+
+    if not mapa.inicios:
+        raise MapaInvalido(f"{nome}o mapa não tem início S; precisa ter exatamente um.")
+    if len(mapa.inicios) > 1:
+        posicoes = ", ".join(f"({l},{c})" for l, c in mapa.inicios)
+        raise MapaInvalido(
+            f"{nome}o mapa tem {len(mapa.inicios)} inícios S, em {posicoes}; precisa ter exatamente um."
+        )
+    if not mapa.saidas:
+        raise MapaInvalido(f"{nome}o mapa não tem saída G; precisa ter pelo menos uma.")
+
+
 def interpretar_mapa(texto: str, nome: str = "") -> Mapa:
-    texto = texto.removeprefix("﻿")
+    texto = texto.removeprefix("\ufeff")
     linhas = [l for l in texto.splitlines() if not l.startswith(";")]
     while linhas and not linhas[0].strip():
         linhas.pop(0)
@@ -73,6 +112,7 @@ def interpretar_mapa(texto: str, nome: str = "") -> Mapa:
                 mapa.fontes.append(pos)
             elif casa in ESTEIRAS:
                 mapa.esteiras[pos] = casa
+    validar_mapa(mapa)
     return mapa
 
 
