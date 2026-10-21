@@ -1,11 +1,12 @@
 # [IA] Claude Code (Claude Opus 5.5) – grafo de posições e grafo de estados, construído por exploração a partir do início
+import argparse
 import csv
 from collections import deque
 from dataclasses import dataclass
 from pathlib import Path
 
 from .graph import Grafo
-from .io import CHAVES, ESTEIRAS, PAREDE, PORTAS, Mapa
+from .io import CHAVES, ESTEIRAS, PAREDE, PORTAS, Mapa, ler_mapa
 
 ALVO = "ALVO"
 DIRECOES = (("N", -1, 0), ("L", 0, 1), ("S", 1, 0), ("O", 0, -1))
@@ -151,3 +152,38 @@ def escrever_arestas_csv(arcos, caminho) -> Path:
         for a in arcos:
             escritor.writerow([a.origem, a.destino, a.movimento, a.casa_destino, a.peso])
     return caminho
+
+
+# [IA] Claude Code (Claude Opus 5.5) – métricas sem o ALVO e exportação do arestas_<mapa>.csv de todos os mapas
+def metricas(construido: GrafoConstruido) -> dict:
+    nos = [n for n in construido.grafo.nos() if n != ALVO]
+    tamanho = sum(1 for n in nos for v, _ in construido.grafo.arcos(n) if v != ALVO)
+    ordem = len(nos)
+    densidade = tamanho / (ordem * (ordem - 1)) if ordem >= 2 else 0.0
+    return {"ordem": ordem, "tamanho": tamanho, "densidade": densidade}
+
+
+def nome_curto(arquivo) -> str:
+    return Path(arquivo).stem.split("_")[0]
+
+
+def exportar_arestas(pastas, saida) -> list:
+    gerados = []
+    for pasta in pastas:
+        for arquivo in sorted(Path(pasta).glob("*.txt")):
+            construido = construir_estados(ler_mapa(arquivo))
+            destino = Path(saida) / f"arestas_{nome_curto(arquivo)}.csv"
+            gerados.append(escrever_arestas_csv(construido.arcos, destino))
+    return gerados
+
+
+def main(argv=None):
+    p = argparse.ArgumentParser(description="Gera o arestas_<mapa>.csv de todos os mapas fornecidos e do grupo.")
+    p.add_argument("--out", default="out/parte1", help="pasta de saída")
+    args = p.parse_args(argv)
+    for caminho in exportar_arestas(["data/mapas", "data/mapas_grupo"], args.out):
+        print(caminho)
+
+
+if __name__ == "__main__":
+    main()
