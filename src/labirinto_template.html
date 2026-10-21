@@ -539,7 +539,7 @@
       `<span><b>${M.total}</b> estados alcançáveis</span>` +
       `<span><b>${M.chaves.length}</b> ${M.chaves.length === 1 ? "camada" : "camadas"}</span>` +
       `<span><b>${M.armadilhas.length}</b> ${M.armadilhas.length === 1 ? "estado-armadilha" : "estados-armadilha"}</span>` +
-      `<span>${d.origem === "enunciado" ? "mapa do enunciado" : "mapa de demonstração"}</span>`;
+      `<span>${({ enunciado: "mapa do enunciado", grupo: "mapa do grupo" })[d.origem] || "mapa de demonstração"}</span>`;
     let leg = M.chaves.map(k => `<span><i class="bolinha" style="background:${cor(k)}"></i>${nomeCamada(k)}</span>`).join("");
     leg += `<span><i class="amostra" style="background:var(--board-wall)"></i>parede</span>`;
     if (M.grade.some(l => l.includes("~"))) leg += `<span><i class="amostra" style="background:var(--board-water)"></i>água (5)</span>`;
