@@ -101,6 +101,9 @@ python -m src.cli --mapa ./data/mapas/m06_fonte.txt --alg BELLMAN_FORD --fonte-c
 python -m src.cli --mapa ./data/mapas/m04_esteiras.txt --armadilhas --out ./out/parte1/
 python -m src.cli --mapa ./data/mapas/m03_tres_chaves.txt --interactive --out ./out/parte1/
 
+python -m src.viz --mapa ./data/mapas/m03_tres_chaves.txt --png ./out/parte1/percurso_m03.png
+python -m src.viz --mapa ./data/mapas/m08_grande.txt --png ./out/parte1/percurso_m08.png
+python -m src.viz --mapa ./data/mapas/m02_uma_chave.txt --camadas ./out/parte1/camadas_m02.png
 python -m src.viz --mapa ./data/mapas/m02_uma_chave.txt --arvore-bfs ./out/parte1/arvore_bfs_m02.png
 python -m src.viz --mapa ./data/mapas/m08_grande.txt --multiplicidade ./out/parte1/multiplicidade_m08.png
 

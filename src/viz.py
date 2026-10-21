@@ -8,9 +8,9 @@ de estados — então não depende de como o caminho foi calculado.
 Também desenha, a partir do grafo de estados (src/graphs/estados.py), a árvore
 BFS por níveis e o heatmap de multiplicidade das casas.
 
-Uso:
-    python -m src.viz --mapa data/mapas/m03_tres_chaves.txt \
-        --percurso out/parte1/percurso_m03.json --png out/parte1/percurso_m03.png
+Uso (o percurso é calculado pelo grafo de estados; --percurso JSON é opcional):
+    python -m src.viz --mapa data/mapas/m03_tres_chaves.txt --png out/parte1/percurso_m03.png
+    python -m src.viz --mapa data/mapas/m02_uma_chave.txt --camadas out/parte1/camadas_m02.png
     python -m src.viz --mapa data/mapas/m02_uma_chave.txt --arvore-bfs out/parte1/arvore_bfs_m02.png
     python -m src.viz --mapa data/mapas/m08_grande.txt --multiplicidade out/parte1/multiplicidade_m08.png
 """
@@ -582,35 +582,65 @@ def gerar_labirinto_interativo(mapas, saida, selo=""):
     return saida
 
 
+# [IA] Claude Code (Claude Opus 5.5) – percurso calculado pelo pipeline do grupo (estados.py + Dijkstra), sem JSON de fora
+def percurso_de_menor_custo(construido):
+    """Rótulos do caminho de menor custo do início ao ALVO (sem o ALVO), e o algoritmo usado.
+
+    Usa Dijkstra; se o grafo tiver peso negativo (bônus, fonte), cai para Bellman-Ford.
+    """
+    from .graphs.algorithms import bellman_ford, caminho, dijkstra
+
+    try:
+        _, pai = dijkstra(construido.grafo, construido.inicial)
+        algoritmo = "Dijkstra"
+    except ValueError:
+        _, pai, ciclo = bellman_ford(construido.grafo, construido.inicial)
+        if ciclo:
+            raise ValueError("O grafo de estados tem ciclo negativo: não há caminho de menor custo.")
+        algoritmo = "Bellman-Ford"
+    rotulos = caminho(pai, "ALVO")
+    if rotulos is None:
+        raise ValueError("Nenhum estado em G é alcançável: o mapa não tem solução.")
+    return rotulos[:-1], algoritmo
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description="Figuras da Parte 1 sobre um mapa.")
     p.add_argument("--mapa", required=True, help="arquivo .txt do mapa")
-    p.add_argument("--percurso", help="JSON com a lista de rótulos do percurso (vai com --png)")
-    p.add_argument("--png", help="arquivo de saída do percurso")
-    p.add_argument("--algoritmo", default="menor custo", help="nome que vai no título do percurso")
+    p.add_argument("--png", help="desenha o percurso de menor custo neste arquivo")
+    p.add_argument("--percurso", help="JSON com os rótulos do percurso; sem ele, o percurso é calculado "
+                                      "pelo grafo de estados (Dijkstra, ou Bellman-Ford com peso negativo)")
+    p.add_argument("--algoritmo", help="nome que vai no título do percurso")
+    p.add_argument("--camadas", metavar="PNG", help="desenha o grafo de estados em camadas neste arquivo")
     p.add_argument("--arvore-bfs", metavar="PNG", help="desenha a árvore BFS de estados neste arquivo")
     p.add_argument("--multiplicidade", metavar="PNG", help="desenha o heatmap de multiplicidade neste arquivo")
     args = p.parse_args(argv)
-    if bool(args.percurso) != bool(args.png):
-        p.error("--percurso e --png vão juntos.")
-    if not (args.png or args.arvore_bfs or args.multiplicidade):
-        p.error("nada a desenhar: use --percurso/--png, --arvore-bfs ou --multiplicidade.")
+    if args.percurso and not args.png:
+        p.error("--percurso precisa de --png.")
+    if not (args.png or args.camadas or args.arvore_bfs or args.multiplicidade):
+        p.error("nada a desenhar: use --png, --camadas, --arvore-bfs ou --multiplicidade.")
+
+    from .graphs.estados import construir_estados
+    from .graphs.io import ler_mapa as ler_mapa_validado
 
     nome = Path(args.mapa).stem
     linhas = ler_mapa(args.mapa)
+    construido = construir_estados(ler_mapa_validado(args.mapa))
     saidas = []
     if args.png:
-        saidas.append(desenhar_percurso(linhas, _ler_percurso(args.percurso), args.png,
-                                        nome_mapa=nome, algoritmo=args.algoritmo))
-    if args.arvore_bfs or args.multiplicidade:
-        from .graphs.estados import construir_estados
-        from .graphs.io import ler_mapa as ler_mapa_validado
-
-        construido = construir_estados(ler_mapa_validado(args.mapa))
-        if args.arvore_bfs:
-            saidas.append(desenhar_arvore_bfs(construido.grafo, construido.inicial, args.arvore_bfs, nome))
-        if args.multiplicidade:
-            saidas.append(desenhar_multiplicidade(linhas, construido.grafo, args.multiplicidade, nome))
+        if args.percurso:
+            rotulos, algoritmo = _ler_percurso(args.percurso), "menor custo"
+        else:
+            rotulos, usado = percurso_de_menor_custo(construido)
+            algoritmo = f"menor custo ({usado})"
+        saidas.append(desenhar_percurso(linhas, rotulos, args.png, nome_mapa=nome,
+                                        algoritmo=args.algoritmo or algoritmo))
+    if args.camadas:
+        saidas.append(desenhar_camadas(linhas, construido.grafo, args.camadas, nome))
+    if args.arvore_bfs:
+        saidas.append(desenhar_arvore_bfs(construido.grafo, construido.inicial, args.arvore_bfs, nome))
+    if args.multiplicidade:
+        saidas.append(desenhar_multiplicidade(linhas, construido.grafo, args.multiplicidade, nome))
     for saida in saidas:
         print(f"Figura salva em {saida}")
 
