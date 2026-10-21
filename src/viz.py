@@ -604,9 +604,60 @@ def percurso_de_menor_custo(construido):
     return rotulos[:-1], algoritmo
 
 
+# [IA] Claude Code (Claude Opus 5.5) – liga o labirinto interativo aos mapas reais: caminhos dos algoritmos e estados-armadilha
+def estados_armadilha(construido):
+    from .graphs.algorithms import bfs
+
+    chegam_ao_alvo, _ = bfs(construido.grafo.transposto(), "ALVO")
+    return [n for n in construido.grafo.nos() if n != "ALVO" and n not in chegam_ao_alvo]
+
+
+def caminhos_dos_algoritmos(construido):
+    from .graphs.algorithms import bellman_ford, bfs, caminho, dijkstra
+
+    g, inicio = construido.grafo, construido.inicial
+    _, pai = bfs(g, inicio)
+    resultado = {"BFS": {"caminho": caminho(pai, "ALVO") or []}}
+    try:
+        _, pai = dijkstra(g, inicio)
+        resultado["DIJKSTRA"] = {"caminho": caminho(pai, "ALVO") or []}
+    except ValueError as erro:
+        resultado["DIJKSTRA"] = {"caminho": [], "status": "RECUSA", "motivo": str(erro)}
+    _, pai, ciclo = bellman_ford(g, inicio)
+    if ciclo:
+        nos, custo = ciclo
+        resultado["BELLMAN_FORD"] = {
+            "caminho": [], "status": "CICLO_NEGATIVO",
+            "motivo": f"Ciclo negativo de custo {custo}: {' → '.join(nos)}",
+        }
+    else:
+        resultado["BELLMAN_FORD"] = {"caminho": caminho(pai, "ALVO") or []}
+    return resultado
+
+
+def titulo_do_mapa(arquivo):
+    codigo, _, resto = Path(arquivo).stem.partition("_")
+    return f"{codigo} · {resto.replace('_', ' ')}" if resto else codigo
+
+
+def gerar_interativo(arquivos, saida):
+    from .graphs.estados import construir_estados
+    from .graphs.io import ler_mapa as ler_mapa_validado
+
+    mapas = []
+    for arquivo in arquivos:
+        mapa = ler_mapa_validado(arquivo)
+        construido = construir_estados(mapa)
+        origem = "grupo" if Path(arquivo).parent.name == "mapas_grupo" else "enunciado"
+        mapas.append(dados_do_mapa(mapa, construido.grafo, caminhos_dos_algoritmos(construido),
+                                   estados_armadilha(construido), titulo=titulo_do_mapa(arquivo),
+                                   origem=origem))
+    return gerar_labirinto_interativo(mapas, saida)
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description="Figuras da Parte 1 sobre um mapa.")
-    p.add_argument("--mapa", required=True, help="arquivo .txt do mapa")
+    p.add_argument("--mapa", help="arquivo .txt do mapa")
     p.add_argument("--png", help="desenha o percurso de menor custo neste arquivo")
     p.add_argument("--percurso", help="JSON com os rótulos do percurso; sem ele, o percurso é calculado "
                                       "pelo grafo de estados (Dijkstra, ou Bellman-Ford com peso negativo)")
@@ -614,11 +665,25 @@ def main(argv=None):
     p.add_argument("--camadas", metavar="PNG", help="desenha o grafo de estados em camadas neste arquivo")
     p.add_argument("--arvore-bfs", metavar="PNG", help="desenha a árvore BFS de estados neste arquivo")
     p.add_argument("--multiplicidade", metavar="PNG", help="desenha o heatmap de multiplicidade neste arquivo")
+    p.add_argument("--interativo", metavar="HTML",
+                   help="gera o labirinto interativo com todos os mapas (ou só o do --mapa)")
     args = p.parse_args(argv)
     if args.percurso and not args.png:
         p.error("--percurso precisa de --png.")
-    if not (args.png or args.camadas or args.arvore_bfs or args.multiplicidade):
-        p.error("nada a desenhar: use --png, --camadas, --arvore-bfs ou --multiplicidade.")
+    estaticas = args.png or args.camadas or args.arvore_bfs or args.multiplicidade
+    if not (estaticas or args.interativo):
+        p.error("nada a desenhar: use --png, --camadas, --arvore-bfs, --multiplicidade ou --interativo.")
+    if estaticas and not args.mapa:
+        p.error("as figuras precisam de --mapa.")
+
+    if args.interativo:
+        if args.mapa:
+            arquivos = [Path(args.mapa)]
+        else:
+            arquivos = sorted(Path("data/mapas").glob("*.txt")) + sorted(Path("data/mapas_grupo").glob("*.txt"))
+        print(f"Página salva em {gerar_interativo(arquivos, args.interativo)}")
+    if not estaticas:
+        return
 
     from .graphs.estados import construir_estados
     from .graphs.io import ler_mapa as ler_mapa_validado
