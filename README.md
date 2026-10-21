@@ -108,11 +108,24 @@ python -m src.viz --mapa ./data/mapas/m08_grande.txt --png ./out/parte1/percurso
 python -m src.viz --mapa ./data/mapas/m02_uma_chave.txt --camadas ./out/parte1/camadas_m02.png
 python -m src.viz --mapa ./data/mapas/m02_uma_chave.txt --arvore-bfs ./out/parte1/arvore_bfs_m02.png
 python -m src.viz --mapa ./data/mapas/m08_grande.txt --multiplicidade ./out/parte1/multiplicidade_m08.png
-python -m src.viz --interativo ./out/parte1/labirinto_interativo.html
 
 python -m src.cli --dataset ./data/dataset_parte2/ --alg DIJKSTRA --source A --target Z --out ./out/parte2/
 python -m src.cli --dataset ./data/dataset_parte2/ --benchmark --out ./out/parte2/
 ```
+
+### Labirinto interativo
+
+Feito em Python com Streamlit; abre no navegador:
+
+```
+streamlit run src/interativo.py
+streamlit run src/interativo.py -- --mapa ./data/mapas/m03_tres_chaves.txt
+```
+
+Na barra lateral escolhe-se o mapa (ou envia-se um `.txt`, como o mapa surpresa), o algoritmo
+(BFS, Dijkstra ou Bellman-Ford), a camada em destaque e a velocidade. A animação mostra posição,
+chaves, bônus consumidos e custo acumulado a cada passo; os estados-armadilha ficam marcados e,
+embaixo, há a comparação dos três algoritmos no mesmo mapa.
 
 ## Testes
 
