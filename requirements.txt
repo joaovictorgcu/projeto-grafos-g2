@@ -12,5 +12,8 @@ pytest>=8.0
 # implementação conhecida. O enunciado permite networkx SOMENTE dentro de tests/.
 networkx>=3.0
 
-# P5 acrescenta aqui a biblioteca que escolher para o labirinto interativo
-# e para as visualizações de AVD (plotly, pyvis, streamlit ou seaborn).
+# Labirinto interativo (src/interativo.py), todo em Python
+streamlit>=1.50
+
+# P5 acrescenta aqui a biblioteca que escolher para as visualizações de AVD
+# (plotly, pyvis ou seaborn), se precisar de alguma além do matplotlib.
