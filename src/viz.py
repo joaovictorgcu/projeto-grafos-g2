@@ -5,9 +5,14 @@ coletada (uma cor por camada = conjunto de chaves). Recebe o percurso como lista
 de rótulos no formato do enunciado, "(3,5)|ab|{0,2}", que é o que sai do grafo
 de estados — então não depende de como o caminho foi calculado.
 
+Também desenha, a partir do grafo de estados (src/graphs/estados.py), a árvore
+BFS por níveis e o heatmap de multiplicidade das casas.
+
 Uso:
     python -m src.viz --mapa data/mapas/m03_tres_chaves.txt \
         --percurso out/parte1/percurso_m03.json --png out/parte1/percurso_m03.png
+    python -m src.viz --mapa data/mapas/m02_uma_chave.txt --arvore-bfs out/parte1/arvore_bfs_m02.png
+    python -m src.viz --mapa data/mapas/m08_grande.txt --multiplicidade out/parte1/multiplicidade_m08.png
 """
 import argparse
 import json
@@ -311,6 +316,214 @@ def desenhar_camadas(linhas, grafo, saida, nome_mapa=""):
     return saida
 
 
+# [IA] Claude Code (Claude Opus 5.5) – árvore BFS desenhada por níveis, com layout de árvore arrumada; revisado por Caio
+def desenhar_arvore_bfs(grafo, inicial, saida, nome_mapa=""):
+    """Desenha a árvore BFS do grafo de estados a partir de `inicial`, um nível por linha.
+
+    O eixo vertical é o nível (passos desde o início); cada estado fica na linha
+    do seu nível. Os filhos aparecem na ordem em que o BFS os descobriu (N, L, S, O),
+    e o pai fica centrado sobre eles. O caminho até o ALVO vai em traço grosso.
+    """
+    from .graphs.algorithms import bfs, caminho
+
+    dist, pai = bfs(grafo, inicial)
+    filhos = {u: [] for u in dist}
+    for v in dist:  # dist preserva a ordem de descoberta
+        if pai[v] is not None:
+            filhos[pai[v]].append(v)
+
+    # Folhas ganham x = 0, 1, 2... da esquerda para a direita; pai = média dos filhos.
+    x, prox = {}, [0]
+
+    def posicionar(u):
+        if not filhos[u]:
+            x[u] = prox[0]
+            prox[0] += 1
+        else:
+            for v in filhos[u]:
+                posicionar(v)
+            x[u] = sum(x[v] for v in filhos[u]) / len(filhos[u])
+
+    import sys
+    sys.setrecursionlimit(max(sys.getrecursionlimit(), 4 * len(dist)))
+    posicionar(inicial)
+
+    camada = {u: ler_rotulo(u)[1] for u in dist if u != "ALVO"}
+    camadas = sorted(set(camada.values()), key=lambda k: (len(k), k))
+    if len(camadas) > len(CORES_CAMADA):
+        raise ValueError(f"Árvore com {len(camadas)} camadas; a paleta tem {len(CORES_CAMADA)}.")
+    cor = {k: CORES_CAMADA[i] for i, k in enumerate(camadas)}
+    no_caminho = set(caminho(pai, "ALVO") or [])
+
+    niveis = max(dist.values()) + 1
+    largura = prox[0]
+    fig, ax = plt.subplots(figsize=(max(7.0, 2.6 * largura + 4), niveis * 0.3 + 2), dpi=150)
+    for n in range(0, niveis, 2):  # faixas alternadas para o olho seguir o nível
+        ax.axhspan(n - 0.5, n + 0.5, color="#f1f0ec", zorder=0, lw=0)
+
+    n_troca = 0
+    for v in dist:
+        u = pai[v]
+        if u is None:
+            continue
+        troca = v != "ALVO" and camada[u] != camada[v]
+        n_troca += troca
+        ax.plot([x[u], x[v]], [dist[u], dist[v]], zorder=2, solid_capstyle="round",
+                color=COR_TEXTO if troca or v == "ALVO" else cor[camada[u]],
+                lw=3.2 if v in no_caminho else 1.4,
+                ls="--" if v == "ALVO" else "-")
+        if troca:
+            nova = "".join(sorted(set(camada[v]) - set(camada[u])))
+            ax.annotate(f"pega {nova}", (x[v], dist[v] - 0.5), xytext=(-12, 0), textcoords="offset points",
+                        ha="right", va="center", fontsize=9, color=COR_TEXTO, fontweight="bold", zorder=7,
+                        bbox=dict(boxstyle="round,pad=0.25", fc=COR_CHAO, ec="none", alpha=0.95))
+
+    for u in dist:
+        if u == "ALVO":
+            ax.plot(x[u], dist[u], "D", ms=9, color=COR_TEXTO, zorder=4)
+            ax.text(x[u] + 0.12, dist[u], "ALVO", ha="left", va="center", fontsize=8.5,
+                    color=COR_TEXTO, fontweight="bold")
+            continue
+        folha = not filhos[u]
+        ax.plot(x[u], dist[u], "o", ms=7, zorder=4, color=COR_CHAO if folha else cor[camada[u]],
+                mec=cor[camada[u]], mew=1.8 if folha else 1.2)
+        ax.text(x[u] + 0.12, dist[u], u, ha="left", va="center", fontsize=8, color=COR_TEXTO,
+                family="monospace", zorder=5)
+
+    passos = dist["ALVO"] - 1 if "ALVO" in dist else None
+    titulo = f"{nome_mapa}: árvore BFS de estados" if nome_mapa else "Árvore BFS de estados"
+    sub = (f"{len(dist) - ('ALVO' in dist)} estados em {niveis} níveis · "
+           + (f"menor número de passos até G: {passos}" if passos is not None else "G inalcançável")
+           + f" · {n_troca} arco(s) da árvore mudam de camada")
+    ax.set_title(f"{titulo}\n{sub}", fontsize=12, color=COR_TEXTO, loc="left")
+    ax.set_ylabel("nível BFS (passos desde o início S)", color=COR_TEXTO_2)
+    ax.set_xlabel("ramos da árvore (filhos na ordem de descoberta N, L, S, O)", color=COR_TEXTO_2)
+    ax.set_ylim(niveis - 0.5, -0.8)
+    ax.set_xlim(-0.6, largura - 1 + 1.9)
+    ax.set_yticks(range(niveis))
+    ax.set_xticks([])
+    ax.tick_params(labelsize=8, colors=COR_TEXTO_2, length=0)
+    for lado_ax in ax.spines.values():
+        lado_ax.set_visible(False)
+
+    legenda = [Line2D([0], [0], marker="o", ls="", color=cor[k], ms=7,
+                      label=f"estado com chaves {{{','.join(k)}}}" if k else "estado sem chaves")
+               for k in camadas]
+    legenda += [
+        Line2D([0], [0], marker="o", ls="", color=COR_CHAO, mec=COR_TEXTO_2, mew=1.8, ms=7,
+               label="folha (o BFS não descobre nada novo dali)"),
+        Line2D([0], [0], color=COR_TEXTO_2, lw=3.2, label="caminho BFS até o ALVO"),
+        Line2D([0], [0], color=COR_TEXTO, lw=1.4, label="arco que muda de camada"),
+        Line2D([0], [0], color=COR_TEXTO, lw=1.4, ls="--", label="arco de custo 0 até o ALVO"),
+    ]
+    ax.legend(handles=legenda, loc="upper center", bbox_to_anchor=(0.5, -0.03),
+              ncol=2, frameon=False, fontsize=9, labelcolor=COR_TEXTO)
+
+    Path(saida).parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(saida, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+    return saida
+
+
+# Rampa sequencial azul (clara -> escura) para contagens pequenas e discretas. Começa no
+# passo 250, não no mais claro, para "1 estado" não sumir no fundo; a parede fica em
+# cinza claro, para não competir com os azuis escuros.
+# [IA] Claude Code (Claude Opus 5.5) – passos da rampa ordinal escolhidos com o skill de dataviz; revisado por Caio
+RAMPA_MULTIPLICIDADE = ["#86b6ef", "#6da7ec", "#3987e5", "#2a78d6", "#256abf", "#1c5cab",
+                        "#184f95", "#104281", "#0d366b"]
+COR_PAREDE_CLARA = "#dcdbd6"
+
+
+def multiplicidade_por_casa(grafo):
+    """(l, c) -> quantos estados alcançáveis estão naquela casa."""
+    mult = {}
+    for u in grafo.nos():
+        if u != "ALVO":
+            pos, _, _ = ler_rotulo(u)
+            mult[pos] = mult.get(pos, 0) + 1
+    return mult
+
+
+# [IA] Claude Code (Claude Opus 5.5) – heatmap discreto da multiplicidade sobre a grade; revisado por Caio
+def desenhar_multiplicidade(linhas, grafo, saida, nome_mapa=""):
+    """Heatmap da multiplicidade de cada casa: quantos estados alcançáveis ficam nela.
+
+    Uma casa com multiplicidade 3 é visitada em 3 combinações diferentes de chaves
+    (e bônus). Paredes em cinza escuro; casas livres que nenhum estado alcança
+    vão hachuradas.
+    """
+    mult = multiplicidade_por_casa(grafo)
+    maximo = max(mult.values())
+    if maximo > len(RAMPA_MULTIPLICIDADE):
+        raise ValueError(f"Multiplicidade {maximo}; a rampa tem {len(RAMPA_MULTIPLICIDADE)} passos.")
+    # Passos espalhados pela rampa inteira, para 1 e o máximo ficarem bem distintos.
+    n = len(RAMPA_MULTIPLICIDADE) - 1
+    passos = [RAMPA_MULTIPLICIDADE[round(i * n / max(1, maximo - 1))] for i in range(maximo)]
+
+    altura, largura = len(linhas), max(len(l) for l in linhas)
+    lado = _lado_da_casa(largura)
+    escala = lado / 0.55
+    fig, ax = plt.subplots(figsize=(max(6.0, largura * lado), max(4.0, altura * lado + 1.8)),
+                           dpi=150 if escala == 1 else 200)
+
+    sem_estado = 0
+    no_maximo = []
+    for l, linha in enumerate(linhas):
+        for c, casa in enumerate(linha):
+            if casa == "#":
+                ax.add_patch(Rectangle((c - 0.5, l - 0.5), 1, 1, facecolor=COR_PAREDE_CLARA,
+                                       edgecolor="none", zorder=1))
+                continue
+            m = mult.get((l, c), 0)
+            if m == 0:
+                sem_estado += 1
+                ax.add_patch(Rectangle((c - 0.5, l - 0.5), 1, 1, facecolor=COR_CHAO, edgecolor="#bdbcb7",
+                                       hatch="////", linewidth=0, zorder=1))
+            else:
+                ax.add_patch(Rectangle((c - 0.5, l - 0.5), 1, 1, facecolor=passos[m - 1],
+                                       edgecolor=COR_CHAO, linewidth=0.5 * escala, zorder=1))
+                if m == maximo:
+                    no_maximo.append((l, c))
+            if casa in "SGABCDabcd":
+                escura = m > 0 and passos[m - 1] in RAMPA_MULTIPLICIDADE[3:]
+                ax.text(c, l, casa, ha="center", va="center", fontsize=max(5, 11 * escala),
+                        fontweight="bold" if casa.isupper() else "normal",
+                        color=COR_CHAO if escura else COR_TEXTO, zorder=3)
+
+    titulo = f"{nome_mapa}: multiplicidade das casas" if nome_mapa else "Multiplicidade das casas"
+    ax.set_title(f"{titulo}\nquantos estados alcançáveis (combinações de chaves e bônus) caem em cada casa · "
+                 f"máxima {maximo}, em {len(no_maximo)} casas",
+                 fontsize=12, color=COR_TEXTO, loc="left")
+    ax.set_xlabel("coluna", color=COR_TEXTO_2)
+    ax.set_ylabel("linha", color=COR_TEXTO_2)
+    ax.set_xlim(-0.5, largura - 0.5)
+    ax.set_ylim(altura - 0.5, -0.5)
+    passo_tick = 1 if largura <= 20 else 5
+    ax.set_xticks(range(0, largura, passo_tick))
+    ax.set_yticks(range(0, altura, passo_tick))
+    ax.tick_params(labelsize=8, colors=COR_TEXTO_2, length=0)
+    ax.set_aspect("equal")
+    for lado_ax in ax.spines.values():
+        lado_ax.set_visible(False)
+
+    contagem = {m: sum(1 for v in mult.values() if v == m) for m in range(1, maximo + 1)}
+    legenda = [Patch(facecolor=passos[m - 1], edgecolor="#bdbcb7", linewidth=0.5,
+                     label=f"{m} estado{'s' if m > 1 else ''} · {contagem[m]} casas")
+               for m in range(1, maximo + 1)]
+    legenda.append(Patch(facecolor=COR_PAREDE_CLARA, label="parede"))
+    if sem_estado:
+        legenda.append(Patch(facecolor=COR_CHAO, edgecolor="#bdbcb7", hatch="////",
+                             label=f"livre, nunca alcançada · {sem_estado} casas"))
+    ax.legend(handles=legenda, loc="upper center", bbox_to_anchor=(0.5, -0.06), ncol=min(4, len(legenda)),
+              frameon=False, fontsize=9, labelcolor=COR_TEXTO, title="multiplicidade (estados na casa)",
+              title_fontsize=9)
+
+    Path(saida).parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(saida, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+    return saida
+
+
 def _ler_percurso(caminho):
     """Aceita uma lista de rótulos ou um objeto com a lista em 'caminho'."""
     with open(caminho, encoding="utf-8") as f:
@@ -370,16 +583,36 @@ def gerar_labirinto_interativo(mapas, saida, selo=""):
 
 
 def main(argv=None):
-    p = argparse.ArgumentParser(description="Desenha um percurso sobre o mapa.")
+    p = argparse.ArgumentParser(description="Figuras da Parte 1 sobre um mapa.")
     p.add_argument("--mapa", required=True, help="arquivo .txt do mapa")
-    p.add_argument("--percurso", required=True, help="JSON com a lista de rótulos do percurso")
-    p.add_argument("--png", required=True, help="arquivo de saída")
-    p.add_argument("--algoritmo", default="menor custo", help="nome que vai no título")
+    p.add_argument("--percurso", help="JSON com a lista de rótulos do percurso (vai com --png)")
+    p.add_argument("--png", help="arquivo de saída do percurso")
+    p.add_argument("--algoritmo", default="menor custo", help="nome que vai no título do percurso")
+    p.add_argument("--arvore-bfs", metavar="PNG", help="desenha a árvore BFS de estados neste arquivo")
+    p.add_argument("--multiplicidade", metavar="PNG", help="desenha o heatmap de multiplicidade neste arquivo")
     args = p.parse_args(argv)
+    if bool(args.percurso) != bool(args.png):
+        p.error("--percurso e --png vão juntos.")
+    if not (args.png or args.arvore_bfs or args.multiplicidade):
+        p.error("nada a desenhar: use --percurso/--png, --arvore-bfs ou --multiplicidade.")
+
+    nome = Path(args.mapa).stem
     linhas = ler_mapa(args.mapa)
-    saida = desenhar_percurso(linhas, _ler_percurso(args.percurso), args.png,
-                              nome_mapa=Path(args.mapa).stem, algoritmo=args.algoritmo)
-    print(f"Figura salva em {saida}")
+    saidas = []
+    if args.png:
+        saidas.append(desenhar_percurso(linhas, _ler_percurso(args.percurso), args.png,
+                                        nome_mapa=nome, algoritmo=args.algoritmo))
+    if args.arvore_bfs or args.multiplicidade:
+        from .graphs.estados import construir_estados
+        from .graphs.io import ler_mapa as ler_mapa_validado
+
+        construido = construir_estados(ler_mapa_validado(args.mapa))
+        if args.arvore_bfs:
+            saidas.append(desenhar_arvore_bfs(construido.grafo, construido.inicial, args.arvore_bfs, nome))
+        if args.multiplicidade:
+            saidas.append(desenhar_multiplicidade(linhas, construido.grafo, args.multiplicidade, nome))
+    for saida in saidas:
+        print(f"Figura salva em {saida}")
 
 
 if __name__ == "__main__":
