@@ -1,0 +1,662 @@
+<!doctype html>
+<!-- [IA] Claude Code (Claude Opus 5.5) – modelo do labirinto interativo; o src/viz.py preenche os dados -->
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Labirinto interativo</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --bg: #EEF0F3;
+    --surface: #FFFFFF;
+    --surface-2: #E7EAEF;
+    --fg: #14213D;
+    --muted: #5C6B85;
+    --line: #D3D9E2;
+    --accent: #C9561F;
+    --accent-fg: #FFFFFF;
+    --trap: #B83227;
+    --ok: #2B7A57;
+    --shadow: 0 1px 2px rgba(20,33,61,.06), 0 8px 24px rgba(20,33,61,.06);
+
+    --board-floor: #FCFCFB;
+    --board-wall: #4A4A48;
+    --board-water: #D3E4F5;
+    --board-mud: #E6D8C3;
+    --board-grid: #E2E1DC;
+    --board-ink: #1A1A18;
+    --board-ink-2: #77756F;
+    --board-trap: #C0392B;
+    --board-frame: #FFFFFF;
+
+    --display: 'Oswald', 'Arial Narrow', sans-serif;
+    --body: 'IBM Plex Sans', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, 'Courier New', monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0D131F;
+      --surface: #151D2C;
+      --surface-2: #1D2738;
+      --fg: #E4EAF3;
+      --muted: #93A2BA;
+      --line: #2A364B;
+      --accent: #E8834A;
+      --accent-fg: #15110D;
+      --trap: #EE6B5B;
+      --ok: #5DBB8D;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 28px rgba(0,0,0,.28);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0D131F;
+    --surface: #151D2C;
+    --surface-2: #1D2738;
+    --fg: #E4EAF3;
+    --muted: #93A2BA;
+    --line: #2A364B;
+    --accent: #E8834A;
+    --accent-fg: #15110D;
+    --trap: #EE6B5B;
+    --ok: #5DBB8D;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 28px rgba(0,0,0,.28);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.45; }
+  .wrap {
+    max-width: 1180px; margin: 0 auto;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 22px 44px;
+    display: grid; gap: 16px;
+  }
+  h1, h2 { font-family: var(--display); font-weight: 600; margin: 0; letter-spacing: .02em; text-wrap: balance; }
+  h1 { font-size: clamp(24px, 4.2vw, 34px); text-transform: uppercase; letter-spacing: .05em; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); font-weight: 500; }
+  p { margin: 0; }
+  .mono { font-family: var(--mono); }
+
+  .topo { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; }
+  .topo .sub { color: var(--muted); font-size: 14px; }
+  .selo {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
+    border: 1px solid var(--accent); color: var(--accent); border-radius: 4px; padding: 2px 7px;
+  }
+
+  .barra { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: end; }
+  .campo { display: grid; gap: 5px; }
+  .campo > span { font-size: 12px; color: var(--muted); letter-spacing: .02em; }
+  select {
+    font: inherit; font-size: 14px; color: var(--fg); background: var(--surface);
+    border: 1px solid var(--line); border-radius: 7px; padding: 7px 10px; min-width: 0; max-width: 100%;
+  }
+  .seg { display: inline-flex; background: var(--surface-2); border-radius: 8px; padding: 3px; gap: 2px; flex-wrap: wrap; }
+  .seg button {
+    font: inherit; font-size: 14px; color: var(--muted); background: transparent; border: 0;
+    border-radius: 6px; padding: 6px 12px; cursor: pointer;
+  }
+  .seg button[aria-pressed="true"] { background: var(--surface); color: var(--fg); box-shadow: var(--shadow); font-weight: 600; }
+  .seg button small { display: block; font-size: 10.5px; font-weight: 400; color: var(--muted); letter-spacing: .02em; }
+
+  .grade { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 16px; align-items: start; }
+  @media (max-width: 880px) { .grade { grid-template-columns: minmax(0, 1fr); } }
+
+  .cartao { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); }
+  .tabuleiro { padding: 14px; display: grid; gap: 12px; min-width: 0; }
+  .fatos { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--muted); }
+  .fatos b { color: var(--fg); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .quadro { background: var(--board-frame); border-radius: 6px; padding: 6px; overflow-x: auto; }
+  svg#mapa { display: block; width: 100%; height: auto; max-height: 62vh; }
+
+  .coord { font-family: var(--mono); font-size: .36px; fill: var(--board-ink-2); }
+  .simbolo { font-family: var(--mono); font-size: .5px; font-weight: 600; fill: var(--board-ink); text-anchor: middle; dominant-baseline: central; opacity: .62; pointer-events: none; }
+  .simbolo.claro { fill: #FFFFFF; }
+  .c-chao { fill: var(--board-floor); } .c-parede { fill: var(--board-wall); }
+  .c-agua { fill: var(--board-water); } .c-lama { fill: var(--board-mud); }
+  .casa { stroke: var(--board-grid); stroke-width: .03; }
+  .anel-armadilha { fill: none; stroke: var(--board-trap); stroke-width: .07; stroke-dasharray: .14 .09; }
+  .x-armadilha { stroke: var(--board-trap); stroke-width: .07; stroke-linecap: round; }
+  .jogador-pulso { fill: none; stroke-width: .06; opacity: .5; transform-box: fill-box; transform-origin: center; animation: pulso 1.4s ease-out infinite; }
+  @keyframes pulso { from { transform: scale(.7); opacity: .6; } to { transform: scale(1.5); opacity: 0; } }
+
+  .controles { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+  .botoes { display: inline-flex; gap: 4px; }
+  .btn {
+    display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 8px;
+    border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer;
+  }
+  .btn svg { width: 18px; height: 18px; fill: currentColor; }
+  .btn.principal { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); width: 46px; }
+  .btn:disabled { opacity: .4; cursor: default; }
+  .deslizador { display: grid; gap: 4px; flex: 1 1 160px; min-width: 0; }
+  .deslizador label { font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; gap: 8px; }
+  .deslizador label b { color: var(--fg); font-weight: 600; font-variant-numeric: tabular-nums; }
+  input[type="range"] {
+    -webkit-appearance: none; appearance: none; width: 100%; height: 6px; margin: 9px 0;
+    border-radius: 99px; background: var(--surface-2); cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none; width: 17px; height: 17px; border-radius: 50%;
+    background: var(--accent); border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--line);
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 13px; height: 13px; border-radius: 50%; background: var(--accent); border: 2px solid var(--surface);
+  }
+  input[type="range"]:disabled { opacity: .45; cursor: default; }
+  .vazio { padding: 26px 24px; display: grid; gap: 10px; max-width: 68ch; }
+  .vazio h2 { color: var(--fg); font-size: 17px; letter-spacing: .06em; }
+  .vazio p { color: var(--muted); line-height: 1.6; }
+
+  .painel { display: grid; gap: 12px; min-width: 0; }
+  .secao { padding: 14px 16px; display: grid; gap: 10px; }
+  .rotulo-atual { font-family: var(--mono); font-size: 17px; font-weight: 600; word-break: break-all; }
+  .passo { font-family: var(--mono); font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-size: 14px; }
+  dt { color: var(--muted); }
+  dd { margin: 0; font-variant-numeric: tabular-nums; text-align: right; }
+  dd.grande { font-family: var(--mono); font-size: 18px; font-weight: 600; }
+  .evento {
+    font-size: 13.5px; background: var(--surface-2); border-radius: 7px; padding: 9px 11px;
+    border-left: 3px solid var(--cor-evento, var(--muted));
+  }
+  .camada-chip { display: inline-flex; align-items: center; gap: 6px; }
+  .bolinha { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex: none; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th { text-align: left; font-weight: 500; color: var(--muted); font-size: 12px; padding: 4px 6px; }
+  td { padding: 7px 6px; border-top: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+  td.num, th.num { text-align: right; }
+  tbody tr { cursor: pointer; }
+  tbody tr[aria-selected="true"] td { background: var(--surface-2); font-weight: 600; }
+  tbody tr:hover td { background: var(--surface-2); }
+  .status { font-family: var(--mono); font-size: 11px; letter-spacing: .04em; }
+  .status.ok { color: var(--ok); } .status.ruim { color: var(--trap); }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    font: inherit; font-size: 13px; display: inline-flex; align-items: center; gap: 7px;
+    border: 1px solid var(--line); background: var(--surface); color: var(--fg);
+    border-radius: 99px; padding: 5px 11px; cursor: pointer;
+  }
+  .chip[aria-pressed="true"] { border-color: var(--fg); box-shadow: inset 0 0 0 1px var(--fg); }
+  .chip .n { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  .alternar { display: flex; align-items: center; gap: 9px; font-size: 14px; cursor: pointer; }
+  .alternar input { width: 17px; height: 17px; accent-color: var(--trap); }
+  .nota { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+
+  .legenda { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 12.5px; color: var(--muted); }
+  .legenda span { display: inline-flex; align-items: center; gap: 7px; }
+  .amostra { width: 14px; height: 14px; border-radius: 3px; border: 1px solid var(--line); flex: none; }
+
+  .rodape { font-size: 12.5px; color: var(--muted); max-width: 78ch; line-height: 1.55; }
+
+  button:focus-visible, select:focus-visible, input:focus-visible, tr:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) { .jogador-pulso { animation: none; opacity: 0; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="topo">
+    <h1>Labirinto interativo</h1>
+    <span class="sub">Teoria dos Grafos · Grupo 2</span>
+    <span class="selo" id="selo" hidden></span>
+  </header>
+
+  <section class="cartao vazio" id="vazio" hidden>
+    <h2>Molde sem dados</h2>
+    <p>Este arquivo é o molde do labirinto interativo. Sozinho ele não tem nenhum mapa para mostrar.</p>
+    <p>A página de verdade é gerada pelo Python: o <span class="mono">src/viz.py</span> recebe o grafo de estados e o caminho de cada algoritmo, preenche este molde e grava o resultado em <span class="mono">out/parte1/labirinto_interativo.html</span>.</p>
+  </section>
+
+  <div class="barra" id="barra">
+    <label class="campo" for="selMapa">
+      <span>Mapa</span>
+      <select id="selMapa"></select>
+    </label>
+    <div class="campo">
+      <span>Algoritmo</span>
+      <div class="seg" id="segAlg" role="group" aria-label="Algoritmo"></div>
+    </div>
+  </div>
+
+  <div class="grade" id="grade">
+    <section class="cartao tabuleiro" aria-label="Tabuleiro">
+      <div class="fatos" id="fatos"></div>
+      <div class="quadro">
+        <svg id="mapa" role="img" aria-label="Mapa do labirinto com o percurso">
+          <g id="estatico"></g>
+          <g id="dinamico"></g>
+        </svg>
+      </div>
+      <div class="controles">
+        <div class="botoes">
+          <button class="btn" id="bInicio" aria-label="Voltar ao início"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
+          <button class="btn" id="bVolta" aria-label="Passo anterior"><svg viewBox="0 0 24 24"><path d="M17 5v14L6 12z"/></svg></button>
+          <button class="btn principal" id="bPlay" aria-label="Reproduzir"><svg viewBox="0 0 24 24" id="iconePlay"><path d="M7 5v14l12-7z"/></svg></button>
+          <button class="btn" id="bAvanca" aria-label="Próximo passo"><svg viewBox="0 0 24 24"><path d="M7 5v14l11-7z"/></svg></button>
+          <button class="btn" id="bFim" aria-label="Ir ao fim"><svg viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
+        </div>
+        <div class="deslizador">
+          <label for="rVel"><span>Velocidade</span><b id="txtVel"></b></label>
+          <input type="range" id="rVel" min="1" max="8" step="1" value="2">
+        </div>
+        <div class="deslizador">
+          <label for="rPasso"><span>Linha do tempo</span><b id="txtPasso"></b></label>
+          <input type="range" id="rPasso" min="0" max="0" step="1" value="0">
+        </div>
+      </div>
+      <div class="legenda" id="legenda"></div>
+    </section>
+
+    <aside class="painel">
+      <section class="cartao secao" aria-live="polite">
+        <h2>Estado atual</h2>
+        <div>
+          <div class="passo" id="txtPassoPainel"></div>
+          <div class="rotulo-atual" id="txtRotulo"></div>
+        </div>
+        <dl>
+          <dt>Posição</dt><dd id="dPos"></dd>
+          <dt>Casa</dt><dd id="dCasa"></dd>
+          <dt>Chaves</dt><dd id="dChaves"></dd>
+          <dt>Bônus consumidos</dt><dd id="dBonus"></dd>
+          <dt>Custo deste passo</dt><dd id="dCustoPasso"></dd>
+          <dt>Custo acumulado</dt><dd class="grande" id="dCusto"></dd>
+        </dl>
+        <div class="evento" id="txtEvento"></div>
+      </section>
+
+      <section class="cartao secao">
+        <h2>Comparação</h2>
+        <table>
+          <thead><tr><th>Algoritmo</th><th class="num">Passos</th><th class="num">Custo</th><th class="num">Status</th></tr></thead>
+          <tbody id="tbComp"></tbody>
+        </table>
+      </section>
+
+      <section class="cartao secao">
+        <h2>Camadas do grafo de estados</h2>
+        <div class="chips" id="chipsCamada" role="group" aria-label="Camada visível"></div>
+        <p class="nota">Cada ponto no mapa é um estado. A mesma casa pode ter um ponto por camada: o mapa não é o grafo.</p>
+        <label class="alternar" for="cArmadilhas">
+          <input type="checkbox" id="cArmadilhas" checked>
+          <span id="txtArmadilhas"></span>
+        </label>
+      </section>
+    </aside>
+  </div>
+
+  <p class="rodape" id="rodape"></p>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  const DADOS = {"mapas": [{"id": "m01_terreno", "titulo": "m01 · terreno", "origem": "enunciado", "grade": ["#############", "#S..~~~~~..G#", "#.#########.#", "#.,,,.......#", "#############"], "camadas": {"-": ["(1,1)|-|{}", "(1,2)|-|{}", "(2,1)|-|{}", "(1,3)|-|{}", "(3,1)|-|{}", "(1,4)|-|{}", "(3,2)|-|{}", "(1,5)|-|{}", "(3,3)|-|{}", "(1,6)|-|{}", "(3,4)|-|{}", "(1,7)|-|{}", "(3,5)|-|{}", "(1,8)|-|{}", "(3,6)|-|{}", "(1,9)|-|{}", "(3,7)|-|{}", "(1,10)|-|{}", "(3,8)|-|{}", "(1,11)|-|{}", "(3,9)|-|{}", "(3,10)|-|{}", "(3,11)|-|{}", "(2,11)|-|{}"]}, "armadilhas": [], "algoritmos": {"BFS": {"caminho": ["(1,1)|-|{}", "(1,2)|-|{}", "(1,3)|-|{}", "(1,4)|-|{}", "(1,5)|-|{}", "(1,6)|-|{}", "(1,7)|-|{}", "(1,8)|-|{}", "(1,9)|-|{}", "(1,10)|-|{}", "(1,11)|-|{}"], "status": "OK", "motivo": ""}, "DIJKSTRA": {"caminho": ["(1,1)|-|{}", "(2,1)|-|{}", "(3,1)|-|{}", "(3,2)|-|{}", "(3,3)|-|{}", "(3,4)|-|{}", "(3,5)|-|{}", "(3,6)|-|{}", "(3,7)|-|{}", "(3,8)|-|{}", "(3,9)|-|{}", "(3,10)|-|{}", "(3,11)|-|{}", "(2,11)|-|{}", "(1,11)|-|{}"], "status": "OK", "motivo": ""}, "BELLMAN_FORD": {"caminho": ["(1,1)|-|{}", "(2,1)|-|{}", "(3,1)|-|{}", "(3,2)|-|{}", "(3,3)|-|{}", "(3,4)|-|{}", "(3,5)|-|{}", "(3,6)|-|{}", "(3,7)|-|{}", "(3,8)|-|{}", "(3,9)|-|{}", "(3,10)|-|{}", "(3,11)|-|{}", "(2,11)|-|{}", "(1,11)|-|{}"], "status": "OK", "motivo": ""}}, "nota": ""}, {"id": "m02_uma_chave", "titulo": "m02 · uma chave", "origem": "enunciado", "grade": ["#############", "#S....A....G#", "#.###########", "#...,,,....a#", "#############"], "camadas": {"-": ["(1,1)|-|{}", "(1,2)|-|{}", "(2,1)|-|{}", "(1,3)|-|{}", "(3,1)|-|{}", "(1,4)|-|{}", "(3,2)|-|{}", "(1,5)|-|{}", "(3,3)|-|{}", "(3,4)|-|{}", "(3,5)|-|{}", "(3,6)|-|{}", "(3,7)|-|{}", "(3,8)|-|{}", "(3,9)|-|{}", "(3,10)|-|{}"], "a": ["(3,11)|a|{}", "(3,10)|a|{}", "(3,9)|a|{}", "(3,8)|a|{}", "(3,7)|a|{}", "(3,6)|a|{}", "(3,5)|a|{}", "(3,4)|a|{}", "(3,3)|a|{}", "(3,2)|a|{}", "(3,1)|a|{}", "(2,1)|a|{}", "(1,1)|a|{}", "(1,2)|a|{}", "(1,3)|a|{}", "(1,4)|a|{}", "(1,5)|a|{}", "(1,6)|a|{}", "(1,7)|a|{}", "(1,8)|a|{}", "(1,9)|a|{}", "(1,10)|a|{}", "(1,11)|a|{}"]}, "armadilhas": [], "algoritmos": {"BFS": {"caminho": ["(1,1)|-|{}", "(2,1)|-|{}", "(3,1)|-|{}", "(3,2)|-|{}", "(3,3)|-|{}", "(3,4)|-|{}", "(3,5)|-|{}", "(3,6)|-|{}", "(3,7)|-|{}", "(3,8)|-|{}", "(3,9)|-|{}", "(3,10)|-|{}", "(3,11)|a|{}", "(3,10)|a|{}", "(3,9)|a|{}", "(3,8)|a|{}", "(3,7)|a|{}", "(3,6)|a|{}", "(3,5)|a|{}", "(3,4)|a|{}", "(3,3)|a|{}", "(3,2)|a|{}", "(3,1)|a|{}", "(2,1)|a|{}", "(1,1)|a|{}", "(1,2)|a|{}", "(1,3)|a|{}", "(1,4)|a|{}", "(1,5)|a|{}", "(1,6)|a|{}", "(1,7)|a|{}", "(1,8)|a|{}", "(1,9)|a|{}", "(1,10)|a|{}", "(1,11)|a|{}"], "status": "OK", "motivo": ""}, "DIJKSTRA": {"caminho": ["(1,1)|-|{}", "(2,1)|-|{}", "(3,1)|-|{}", "(3,2)|-|{}", "(3,3)|-|{}", "(3,4)|-|{}", "(3,5)|-|{}", "(3,6)|-|{}", "(3,7)|-|{}", "(3,8)|-|{}", "(3,9)|-|{}", "(3,10)|-|{}", "(3,11)|a|{}", "(3,10)|a|{}", "(3,9)|a|{}", "(3,8)|a|{}", "(3,7)|a|{}", "(3,6)|a|{}", "(3,5)|a|{}", "(3,4)|a|{}", "(3,3)|a|{}", "(3,2)|a|{}", "(3,1)|a|{}", "(2,1)|a|{}", "(1,1)|a|{}", "(1,2)|a|{}", "(1,3)|a|{}", "(1,4)|a|{}", "(1,5)|a|{}", "(1,6)|a|{}", "(1,7)|a|{}", "(1,8)|a|{}", "(1,9)|a|{}", "(1,10)|a|{}", "(1,11)|a|{}"], "status": "OK", "motivo": ""}, "BELLMAN_FORD": {"caminho": ["(1,1)|-|{}", "(2,1)|-|{}", "(3,1)|-|{}", "(3,2)|-|{}", "(3,3)|-|{}", "(3,4)|-|{}", "(3,5)|-|{}", "(3,6)|-|{}", "(3,7)|-|{}", "(3,8)|-|{}", "(3,9)|-|{}", "(3,10)|-|{}", "(3,11)|a|{}", "(3,10)|a|{}", "(3,9)|a|{}", "(3,8)|a|{}", "(3,7)|a|{}", "(3,6)|a|{}", "(3,5)|a|{}", "(3,4)|a|{}", "(3,3)|a|{}", "(3,2)|a|{}", "(3,1)|a|{}", "(2,1)|a|{}", "(1,1)|a|{}", "(1,2)|a|{}", "(1,3)|a|{}", "(1,4)|a|{}", "(1,5)|a|{}", "(1,6)|a|{}", "(1,7)|a|{}", "(1,8)|a|{}", "(1,9)|a|{}", "(1,10)|a|{}", "(1,11)|a|{}"], "status": "OK", "motivo": ""}}, "nota": ""}, {"id": "m03_tres_chaves", "titulo": "m03 · tres chaves", "origem": "enunciado", "grade": ["#################", "#S.....A....b...#", "#.###############", "#.#.....#.#.....#", "#.#.~~~.B.#.,,,.#", "#.#.#####.#.###.#", "#.#...c.#...#G#.#", "#.#######.###C#.#", "#a.......~......#", "#################"], "camadas": {"-": ["(1,1)|-|{}", "(1,2)|-|{}", "(2,1)|-|{}", "(1,3)|-|{}", "(3,1)|-|{}", "(1,4)|-|{}", "(4,1)|-|{}", "(1,5)|-|{}", "(5,1)|-|{}", "(1,6)|-|{}", "(6,1)|-|{}", "(7,1)|-|{}"], "a": ["(8,1)|a|{}", "(7,1)|a|{}", "(8,2)|a|{}", "(6,1)|a|{}", "(8,3)|a|{}", "(5,1)|a|{}", "(8,4)|a|{}", "(4,1)|a|{}", "(8,5)|a|{}", "(3,1)|a|{}", "(8,6)|a|{}", "(2,1)|a|{}", "(8,7)|a|{}", "(1,1)|a|{}", "(8,8)|a|{}", "(1,2)|a|{}", "(8,9)|a|{}", "(1,3)|a|{}", "(7,9)|a|{}", "(8,10)|a|{}", "(1,4)|a|{}", "(6,9)|a|{}", "(8,11)|a|{}", "(1,5)|a|{}", "(5,9)|a|{}", "(6,10)|a|{}", "(8,12)|a|{}", "(1,6)|a|{}", "(4,9)|a|{}", "(6,11)|a|{}", "(8,13)|a|{}", "(1,7)|a|{}", "(3,9)|a|{}", "(5,11)|a|{}", "(8,14)|a|{}", "(1,8)|a|{}", "(4,11)|a|{}", "(8,15)|a|{}", "(1,9)|a|{}", "(3,11)|a|{}", "(4,12)|a|{}", "(7,15)|a|{}", "(1,10)|a|{}", "(3,12)|a|{}", "(4,13)|a|{}", "(6,15)|a|{}", "(1,11)|a|{}", "(3,13)|a|{}", "(4,14)|a|{}", "(5,15)|a|{}", "(3,14)|a|{}", "(4,15)|a|{}", "(3,15)|a|{}"], "ab": ["(1,12)|ab|{}", "(1,13)|ab|{}", "(1,11)|ab|{}", "(1,14)|ab|{}", "(1,10)|ab|{}", "(1,15)|ab|{}", "(1,9)|ab|{}", "(1,8)|ab|{}", "(1,7)|ab|{}", "(1,6)|ab|{}", "(1,5)|ab|{}", "(1,4)|ab|{}", "(1,3)|ab|{}", "(1,2)|ab|{}", "(1,1)|ab|{}", "(2,1)|ab|{}", "(3,1)|ab|{}", "(4,1)|ab|{}", "(5,1)|ab|{}", "(6,1)|ab|{}", "(7,1)|ab|{}", "(8,1)|ab|{}", "(8,2)|ab|{}", "(8,3)|ab|{}", "(8,4)|ab|{}", "(8,5)|ab|{}", "(8,6)|ab|{}", "(8,7)|ab|{}", "(8,8)|ab|{}", "(8,9)|ab|{}", "(7,9)|ab|{}", "(8,10)|ab|{}", "(6,9)|ab|{}", "(8,11)|ab|{}", "(5,9)|ab|{}", "(6,10)|ab|{}", "(8,12)|ab|{}", "(4,9)|ab|{}", "(6,11)|ab|{}", "(8,13)|ab|{}", "(3,9)|ab|{}", "(4,8)|ab|{}", "(5,11)|ab|{}", "(8,14)|ab|{}", "(4,7)|ab|{}", "(4,11)|ab|{}", "(8,15)|ab|{}", "(3,7)|ab|{}", "(4,6)|ab|{}", "(3,11)|ab|{}", "(4,12)|ab|{}", "(7,15)|ab|{}", "(3,6)|ab|{}", "(4,5)|ab|{}", "(3,12)|ab|{}", "(4,13)|ab|{}", "(6,15)|ab|{}", "(3,5)|ab|{}", "(4,4)|ab|{}", "(3,13)|ab|{}", "(4,14)|ab|{}", "(5,15)|ab|{}", "(3,4)|ab|{}", "(4,3)|ab|{}", "(3,14)|ab|{}", "(4,15)|ab|{}", "(3,3)|ab|{}", "(5,3)|ab|{}", "(3,15)|ab|{}", "(6,3)|ab|{}", "(6,4)|ab|{}", "(6,5)|ab|{}"], "abc": ["(6,6)|abc|{}", "(6,7)|abc|{}", "(6,5)|abc|{}", "(6,4)|abc|{}", "(6,3)|abc|{}", "(5,3)|abc|{}", "(4,3)|abc|{}", "(3,3)|abc|{}", "(4,4)|abc|{}", "(3,4)|abc|{}", "(4,5)|abc|{}", "(3,5)|abc|{}", "(4,6)|abc|{}", "(3,6)|abc|{}", "(4,7)|abc|{}", "(3,7)|abc|{}", "(4,8)|abc|{}", "(4,9)|abc|{}", "(3,9)|abc|{}", "(5,9)|abc|{}", "(6,9)|abc|{}", "(6,10)|abc|{}", "(7,9)|abc|{}", "(6,11)|abc|{}", "(8,9)|abc|{}", "(5,11)|abc|{}", "(8,10)|abc|{}", "(8,8)|abc|{}", "(4,11)|abc|{}", "(8,11)|abc|{}", "(8,7)|abc|{}", "(3,11)|abc|{}", "(4,12)|abc|{}", "(8,12)|abc|{}", "(8,6)|abc|{}", "(3,12)|abc|{}", "(4,13)|abc|{}", "(8,13)|abc|{}", "(8,5)|abc|{}", "(3,13)|abc|{}", "(4,14)|abc|{}", "(7,13)|abc|{}", "(8,14)|abc|{}", "(8,4)|abc|{}", "(3,14)|abc|{}", "(4,15)|abc|{}", "(6,13)|abc|{}", "(8,15)|abc|{}", "(8,3)|abc|{}", "(3,15)|abc|{}", "(5,15)|abc|{}", "(7,15)|abc|{}", "(8,2)|abc|{}", "(6,15)|abc|{}", "(8,1)|abc|{}", "(7,1)|abc|{}", "(6,1)|abc|{}", "(5,1)|abc|{}", "(4,1)|abc|{}", "(3,1)|abc|{}", "(2,1)|abc|{}", "(1,1)|abc|{}", "(1,2)|abc|{}", "(1,3)|abc|{}", "(1,4)|abc|{}", "(1,5)|abc|{}", "(1,6)|abc|{}", "(1,7)|abc|{}", "(1,8)|abc|{}", "(1,9)|abc|{}", "(1,10)|abc|{}", "(1,11)|abc|{}", "(1,12)|abc|{}", "(1,13)|abc|{}", "(1,14)|abc|{}", "(1,15)|abc|{}"]}, "armadilhas": [], "algoritmos": {"BFS": {"caminho": ["(1,1)|-|{}", "(2,1)|-|{}", "(3,1)|-|{}", "(4,1)|-|{}", "(5,1)|-|{}", "(6,1)|-|{}", "(7,1)|-|{}", "(8,1)|a|{}", "(7,1)|a|{}", "(6,1)|a|{}", "(5,1)|a|{}", "(4,1)|a|{}", "(3,1)|a|{}", "(2,1)|a|{}", "(1,1)|a|{}", "(1,2)|a|{}", "(1,3)|a|{}", "(1,4)|a|{}", "(1,5)|a|{}", "(1,6)|a|{}", "(1,7)|a|{}", "(1,8)|a|{}", "(1,9)|a|{}", "(1,10)|a|{}", "(1,11)|a|{}", "(1,12)|ab|{}", "(1,11)|ab|{}", "(1,10)|ab|{}", "(1,9)|ab|{}", "(1,8)|ab|{}", "(1,7)|ab|{}", "(1,6)|ab|{}", "(1,5)|ab|{}", "(1,4)|ab|{}", "(1,3)|ab|{}", "(1,2)|ab|{}", "(1,1)|ab|{}", "(2,1)|ab|{}", "(3,1)|ab|{}", "(4,1)|ab|{}", "(5,1)|ab|{}", "(6,1)|ab|{}", "(7,1)|ab|{}", "(8,1)|ab|{}", "(8,2)|ab|{}", "(8,3)|ab|{}", "(8,4)|ab|{}", "(8,5)|ab|{}", "(8,6)|ab|{}", "(8,7)|ab|{}", "(8,8)|ab|{}", "(8,9)|ab|{}", "(7,9)|ab|{}", "(6,9)|ab|{}", "(5,9)|ab|{}", "(4,9)|ab|{}", "(4,8)|ab|{}", "(4,7)|ab|{}", "(4,6)|ab|{}", "(4,5)|ab|{}", "(4,4)|ab|{}", "(4,3)|ab|{}", "(5,3)|ab|{}", "(6,3)|ab|{}", "(6,4)|ab|{}", "(6,5)|ab|{}", "(6,6)|abc|{}", "(6,5)|abc|{}", "(6,4)|abc|{}", "(6,3)|abc|{}", "(5,3)|abc|{}", "(4,3)|abc|{}", "(4,4)|abc|{}", "(4,5)|abc|{}", "(4,6)|abc|{}", "(4,7)|abc|{}", "(4,8)|abc|{}", "(4,9)|abc|{}", "(5,9)|abc|{}", "(6,9)|abc|{}", "(7,9)|abc|{}", "(8,9)|abc|{}", "(8,10)|abc|{}", "(8,11)|abc|{}", "(8,12)|abc|{}", "(8,13)|abc|{}", "(7,13)|abc|{}", "(6,13)|abc|{}"], "status": "OK", "motivo": ""}, "DIJKSTRA": {"caminho": ["(1,1)|-|{}", "(2,1)|-|{}", "(3,1)|-|{}", "(4,1)|-|{}", "(5,1)|-|{}", "(6,1)|-|{}", "(7,1)|-|{}", "(8,1)|a|{}", "(7,1)|a|{}", "(6,1)|a|{}", "(5,1)|a|{}", "(4,1)|a|{}", "(3,1)|a|{}", "(2,1)|a|{}", "(1,1)|a|{}", "(1,2)|a|{}", "(1,3)|a|{}", "(1,4)|a|{}", "(1,5)|a|{}", "(1,6)|a|{}", "(1,7)|a|{}", "(1,8)|a|{}", "(1,9)|a|{}", "(1,10)|a|{}", "(1,11)|a|{}", "(1,12)|ab|{}", "(1,11)|ab|{}", "(1,10)|ab|{}", "(1,9)|ab|{}", "(1,8)|ab|{}", "(1,7)|ab|{}", "(1,6)|ab|{}", "(1,5)|ab|{}", "(1,4)|ab|{}", "(1,3)|ab|{}", "(1,2)|ab|{}", "(1,1)|ab|{}", "(2,1)|ab|{}", "(3,1)|ab|{}", "(4,1)|ab|{}", "(5,1)|ab|{}", "(6,1)|ab|{}", "(7,1)|ab|{}", "(8,1)|ab|{}", "(8,2)|ab|{}", "(8,3)|ab|{}", "(8,4)|ab|{}", "(8,5)|ab|{}", "(8,6)|ab|{}", "(8,7)|ab|{}", "(8,8)|ab|{}", "(8,9)|ab|{}", "(7,9)|ab|{}", "(6,9)|ab|{}", "(5,9)|ab|{}", "(4,9)|ab|{}", "(4,8)|ab|{}", "(4,7)|ab|{}", "(3,7)|ab|{}", "(3,6)|ab|{}", "(3,5)|ab|{}", "(3,4)|ab|{}", "(3,3)|ab|{}", "(4,3)|ab|{}", "(5,3)|ab|{}", "(6,3)|ab|{}", "(6,4)|ab|{}", "(6,5)|ab|{}", "(6,6)|abc|{}", "(6,5)|abc|{}", "(6,4)|abc|{}", "(6,3)|abc|{}", "(5,3)|abc|{}", "(4,3)|abc|{}", "(3,3)|abc|{}", "(3,4)|abc|{}", "(3,5)|abc|{}", "(3,6)|abc|{}", "(3,7)|abc|{}", "(4,7)|abc|{}", "(4,8)|abc|{}", "(4,9)|abc|{}", "(5,9)|abc|{}", "(6,9)|abc|{}", "(7,9)|abc|{}", "(8,9)|abc|{}", "(8,10)|abc|{}", "(8,11)|abc|{}", "(8,12)|abc|{}", "(8,13)|abc|{}", "(7,13)|abc|{}", "(6,13)|abc|{}"], "status": "OK", "motivo": ""}, "BELLMAN_FORD": {"caminho": ["(1,1)|-|{}", "(2,1)|-|{}", "(3,1)|-|{}", "(4,1)|-|{}", "(5,1)|-|{}", "(6,1)|-|{}", "(7,1)|-|{}", "(8,1)|a|{}", "(7,1)|a|{}", "(6,1)|a|{}", "(5,1)|a|{}", "(4,1)|a|{}", "(3,1)|a|{}", "(2,1)|a|{}", "(1,1)|a|{}", "(1,2)|a|{}", "(1,3)|a|{}", "(1,4)|a|{}", "(1,5)|a|{}", "(1,6)|a|{}", "(1,7)|a|{}", "(1,8)|a|{}", "(1,9)|a|{}", "(1,10)|a|{}", "(1,11)|a|{}", "(1,12)|ab|{}", "(1,11)|ab|{}", "(1,10)|ab|{}", "(1,9)|ab|{}", "(1,8)|ab|{}", "(1,7)|ab|{}", "(1,6)|ab|{}", "(1,5)|ab|{}", "(1,4)|ab|{}", "(1,3)|ab|{}", "(1,2)|ab|{}", "(1,1)|ab|{}", "(2,1)|ab|{}", "(3,1)|ab|{}", "(4,1)|ab|{}", "(5,1)|ab|{}", "(6,1)|ab|{}", "(7,1)|ab|{}", "(8,1)|ab|{}", "(8,2)|ab|{}", "(8,3)|ab|{}", "(8,4)|ab|{}", "(8,5)|ab|{}", "(8,6)|ab|{}", "(8,7)|ab|{}", "(8,8)|ab|{}", "(8,9)|ab|{}", "(7,9)|ab|{}", "(6,9)|ab|{}", "(5,9)|ab|{}", "(4,9)|ab|{}", "(4,8)|ab|{}", "(4,7)|ab|{}", "(3,7)|ab|{}", "(3,6)|ab|{}", "(3,5)|ab|{}", "(3,4)|ab|{}", "(3,3)|ab|{}", "(4,3)|ab|{}", "(5,3)|ab|{}", "(6,3)|ab|{}", "(6,4)|ab|{}", "(6,5)|ab|{}", "(6,6)|abc|{}", "(6,5)|abc|{}", "(6,4)|abc|{}", "(6,3)|abc|{}", "(5,3)|abc|{}", "(4,3)|abc|{}", "(3,3)|abc|{}", "(3,4)|abc|{}", "(3,5)|abc|{}", "(3,6)|abc|{}", "(3,7)|abc|{}", "(4,7)|abc|{}", "(4,8)|abc|{}", "(4,9)|abc|{}", "(5,9)|abc|{}", "(6,9)|abc|{}", "(7,9)|abc|{}", "(8,9)|abc|{}", "(8,10)|abc|{}", "(8,11)|abc|{}", "(8,12)|abc|{}", "(8,13)|abc|{}", "(7,13)|abc|{}", "(6,13)|abc|{}"], "status": "OK", "motivo": ""}}, "nota": ""}, {"id": "m04_esteiras", "titulo": "m04 · esteiras", "origem": "enunciado", "grade": ["#############", "#S.^>>>>>.AG#", "#.######.####", "#.....~~.,,a#", "#############"], "camadas": {"-": ["(1,1)|-|{}", "(1,2)|-|{}", "(2,1)|-|{}", "(1,3)|-|{}", "(3,1)|-|{}", "(3,2)|-|{}", "(3,3)|-|{}", "(3,4)|-|{}", "(3,5)|-|{}", "(3,6)|-|{}", "(3,7)|-|{}", "(3,8)|-|{}", "(2,8)|-|{}", "(3,9)|-|{}", "(1,8)|-|{}", "(3,10)|-|{}", "(1,9)|-|{}"], "a": ["(3,11)|a|{}", "(3,10)|a|{}", "(3,9)|a|{}", "(3,8)|a|{}", "(2,8)|a|{}", "(3,7)|a|{}", "(1,8)|a|{}", "(3,6)|a|{}", "(1,9)|a|{}", "(3,5)|a|{}", "(1,10)|a|{}", "(3,4)|a|{}", "(1,11)|a|{}", "(3,3)|a|{}", "(3,2)|a|{}", "(3,1)|a|{}", "(2,1)|a|{}", "(1,1)|a|{}", "(1,2)|a|{}", "(1,3)|a|{}"]}, "armadilhas": ["(1,3)|-|{}", "(1,8)|-|{}", "(1,9)|-|{}", "(1,3)|a|{}"], "algoritmos": {"BFS": {"caminho": ["(1,1)|-|{}", "(2,1)|-|{}", "(3,1)|-|{}", "(3,2)|-|{}", "(3,3)|-|{}", "(3,4)|-|{}", "(3,5)|-|{}", "(3,6)|-|{}", "(3,7)|-|{}", "(3,8)|-|{}", "(3,9)|-|{}", "(3,10)|-|{}", "(3,11)|a|{}", "(3,10)|a|{}", "(3,9)|a|{}", "(3,8)|a|{}", "(2,8)|a|{}", "(1,8)|a|{}", "(1,9)|a|{}", "(1,10)|a|{}", "(1,11)|a|{}"], "status": "OK", "motivo": ""}, "DIJKSTRA": {"caminho": ["(1,1)|-|{}", "(2,1)|-|{}", "(3,1)|-|{}", "(3,2)|-|{}", "(3,3)|-|{}", "(3,4)|-|{}", "(3,5)|-|{}", "(3,6)|-|{}", "(3,7)|-|{}", "(3,8)|-|{}", "(3,9)|-|{}", "(3,10)|-|{}", "(3,11)|a|{}", "(3,10)|a|{}", "(3,9)|a|{}", "(3,8)|a|{}", "(2,8)|a|{}", "(1,8)|a|{}", "(1,9)|a|{}", "(1,10)|a|{}", "(1,11)|a|{}"], "status": "OK", "motivo": ""}, "BELLMAN_FORD": {"caminho": ["(1,1)|-|{}", "(2,1)|-|{}", "(3,1)|-|{}", "(3,2)|-|{}", "(3,3)|-|{}", "(3,4)|-|{}", "(3,5)|-|{}", "(3,6)|-|{}", "(3,7)|-|{}", "(3,8)|-|{}", "(3,9)|-|{}", "(3,10)|-|{}", "(3,11)|a|{}", "(3,10)|a|{}", "(3,9)|a|{}", "(3,8)|a|{}", "(2,8)|a|{}", "(1,8)|a|{}", "(1,9)|a|{}", "(1,10)|a|{}", "(1,11)|a|{}"], "status": "OK", "motivo": ""}}, "nota": ""}, {"id": "m05_bonus", "titulo": "m05 · bonus", "origem": "enunciado", "grade": ["###############", "#S.....,,,...G#", "#.###########.#", "#.+.#.....+...#", "#.#.#.#######.#", "#...+.........#", "###############"], "camadas": {"-": ["(1,1)|-|{}", "(1,2)|-|{}", "(2,1)|-|{}", "(1,3)|-|{}", "(3,1)|-|{}", "(1,4)|-|{}", "(3,2)|-|{0}", "(4,1)|-|{}", "(1,5)|-|{}", "(3,3)|-|{0}", "(3,1)|-|{0}", "(5,1)|-|{}", "(1,6)|-|{}", "(4,3)|-|{0}", "(2,1)|-|{0}", "(4,1)|-|{0}", "(5,2)|-|{}", "(1,7)|-|{}", "(5,3)|-|{0}", "(1,1)|-|{0}", "(5,1)|-|{0}", "(5,3)|-|{}", "(1,8)|-|{}", "(5,4)|-|{0,2}", "(5,2)|-|{0}", "(1,2)|-|{0}", "(4,3)|-|{}", "(5,4)|-|{2}", "(1,9)|-|{}", "(5,5)|-|{0,2}", "(5,3)|-|{0,2}", "(1,3)|-|{0}", "(3,3)|-|{}", "(5,5)|-|{2}", "(5,3)|-|{2}", "(1,10)|-|{}", "(4,5)|-|{0,2}", "(5,6)|-|{0,2}", "(4,3)|-|{0,2}", "(5,2)|-|{0,2}", "(1,4)|-|{0}", "(4,5)|-|{2}", "(5,6)|-|{2}", "(4,3)|-|{2}", "(5,2)|-|{2}", "(1,11)|-|{}", "(3,5)|-|{0,2}", "(5,7)|-|{0,2}", "(3,3)|-|{0,2}", "(5,1)|-|{0,2}", "(1,5)|-|{0}", "(3,5)|-|{2}", "(5,7)|-|{2}", "(3,3)|-|{2}", "(5,1)|-|{2}", "(1,12)|-|{}", "(3,6)|-|{0,2}", "(5,8)|-|{0,2}", "(3,2)|-|{0,2}", "(4,1)|-|{0,2}", "(1,6)|-|{0}", "(3,6)|-|{2}", "(5,8)|-|{2}", "(4,1)|-|{2}", "(1,13)|-|{}", "(3,7)|-|{0,2}", "(5,9)|-|{0,2}", "(3,1)|-|{0,2}", "(1,7)|-|{0}", "(3,7)|-|{2}", "(5,9)|-|{2}", "(3,1)|-|{2}", "(3,8)|-|{0,2}", "(5,10)|-|{0,2}", "(2,1)|-|{0,2}", "(1,8)|-|{0}", "(3,8)|-|{2}", "(5,10)|-|{2}", "(2,1)|-|{2}", "(3,9)|-|{0,2}", "(5,11)|-|{0,2}", "(1,1)|-|{0,2}", "(1,9)|-|{0}", "(3,9)|-|{2}", "(5,11)|-|{2}", "(1,1)|-|{2}", "(3,10)|-|{0,1,2}", "(5,12)|-|{0,2}", "(1,2)|-|{0,2}", "(1,10)|-|{0}", "(3,10)|-|{1,2}", "(5,12)|-|{2}", "(1,2)|-|{2}", "(3,11)|-|{0,1,2}", "(3,9)|-|{0,1,2}", "(5,13)|-|{0,2}", "(1,3)|-|{0,2}", "(1,11)|-|{0}", "(3,11)|-|{1,2}", "(3,9)|-|{1,2}", "(5,13)|-|{2}", "(1,3)|-|{2}", "(3,12)|-|{0,1,2}", "(3,8)|-|{0,1,2}", "(4,13)|-|{0,2}", "(1,4)|-|{0,2}", "(1,12)|-|{0}", "(3,12)|-|{1,2}", "(3,8)|-|{1,2}", "(4,13)|-|{2}", "(1,4)|-|{2}", "(3,13)|-|{0,1,2}", "(3,7)|-|{0,1,2}", "(3,13)|-|{0,2}", "(1,5)|-|{0,2}", "(1,13)|-|{0}", "(3,13)|-|{1,2}", "(3,7)|-|{1,2}", "(3,13)|-|{2}", "(1,5)|-|{2}", "(2,13)|-|{0,1,2}", "(4,13)|-|{0,1,2}", "(3,6)|-|{0,1,2}", "(2,13)|-|{0,2}", "(3,12)|-|{0,2}", "(1,6)|-|{0,2}", "(2,13)|-|{1,2}", "(4,13)|-|{1,2}", "(3,6)|-|{1,2}", "(2,13)|-|{2}", "(3,12)|-|{2}", "(1,6)|-|{2}", "(1,13)|-|{0,1,2}", "(5,13)|-|{0,1,2}", "(3,5)|-|{0,1,2}", "(1,13)|-|{0,2}", "(3,11)|-|{0,2}", "(1,7)|-|{0,2}", "(1,13)|-|{1,2}", "(5,13)|-|{1,2}", "(3,5)|-|{1,2}", "(1,13)|-|{2}", "(3,11)|-|{2}", "(1,7)|-|{2}", "(5,12)|-|{0,1,2}", "(4,5)|-|{0,1,2}", "(1,8)|-|{0,2}", "(5,12)|-|{1,2}", "(4,5)|-|{1,2}", "(1,8)|-|{2}", "(5,11)|-|{0,1,2}", "(5,5)|-|{0,1,2}", "(1,9)|-|{0,2}", "(5,11)|-|{1,2}", "(5,5)|-|{1,2}", "(1,9)|-|{2}", "(5,10)|-|{0,1,2}", "(5,6)|-|{0,1,2}", "(5,4)|-|{0,1,2}", "(1,10)|-|{0,2}", "(5,10)|-|{1,2}", "(5,6)|-|{1,2}", "(5,4)|-|{1,2}", "(1,10)|-|{2}", "(5,9)|-|{0,1,2}", "(5,7)|-|{0,1,2}", "(5,3)|-|{0,1,2}", "(1,11)|-|{0,2}", "(5,9)|-|{1,2}", "(5,7)|-|{1,2}", "(5,3)|-|{1,2}", "(1,11)|-|{2}", "(5,8)|-|{0,1,2}", "(4,3)|-|{0,1,2}", "(5,2)|-|{0,1,2}", "(1,12)|-|{0,2}", "(5,8)|-|{1,2}", "(4,3)|-|{1,2}", "(5,2)|-|{1,2}", "(1,12)|-|{2}", "(3,3)|-|{0,1,2}", "(5,1)|-|{0,1,2}", "(3,3)|-|{1,2}", "(5,1)|-|{1,2}", "(3,2)|-|{0,1,2}", "(4,1)|-|{0,1,2}", "(4,1)|-|{1,2}", "(3,1)|-|{0,1,2}", "(3,1)|-|{1,2}", "(2,1)|-|{0,1,2}", "(2,1)|-|{1,2}", "(1,1)|-|{0,1,2}", "(1,1)|-|{1,2}", "(1,2)|-|{0,1,2}", "(1,2)|-|{1,2}", "(1,3)|-|{0,1,2}", "(1,3)|-|{1,2}", "(1,4)|-|{0,1,2}", "(1,4)|-|{1,2}", "(1,5)|-|{0,1,2}", "(1,5)|-|{1,2}", "(1,6)|-|{0,1,2}", "(1,6)|-|{1,2}", "(1,7)|-|{0,1,2}", "(1,7)|-|{1,2}", "(1,8)|-|{0,1,2}", "(1,8)|-|{1,2}", "(1,9)|-|{0,1,2}", "(1,9)|-|{1,2}", "(1,10)|-|{0,1,2}", "(1,10)|-|{1,2}", "(1,11)|-|{0,1,2}", "(1,11)|-|{1,2}", "(1,12)|-|{0,1,2}", "(1,12)|-|{1,2}"]}, "armadilhas": [], "algoritmos": {"BFS": {"caminho": ["(1,1)|-|{}", "(1,2)|-|{}", "(1,3)|-|{}", "(1,4)|-|{}", "(1,5)|-|{}", "(1,6)|-|{}", "(1,7)|-|{}", "(1,8)|-|{}", "(1,9)|-|{}", "(1,10)|-|{}", "(1,11)|-|{}", "(1,12)|-|{}", "(1,13)|-|{}"], "status": "OK", "motivo": ""}, "DIJKSTRA": {"caminho": [], "status": "RECUSA", "motivo": "Dijkstra não aceita pesos negativos: arco (3,1)|-|{} -> (3,2)|-|{0} tem peso -4. Use Bellman-Ford."}, "BELLMAN_FORD": {"caminho": ["(1,1)|-|{}", "(2,1)|-|{}", "(3,1)|-|{}", "(3,2)|-|{0}", "(3,3)|-|{0}", "(4,3)|-|{0}", "(5,3)|-|{0}", "(5,4)|-|{0,2}", "(5,5)|-|{0,2}", "(4,5)|-|{0,2}", "(3,5)|-|{0,2}", "(3,6)|-|{0,2}", "(3,7)|-|{0,2}", "(3,8)|-|{0,2}", "(3,9)|-|{0,2}", "(3,10)|-|{0,1,2}", "(3,11)|-|{0,1,2}", "(3,12)|-|{0,1,2}", "(3,13)|-|{0,1,2}", "(2,13)|-|{0,1,2}", "(1,13)|-|{0,1,2}"], "status": "OK", "motivo": ""}}, "nota": ""}, {"id": "m06_fonte", "titulo": "m06 · fonte", "origem": "enunciado", "grade": ["#############", "#S.........G#", "#.#########.#", "#....*......#", "#############"], "camadas": {"-": ["(1,1)|-|{}", "(1,2)|-|{}", "(2,1)|-|{}", "(1,3)|-|{}", "(3,1)|-|{}", "(1,4)|-|{}", "(3,2)|-|{}", "(1,5)|-|{}", "(3,3)|-|{}", "(1,6)|-|{}", "(3,4)|-|{}", "(1,7)|-|{}", "(3,5)|-|{}", "(1,8)|-|{}", "(3,6)|-|{}", "(1,9)|-|{}", "(3,7)|-|{}", "(1,10)|-|{}", "(3,8)|-|{}", "(1,11)|-|{}", "(3,9)|-|{}", "(3,10)|-|{}", "(3,11)|-|{}", "(2,11)|-|{}"]}, "armadilhas": [], "algoritmos": {"BFS": {"caminho": ["(1,1)|-|{}", "(1,2)|-|{}", "(1,3)|-|{}", "(1,4)|-|{}", "(1,5)|-|{}", "(1,6)|-|{}", "(1,7)|-|{}", "(1,8)|-|{}", "(1,9)|-|{}", "(1,10)|-|{}", "(1,11)|-|{}"], "status": "OK", "motivo": ""}, "DIJKSTRA": {"caminho": [], "status": "RECUSA", "motivo": "Dijkstra não aceita pesos negativos: arco (3,4)|-|{} -> (3,5)|-|{} tem peso -2. Use Bellman-Ford."}, "BELLMAN_FORD": {"caminho": [], "status": "CICLO_NEGATIVO", "motivo": "Ciclo negativo de custo -1: (3,5)|-|{} → (3,6)|-|{} → (3,5)|-|{}"}}, "nota": ""}, {"id": "m07_impossivel", "titulo": "m07 · impossivel", "origem": "enunciado", "grade": ["#############", "#S....A....G#", "#.#####.#####", "#.....#A#...#", "#.....#a#...#", "#############"], "camadas": {"-": ["(1,1)|-|{}", "(1,2)|-|{}", "(2,1)|-|{}", "(1,3)|-|{}", "(3,1)|-|{}", "(1,4)|-|{}", "(3,2)|-|{}", "(4,1)|-|{}", "(1,5)|-|{}", "(3,3)|-|{}", "(4,2)|-|{}", "(3,4)|-|{}", "(4,3)|-|{}", "(3,5)|-|{}", "(4,4)|-|{}", "(4,5)|-|{}"]}, "armadilhas": ["(1,1)|-|{}", "(1,2)|-|{}", "(2,1)|-|{}", "(1,3)|-|{}", "(3,1)|-|{}", "(1,4)|-|{}", "(3,2)|-|{}", "(4,1)|-|{}", "(1,5)|-|{}", "(3,3)|-|{}", "(4,2)|-|{}", "(3,4)|-|{}", "(4,3)|-|{}", "(3,5)|-|{}", "(4,4)|-|{}", "(4,5)|-|{}"], "algoritmos": {"BFS": {"caminho": [], "status": "SEM_SOLUCAO", "motivo": ""}, "DIJKSTRA": {"caminho": [], "status": "SEM_SOLUCAO", "motivo": ""}, "BELLMAN_FORD": {"caminho": [], "status": "SEM_SOLUCAO", "motivo": ""}}, "nota": ""}, {"id": "m08_grande", "titulo": "m08 · grande", "origem": "enunciado", "grade": ["#######################################################################", "#S..#,....#.,.#...~...#.............#...#.....#....,#........,..,,..~.#", "###.#####.#.#,#.#.###.#,###.#######,#,#.#.#.#.#.#.#.#.###.###.#.###.#.#", "#.#,.,..#.#.#...,.#.#~#b#,..#d....#.#.#..,#.#.#.#...#.#...#.....#...#.#", "#.#####.#.#.#~#,#.#.#,###.#####.#.#.#.###.#.#.###.#.#.#.#.#####.#.#.#.#", "#...~.#.#...#,#...#.#...#.#..,#..,#.#c#.....~...#.#.#..~#,....,,..#,..#", "#.#####.#.#.#.#.###.###,#.#.#.#,#~#.#.#.#######.#.###,#.#.#.###,#####.#", "#...#...#.....#.#...#...#.#.#.....#.#..,#.....#.#.....~...#...#.....,.#", "#.#.#.#####.###.#,#.#.###.#.#####.#,#.###.#.#.#.#####.#.#.###.#.#.#.#.#", "#.#.#...#...~...#.#.#.~,..#..~#...#.#...#,..#.#....~#~.~,.......#...#.#", "#.#.###.#.#.#####.#.#######.#.#.#.#.#.#.#####~#####.#.#.#####.#.#.###.#", "#.#.....#..,#..............,....,.#,#,..~.,,#.....#.#...#..~..#..~..#.#", "###~#.#####.###.#####.###.#########.#.#####.###.#.#.#.#.#.#.###.#.#.###", "#.....#...#...#.,...#,....#~....#.B,#.#.....#...#.#.#...,.#...#...#...#", "#.#.#.#.#.###.#.#.#.###.#~#,###.#.###.#.#####.#.###,#,#.###.#.###.###,#", "#...#...#...#.#.......#.......#.#.#.....#.......#,..#~....#..,~~..#...#", "#.#.#.#.###.#.###.#~#.#.#####.#.#.#####.#.#.#.###.#########.###.#.#.#.#", "#.#,........#.,.#.#.........#.#.#.......#..,#.#..,#....,.....~,..~#...#", "#.#.#####.###.#.#.#.###.#.#.###.#####.#.#,#C###.#.#.###.#####.#####.#.#", "#.........#,...,#,#,~....~#.........#~..#.#.......#.....,........~#.#.#", "#.#.#.###.#.#,###.#.#.#.#.#.#.#.#.#.#####.###.###.#.#,#~###.#.#.#.###.#", "#.#..,....#.#.#...#~....,.....#.~.#...#...#.#...#.#,..#...#...#...#...#", "#.#.#.#######.#.#####.#.#.###.#~#.#.#.#.#.#.###.#.#.#.#.#.#.###.###.#.#", "#..,#..,#.....#...#~....#............~.~#..~..#.#.#.#.#.......#.#...#.#", "#.###.#.#.#######.#,#.###.#.#####.#.#####.#.#.#.#.###.#.#####.#.#.###.#", "#....~..#..,A...#...#...#.#.~,....,........~.,#...#.......#.#.........#", "###.###.#.###.#.###.#,#,#~#.#.#.###.#.#,###.#.#####.#####.#.#######.#.#", "#,...a#.#.#,..#..,#...........#.........#...#,..#...D.#~.....,#...#~..#", "#.###.#.###.#.###.###.#.#.#.#.#~#.#,#####.###.#.#####.#,#####.#.#.###.#", "#,..~.......#.....#..,#.....#............~....#.......#...~.....#..~.G#", "#######################################################################"], "camadas": {"-": ["(1,1)|-|{}", "(1,2)|-|{}", "(1,3)|-|{}", "(2,3)|-|{}", "(3,3)|-|{}", "(3,4)|-|{}", "(3,5)|-|{}", "(3,6)|-|{}", "(3,7)|-|{}", "(4,7)|-|{}", "(5,7)|-|{}", "(6,7)|-|{}", "(7,7)|-|{}", "(7,6)|-|{}", "(7,5)|-|{}", "(8,5)|-|{}", "(9,5)|-|{}", "(9,6)|-|{}", "(9,7)|-|{}", "(10,7)|-|{}", "(11,7)|-|{}", "(11,6)|-|{}", "(11,5)|-|{}", "(12,5)|-|{}", "(11,4)|-|{}", "(13,5)|-|{}", "(11,3)|-|{}", "(14,5)|-|{}", "(13,4)|-|{}", "(10,3)|-|{}", "(12,3)|-|{}", "(15,5)|-|{}", "(13,3)|-|{}", "(9,3)|-|{}", "(15,6)|-|{}", "(16,5)|-|{}", "(14,3)|-|{}", "(13,2)|-|{}", "(8,3)|-|{}", "(15,7)|-|{}", "(17,5)|-|{}", "(15,3)|-|{}", "(13,1)|-|{}", "(7,3)|-|{}", "(14,7)|-|{}", "(16,7)|-|{}", "(17,6)|-|{}", "(17,4)|-|{}", "(16,3)|-|{}", "(15,2)|-|{}", "(14,1)|-|{}", "(7,2)|-|{}", "(13,7)|-|{}", "(17,7)|-|{}", "(17,3)|-|{}", "(15,1)|-|{}", "(7,1)|-|{}", "(13,8)|-|{}", "(17,8)|-|{}", "(18,3)|-|{}", "(16,1)|-|{}", "(6,1)|-|{}", "(8,1)|-|{}", "(13,9)|-|{}", "(17,9)|-|{}", "(19,3)|-|{}", "(17,1)|-|{}", "(5,1)|-|{}", "(9,1)|-|{}", "(14,9)|-|{}", "(17,10)|-|{}", "(18,9)|-|{}", "(19,4)|-|{}", "(20,3)|-|{}", "(19,2)|-|{}", "(18,1)|-|{}", "(4,1)|-|{}", "(5,2)|-|{}", "(10,1)|-|{}", "(15,9)|-|{}", "(17,11)|-|{}", "(19,9)|-|{}", "(19,5)|-|{}", "(21,3)|-|{}", "(19,1)|-|{}", "(3,1)|-|{}", "(5,3)|-|{}", "(11,1)|-|{}", "(15,10)|-|{}", "(16,11)|-|{}", "(20,9)|-|{}", "(19,8)|-|{}", "(19,6)|-|{}", "(20,5)|-|{}", "(21,4)|-|{}", "(22,3)|-|{}", "(20,1)|-|{}", "(5,4)|-|{}", "(15,11)|-|{}", "(21,9)|-|{}", "(19,7)|-|{}", "(21,5)|-|{}", "(23,3)|-|{}", "(21,1)|-|{}", "(5,5)|-|{}", "(21,8)|-|{}", "(21,6)|-|{}", "(22,5)|-|{}", "(23,2)|-|{}", "(22,1)|-|{}", "(21,7)|-|{}", "(23,5)|-|{}", "(23,1)|-|{}", "(23,6)|-|{}", "(24,5)|-|{}", "(24,1)|-|{}", "(23,7)|-|{}", "(25,5)|-|{}", "(25,1)|-|{}", "(24,7)|-|{}", "(25,6)|-|{}", "(25,4)|-|{}", "(25,2)|-|{}", "(25,7)|-|{}", "(25,3)|-|{}", "(26,7)|-|{}", "(26,3)|-|{}", "(27,7)|-|{}", "(27,3)|-|{}", "(28,7)|-|{}", "(27,4)|-|{}", "(27,2)|-|{}", "(29,7)|-|{}", "(27,1)|-|{}", "(29,8)|-|{}", "(29,6)|-|{}", "(28,1)|-|{}", "(29,9)|-|{}", "(29,5)|-|{}", "(29,1)|-|{}", "(29,10)|-|{}", "(28,5)|-|{}", "(29,4)|-|{}", "(29,2)|-|{}", "(29,11)|-|{}", "(29,3)|-|{}", "(28,11)|-|{}", "(27,11)|-|{}", "(27,12)|-|{}", "(27,13)|-|{}", "(26,13)|-|{}", "(28,13)|-|{}", "(25,13)|-|{}", "(29,13)|-|{}", "(25,14)|-|{}", "(29,14)|-|{}", "(25,15)|-|{}", "(29,15)|-|{}", "(26,15)|-|{}", "(29,16)|-|{}", "(27,15)|-|{}", "(29,17)|-|{}", "(27,16)|-|{}", "(28,17)|-|{}", "(27,17)|-|{}"], "a": ["(27,5)|a|{}", "(28,5)|a|{}", "(27,4)|a|{}", "(29,5)|a|{}", "(27,3)|a|{}", "(29,6)|a|{}", "(29,4)|a|{}", "(26,3)|a|{}", "(27,2)|a|{}", "(29,7)|a|{}", "(29,3)|a|{}", "(25,3)|a|{}", "(27,1)|a|{}", "(28,7)|a|{}", "(29,8)|a|{}", "(29,2)|a|{}", "(25,4)|a|{}", "(25,2)|a|{}", "(28,1)|a|{}", "(27,7)|a|{}", "(29,9)|a|{}", "(29,1)|a|{}", "(25,5)|a|{}", "(25,1)|a|{}", "(26,7)|a|{}", "(29,10)|a|{}", "(24,5)|a|{}", "(25,6)|a|{}", "(24,1)|a|{}", "(25,7)|a|{}", "(29,11)|a|{}", "(23,5)|a|{}", "(23,1)|a|{}", "(24,7)|a|{}", "(28,11)|a|{}", "(22,5)|a|{}", "(23,6)|a|{}", "(22,1)|a|{}", "(23,2)|a|{}", "(23,7)|a|{}", "(27,11)|a|{}", "(21,5)|a|{}", "(21,1)|a|{}", "(23,3)|a|{}", "(27,12)|a|{}", "(20,5)|a|{}", "(21,6)|a|{}", "(21,4)|a|{}", "(20,1)|a|{}", "(22,3)|a|{}", "(27,13)|a|{}", "(19,5)|a|{}", "(21,7)|a|{}", "(21,3)|a|{}", "(19,1)|a|{}", "(26,13)|a|{}", "(28,13)|a|{}", "(19,6)|a|{}", "(19,4)|a|{}", "(21,8)|a|{}", "(20,3)|a|{}", "(18,1)|a|{}", "(19,2)|a|{}", "(25,13)|a|{}", "(29,13)|a|{}", "(19,7)|a|{}", "(19,3)|a|{}", "(21,9)|a|{}", "(17,1)|a|{}", "(25,14)|a|{}", "(25,12)|a|{}", "(29,14)|a|{}", "(19,8)|a|{}", "(18,3)|a|{}", "(20,9)|a|{}", "(16,1)|a|{}", "(25,15)|a|{}", "(25,11)|a|{}", "(29,15)|a|{}", "(19,9)|a|{}", "(17,3)|a|{}", "(15,1)|a|{}", "(26,15)|a|{}", "(25,10)|a|{}", "(29,16)|a|{}", "(18,9)|a|{}", "(16,3)|a|{}", "(17,4)|a|{}", "(14,1)|a|{}", "(15,2)|a|{}", "(27,15)|a|{}", "(25,9)|a|{}", "(29,17)|a|{}", "(17,9)|a|{}", "(15,3)|a|{}", "(17,5)|a|{}", "(13,1)|a|{}", "(27,16)|a|{}", "(24,9)|a|{}", "(26,9)|a|{}", "(28,17)|a|{}", "(17,10)|a|{}", "(17,8)|a|{}", "(14,3)|a|{}", "(16,5)|a|{}", "(17,6)|a|{}", "(13,2)|a|{}", "(27,17)|a|{}", "(23,9)|a|{}", "(27,9)|a|{}", "(17,11)|a|{}", "(17,7)|a|{}", "(13,3)|a|{}", "(15,5)|a|{}", "(23,10)|a|{}", "(16,11)|a|{}", "(16,7)|a|{}", "(12,3)|a|{}", "(13,4)|a|{}", "(14,5)|a|{}", "(15,6)|a|{}", "(23,11)|a|{}", "(15,11)|a|{}", "(15,7)|a|{}", "(11,3)|a|{}", "(13,5)|a|{}", "(23,12)|a|{}", "(15,10)|a|{}", "(14,7)|a|{}", "(10,3)|a|{}", "(11,4)|a|{}", "(12,5)|a|{}", "(23,13)|a|{}", "(15,9)|a|{}", "(13,7)|a|{}", "(9,3)|a|{}", "(11,5)|a|{}", "(22,13)|a|{}", "(14,9)|a|{}", "(13,8)|a|{}", "(8,3)|a|{}", "(11,6)|a|{}", "(21,13)|a|{}", "(13,9)|a|{}", "(7,3)|a|{}", "(11,7)|a|{}", "(20,13)|a|{}", "(7,2)|a|{}", "(10,7)|a|{}", "(19,13)|a|{}", "(7,1)|a|{}", "(9,7)|a|{}", "(18,13)|a|{}", "(19,14)|a|{}", "(19,12)|a|{}", "(6,1)|a|{}", "(8,1)|a|{}", "(9,6)|a|{}", "(17,13)|a|{}", "(19,15)|a|{}", "(19,11)|a|{}", "(5,1)|a|{}", "(9,1)|a|{}", "(9,5)|a|{}", "(16,13)|a|{}", "(17,14)|a|{}", "(18,15)|a|{}", "(20,11)|a|{}", "(4,1)|a|{}", "(5,2)|a|{}", "(10,1)|a|{}", "(8,5)|a|{}", "(15,13)|a|{}", "(17,15)|a|{}", "(21,11)|a|{}", "(3,1)|a|{}", "(5,3)|a|{}", "(11,1)|a|{}", "(7,5)|a|{}", "(14,13)|a|{}", "(5,4)|a|{}", "(7,6)|a|{}", "(13,13)|a|{}", "(5,5)|a|{}", "(7,7)|a|{}", "(13,12)|a|{}", "(6,7)|a|{}", "(13,11)|a|{}", "(5,7)|a|{}", "(12,11)|a|{}", "(4,7)|a|{}", "(11,11)|a|{}", "(3,7)|a|{}", "(10,11)|a|{}", "(11,10)|a|{}", "(3,6)|a|{}", "(9,11)|a|{}", "(11,9)|a|{}", "(3,5)|a|{}", "(8,11)|a|{}", "(9,12)|a|{}", "(9,10)|a|{}", "(10,9)|a|{}", "(3,4)|a|{}", "(7,11)|a|{}", "(9,13)|a|{}", "(9,9)|a|{}", "(3,3)|a|{}", "(6,11)|a|{}", "(7,12)|a|{}", "(7,10)|a|{}", "(9,14)|a|{}", "(2,3)|a|{}", "(5,11)|a|{}", "(7,13)|a|{}", "(7,9)|a|{}", "(9,15)|a|{}", "(1,3)|a|{}", "(4,11)|a|{}", "(5,10)|a|{}", "(6,13)|a|{}", "(6,9)|a|{}", "(8,15)|a|{}", "(1,2)|a|{}", "(3,11)|a|{}", "(5,9)|a|{}", "(5,13)|a|{}", "(7,15)|a|{}", "(1,1)|a|{}", "(2,11)|a|{}", "(4,9)|a|{}", "(4,13)|a|{}", "(6,15)|a|{}", "(1,11)|a|{}", "(3,9)|a|{}", "(3,13)|a|{}", "(5,15)|a|{}", "(1,12)|a|{}", "(2,9)|a|{}", "(2,13)|a|{}", "(3,14)|a|{}", "(4,15)|a|{}", "(5,16)|a|{}", "(1,13)|a|{}", "(1,9)|a|{}", "(3,15)|a|{}", "(5,17)|a|{}", "(1,8)|a|{}", "(2,15)|a|{}", "(3,16)|a|{}", "(4,17)|a|{}", "(1,7)|a|{}", "(1,15)|a|{}", "(3,17)|a|{}", "(1,6)|a|{}", "(1,16)|a|{}", "(2,17)|a|{}", "(1,5)|a|{}", "(1,17)|a|{}", "(1,18)|a|{}", "(1,19)|a|{}", "(1,20)|a|{}", "(1,21)|a|{}", "(2,21)|a|{}", "(3,21)|a|{}", "(4,21)|a|{}", "(5,21)|a|{}", "(5,22)|a|{}", "(5,23)|a|{}", "(6,23)|a|{}", "(7,23)|a|{}", "(7,22)|a|{}", "(7,21)|a|{}", "(8,21)|a|{}", "(9,21)|a|{}", "(9,22)|a|{}", "(9,23)|a|{}", "(9,24)|a|{}", "(9,25)|a|{}", "(8,25)|a|{}", "(7,25)|a|{}", "(6,25)|a|{}", "(5,25)|a|{}", "(4,25)|a|{}", "(3,25)|a|{}", "(3,26)|a|{}", "(3,27)|a|{}", "(2,27)|a|{}", "(1,27)|a|{}", "(1,28)|a|{}", "(1,26)|a|{}", "(1,29)|a|{}", "(1,25)|a|{}", "(1,30)|a|{}", "(1,24)|a|{}", "(1,31)|a|{}", "(1,23)|a|{}", "(1,32)|a|{}", "(2,23)|a|{}", "(1,33)|a|{}", "(1,34)|a|{}", "(1,35)|a|{}", "(2,35)|a|{}", "(3,35)|a|{}", "(4,35)|a|{}", "(5,35)|a|{}", "(6,35)|a|{}", "(7,35)|a|{}", "(8,35)|a|{}", "(9,35)|a|{}", "(10,35)|a|{}", "(11,35)|a|{}", "(12,35)|a|{}", "(13,35)|a|{}"], "ab": ["(3,23)|ab|{}", "(2,23)|ab|{}", "(1,23)|ab|{}", "(1,24)|ab|{}", "(1,25)|ab|{}", "(1,26)|ab|{}", "(1,27)|ab|{}", "(1,28)|ab|{}", "(2,27)|ab|{}", "(1,29)|ab|{}", "(3,27)|ab|{}", "(1,30)|ab|{}", "(3,26)|ab|{}", "(1,31)|ab|{}", "(3,25)|ab|{}", "(1,32)|ab|{}", "(4,25)|ab|{}", "(1,33)|ab|{}", "(5,25)|ab|{}", "(1,34)|ab|{}", "(6,25)|ab|{}", "(1,35)|ab|{}", "(7,25)|ab|{}", "(2,35)|ab|{}", "(8,25)|ab|{}", "(3,35)|ab|{}", "(9,25)|ab|{}", "(4,35)|ab|{}", "(9,24)|ab|{}", "(5,35)|ab|{}", "(9,23)|ab|{}", "(6,35)|ab|{}", "(9,22)|ab|{}", "(7,35)|ab|{}", "(9,21)|ab|{}", "(8,35)|ab|{}", "(8,21)|ab|{}", "(9,35)|ab|{}", "(7,21)|ab|{}", "(10,35)|ab|{}", "(7,22)|ab|{}", "(11,35)|ab|{}", "(7,23)|ab|{}", "(12,35)|ab|{}", "(6,23)|ab|{}", "(13,35)|ab|{}", "(5,23)|ab|{}", "(13,34)|ab|{}", "(5,22)|ab|{}", "(13,33)|ab|{}", "(5,21)|ab|{}", "(14,33)|ab|{}", "(4,21)|ab|{}", "(15,33)|ab|{}", "(3,21)|ab|{}", "(16,33)|ab|{}", "(2,21)|ab|{}", "(17,33)|ab|{}", "(1,21)|ab|{}", "(17,34)|ab|{}", "(1,20)|ab|{}", "(17,35)|ab|{}", "(1,19)|ab|{}", "(17,36)|ab|{}", "(1,18)|ab|{}", "(17,37)|ab|{}", "(1,17)|ab|{}", "(17,38)|ab|{}", "(18,37)|ab|{}", "(2,17)|ab|{}", "(1,16)|ab|{}", "(17,39)|ab|{}", "(19,37)|ab|{}", "(3,17)|ab|{}", "(1,15)|ab|{}", "(16,39)|ab|{}", "(18,39)|ab|{}", "(19,38)|ab|{}", "(4,17)|ab|{}", "(3,16)|ab|{}", "(2,15)|ab|{}", "(15,39)|ab|{}", "(19,39)|ab|{}", "(5,17)|ab|{}", "(3,15)|ab|{}", "(14,39)|ab|{}", "(15,38)|ab|{}", "(5,16)|ab|{}", "(4,15)|ab|{}", "(3,14)|ab|{}", "(13,39)|ab|{}", "(15,37)|ab|{}", "(5,15)|ab|{}", "(3,13)|ab|{}", "(13,40)|ab|{}", "(14,37)|ab|{}", "(15,36)|ab|{}", "(6,15)|ab|{}", "(2,13)|ab|{}", "(4,13)|ab|{}", "(13,41)|ab|{}", "(13,37)|ab|{}", "(15,35)|ab|{}", "(7,15)|ab|{}", "(1,13)|ab|{}", "(5,13)|ab|{}", "(13,42)|ab|{}", "(12,37)|ab|{}", "(8,15)|ab|{}", "(1,12)|ab|{}", "(6,13)|ab|{}", "(13,43)|ab|{}", "(11,37)|ab|{}", "(9,15)|ab|{}", "(1,11)|ab|{}", "(7,13)|ab|{}", "(12,43)|ab|{}", "(10,37)|ab|{}", "(11,38)|ab|{}", "(9,14)|ab|{}", "(2,11)|ab|{}", "(7,12)|ab|{}", "(11,43)|ab|{}", "(9,37)|ab|{}", "(11,39)|ab|{}", "(9,13)|ab|{}", "(3,11)|ab|{}", "(7,11)|ab|{}", "(11,42)|ab|{}", "(8,37)|ab|{}", "(9,38)|ab|{}", "(10,39)|ab|{}", "(11,40)|ab|{}", "(9,12)|ab|{}", "(4,11)|ab|{}", "(6,11)|ab|{}", "(8,11)|ab|{}", "(7,10)|ab|{}", "(11,41)|ab|{}", "(7,37)|ab|{}", "(9,39)|ab|{}", "(9,11)|ab|{}", "(5,11)|ab|{}", "(7,9)|ab|{}", "(6,37)|ab|{}", "(7,38)|ab|{}", "(10,11)|ab|{}", "(9,10)|ab|{}", "(5,10)|ab|{}", "(6,9)|ab|{}", "(7,39)|ab|{}", "(11,11)|ab|{}", "(9,9)|ab|{}", "(5,9)|ab|{}", "(6,39)|ab|{}", "(12,11)|ab|{}", "(11,10)|ab|{}", "(10,9)|ab|{}", "(4,9)|ab|{}", "(5,39)|ab|{}", "(13,11)|ab|{}", "(11,9)|ab|{}", "(3,9)|ab|{}", "(5,40)|ab|{}", "(13,12)|ab|{}", "(2,9)|ab|{}", "(5,41)|ab|{}", "(13,13)|ab|{}", "(1,9)|ab|{}", "(4,41)|ab|{}", "(5,42)|ab|{}", "(14,13)|ab|{}", "(1,8)|ab|{}", "(3,41)|ab|{}", "(5,43)|ab|{}", "(15,13)|ab|{}", "(1,7)|ab|{}", "(2,41)|ab|{}", "(3,40)|ab|{}", "(4,43)|ab|{}", "(5,44)|ab|{}", "(16,13)|ab|{}", "(1,6)|ab|{}", "(1,41)|ab|{}", "(3,39)|ab|{}", "(3,43)|ab|{}", "(5,45)|ab|{}", "(17,13)|ab|{}", "(1,5)|ab|{}", "(1,42)|ab|{}", "(2,39)|ab|{}", "(2,43)|ab|{}", "(4,45)|ab|{}", "(5,46)|ab|{}", "(17,14)|ab|{}", "(18,13)|ab|{}", "(1,43)|ab|{}", "(1,39)|ab|{}", "(3,45)|ab|{}", "(5,47)|ab|{}", "(17,15)|ab|{}", "(19,13)|ab|{}", "(1,44)|ab|{}", "(1,38)|ab|{}", "(2,45)|ab|{}", "(6,47)|ab|{}", "(18,15)|ab|{}", "(19,14)|ab|{}", "(20,13)|ab|{}", "(19,12)|ab|{}", "(1,45)|ab|{}", "(1,37)|ab|{}", "(7,47)|ab|{}", "(19,15)|ab|{}", "(21,13)|ab|{}", "(19,11)|ab|{}", "(2,37)|ab|{}", "(8,47)|ab|{}", "(22,13)|ab|{}", "(20,11)|ab|{}", "(3,37)|ab|{}", "(9,47)|ab|{}", "(23,13)|ab|{}", "(21,11)|ab|{}", "(4,37)|ab|{}", "(9,48)|ab|{}", "(23,12)|ab|{}", "(9,49)|ab|{}", "(23,11)|ab|{}", "(9,50)|ab|{}", "(23,10)|ab|{}", "(9,51)|ab|{}", "(23,9)|ab|{}", "(10,51)|ab|{}", "(24,9)|ab|{}", "(11,51)|ab|{}", "(25,9)|ab|{}", "(12,51)|ab|{}", "(25,10)|ab|{}", "(26,9)|ab|{}", "(13,51)|ab|{}", "(25,11)|ab|{}", "(27,9)|ab|{}", "(14,51)|ab|{}", "(25,12)|ab|{}", "(15,51)|ab|{}", "(25,13)|ab|{}", "(15,50)|ab|{}", "(25,14)|ab|{}", "(26,13)|ab|{}", "(15,49)|ab|{}", "(25,15)|ab|{}", "(27,13)|ab|{}", "(16,49)|ab|{}", "(26,15)|ab|{}", "(28,13)|ab|{}", "(27,12)|ab|{}", "(17,49)|ab|{}", "(27,15)|ab|{}", "(29,13)|ab|{}", "(27,11)|ab|{}", "(18,49)|ab|{}", "(17,48)|ab|{}", "(27,16)|ab|{}", "(29,14)|ab|{}", "(28,11)|ab|{}", "(19,49)|ab|{}", "(17,47)|ab|{}", "(27,17)|ab|{}", "(29,15)|ab|{}", "(29,11)|ab|{}", "(20,49)|ab|{}", "(19,48)|ab|{}", "(18,47)|ab|{}", "(28,17)|ab|{}", "(29,16)|ab|{}", "(29,10)|ab|{}", "(21,49)|ab|{}", "(19,47)|ab|{}", "(29,17)|ab|{}", "(29,9)|ab|{}", "(22,49)|ab|{}", "(19,46)|ab|{}", "(29,8)|ab|{}", "(23,49)|ab|{}", "(19,45)|ab|{}", "(29,7)|ab|{}", "(24,49)|ab|{}", "(20,45)|ab|{}", "(19,44)|ab|{}", "(28,7)|ab|{}", "(29,6)|ab|{}", "(25,49)|ab|{}", "(21,45)|ab|{}", "(19,43)|ab|{}", "(27,7)|ab|{}", "(29,5)|ab|{}", "(25,48)|ab|{}", "(21,46)|ab|{}", "(26,7)|ab|{}", "(28,5)|ab|{}", "(29,4)|ab|{}", "(25,47)|ab|{}", "(21,47)|ab|{}", "(25,7)|ab|{}", "(27,5)|ab|{}", "(29,3)|ab|{}", "(24,47)|ab|{}", "(22,47)|ab|{}", "(24,7)|ab|{}", "(25,6)|ab|{}", "(27,4)|ab|{}", "(29,2)|ab|{}", "(23,47)|ab|{}", "(23,7)|ab|{}", "(25,5)|ab|{}", "(27,3)|ab|{}", "(29,1)|ab|{}", "(23,6)|ab|{}", "(24,5)|ab|{}", "(25,4)|ab|{}", "(26,3)|ab|{}", "(27,2)|ab|{}", "(28,1)|ab|{}", "(23,5)|ab|{}", "(25,3)|ab|{}", "(27,1)|ab|{}", "(22,5)|ab|{}", "(25,2)|ab|{}", "(21,5)|ab|{}", "(25,1)|ab|{}", "(20,5)|ab|{}", "(21,6)|ab|{}", "(21,4)|ab|{}", "(24,1)|ab|{}", "(19,5)|ab|{}", "(21,7)|ab|{}", "(21,3)|ab|{}", "(23,1)|ab|{}", "(19,6)|ab|{}", "(19,4)|ab|{}", "(21,8)|ab|{}", "(20,3)|ab|{}", "(22,3)|ab|{}", "(22,1)|ab|{}", "(23,2)|ab|{}", "(19,7)|ab|{}", "(19,3)|ab|{}", "(21,9)|ab|{}", "(23,3)|ab|{}", "(21,1)|ab|{}", "(19,8)|ab|{}", "(18,3)|ab|{}", "(19,2)|ab|{}", "(20,9)|ab|{}", "(20,1)|ab|{}", "(19,9)|ab|{}", "(17,3)|ab|{}", "(19,1)|ab|{}", "(18,9)|ab|{}", "(16,3)|ab|{}", "(17,4)|ab|{}", "(18,1)|ab|{}", "(17,9)|ab|{}", "(15,3)|ab|{}", "(17,5)|ab|{}", "(17,1)|ab|{}", "(17,10)|ab|{}", "(17,8)|ab|{}", "(14,3)|ab|{}", "(15,2)|ab|{}", "(16,5)|ab|{}", "(17,6)|ab|{}", "(16,1)|ab|{}", "(17,11)|ab|{}", "(17,7)|ab|{}", "(13,3)|ab|{}", "(15,1)|ab|{}", "(15,5)|ab|{}", "(16,11)|ab|{}", "(16,7)|ab|{}", "(12,3)|ab|{}", "(13,4)|ab|{}", "(13,2)|ab|{}", "(14,1)|ab|{}", "(14,5)|ab|{}", "(15,6)|ab|{}", "(15,11)|ab|{}", "(15,7)|ab|{}", "(11,3)|ab|{}", "(13,5)|ab|{}", "(13,1)|ab|{}", "(15,10)|ab|{}", "(14,7)|ab|{}", "(10,3)|ab|{}", "(11,4)|ab|{}", "(12,5)|ab|{}", "(15,9)|ab|{}", "(13,7)|ab|{}", "(9,3)|ab|{}", "(11,5)|ab|{}", "(14,9)|ab|{}", "(13,8)|ab|{}", "(8,3)|ab|{}", "(11,6)|ab|{}", "(13,9)|ab|{}", "(7,3)|ab|{}", "(11,7)|ab|{}", "(7,2)|ab|{}", "(10,7)|ab|{}", "(7,1)|ab|{}", "(9,7)|ab|{}", "(6,1)|ab|{}", "(8,1)|ab|{}", "(9,6)|ab|{}", "(5,1)|ab|{}", "(9,1)|ab|{}", "(9,5)|ab|{}", "(4,1)|ab|{}", "(5,2)|ab|{}", "(10,1)|ab|{}", "(8,5)|ab|{}", "(3,1)|ab|{}", "(5,3)|ab|{}", "(11,1)|ab|{}", "(7,5)|ab|{}", "(5,4)|ab|{}", "(7,6)|ab|{}", "(5,5)|ab|{}", "(7,7)|ab|{}", "(6,7)|ab|{}", "(5,7)|ab|{}", "(4,7)|ab|{}", "(3,7)|ab|{}", "(3,6)|ab|{}", "(3,5)|ab|{}", "(3,4)|ab|{}", "(3,3)|ab|{}", "(2,3)|ab|{}", "(1,3)|ab|{}", "(1,2)|ab|{}", "(1,1)|ab|{}"], "abc": ["(5,37)|abc|{}", "(4,37)|abc|{}", "(6,37)|abc|{}", "(3,37)|abc|{}", "(7,37)|abc|{}", "(2,37)|abc|{}", "(7,38)|abc|{}", "(8,37)|abc|{}", "(1,37)|abc|{}", "(7,39)|abc|{}", "(9,37)|abc|{}", "(1,38)|abc|{}", "(6,39)|abc|{}", "(9,38)|abc|{}", "(10,37)|abc|{}", "(1,39)|abc|{}", "(5,39)|abc|{}", "(9,39)|abc|{}", "(11,37)|abc|{}", "(2,39)|abc|{}", "(5,40)|abc|{}", "(10,39)|abc|{}", "(11,38)|abc|{}", "(12,37)|abc|{}", "(3,39)|abc|{}", "(5,41)|abc|{}", "(11,39)|abc|{}", "(13,37)|abc|{}", "(3,40)|abc|{}", "(4,41)|abc|{}", "(5,42)|abc|{}", "(11,40)|abc|{}", "(14,37)|abc|{}", "(3,41)|abc|{}", "(5,43)|abc|{}", "(11,41)|abc|{}", "(15,37)|abc|{}", "(2,41)|abc|{}", "(4,43)|abc|{}", "(5,44)|abc|{}", "(11,42)|abc|{}", "(15,38)|abc|{}", "(15,36)|abc|{}", "(1,41)|abc|{}", "(3,43)|abc|{}", "(5,45)|abc|{}", "(11,43)|abc|{}", "(15,39)|abc|{}", "(15,35)|abc|{}", "(1,42)|abc|{}", "(2,43)|abc|{}", "(4,45)|abc|{}", "(5,46)|abc|{}", "(12,43)|abc|{}", "(14,39)|abc|{}", "(16,39)|abc|{}", "(1,43)|abc|{}", "(3,45)|abc|{}", "(5,47)|abc|{}", "(13,43)|abc|{}", "(13,39)|abc|{}", "(17,39)|abc|{}", "(1,44)|abc|{}", "(2,45)|abc|{}", "(6,47)|abc|{}", "(13,42)|abc|{}", "(13,40)|abc|{}", "(18,39)|abc|{}", "(17,38)|abc|{}", "(1,45)|abc|{}", "(7,47)|abc|{}", "(13,41)|abc|{}", "(19,39)|abc|{}", "(17,37)|abc|{}", "(8,47)|abc|{}", "(19,38)|abc|{}", "(18,37)|abc|{}", "(17,36)|abc|{}", "(9,47)|abc|{}", "(19,37)|abc|{}", "(17,35)|abc|{}", "(9,48)|abc|{}", "(17,34)|abc|{}", "(9,49)|abc|{}", "(17,33)|abc|{}", "(9,50)|abc|{}", "(16,33)|abc|{}", "(9,51)|abc|{}", "(15,33)|abc|{}", "(10,51)|abc|{}", "(14,33)|abc|{}", "(11,51)|abc|{}", "(13,33)|abc|{}", "(12,51)|abc|{}", "(13,34)|abc|{}", "(13,51)|abc|{}", "(13,35)|abc|{}", "(14,51)|abc|{}", "(12,35)|abc|{}", "(15,51)|abc|{}", "(11,35)|abc|{}", "(15,50)|abc|{}", "(10,35)|abc|{}", "(15,49)|abc|{}", "(9,35)|abc|{}", "(16,49)|abc|{}", "(8,35)|abc|{}", "(17,49)|abc|{}", "(7,35)|abc|{}", "(18,49)|abc|{}", "(17,48)|abc|{}", "(6,35)|abc|{}", "(19,49)|abc|{}", "(17,47)|abc|{}", "(5,35)|abc|{}", "(20,49)|abc|{}", "(19,48)|abc|{}", "(18,47)|abc|{}", "(4,35)|abc|{}", "(21,49)|abc|{}", "(19,47)|abc|{}", "(3,35)|abc|{}", "(22,49)|abc|{}", "(19,46)|abc|{}", "(2,35)|abc|{}", "(23,49)|abc|{}", "(19,45)|abc|{}", "(1,35)|abc|{}", "(24,49)|abc|{}", "(20,45)|abc|{}", "(19,44)|abc|{}", "(1,34)|abc|{}", "(25,49)|abc|{}", "(21,45)|abc|{}", "(19,43)|abc|{}", "(1,33)|abc|{}", "(25,48)|abc|{}", "(21,46)|abc|{}", "(18,43)|abc|{}", "(1,32)|abc|{}", "(25,47)|abc|{}", "(21,47)|abc|{}", "(17,43)|abc|{}", "(1,31)|abc|{}", "(24,47)|abc|{}", "(22,47)|abc|{}", "(16,43)|abc|{}", "(17,42)|abc|{}", "(1,30)|abc|{}", "(23,47)|abc|{}", "(15,43)|abc|{}", "(17,41)|abc|{}", "(1,29)|abc|{}", "(15,44)|abc|{}", "(15,42)|abc|{}", "(16,41)|abc|{}", "(18,41)|abc|{}", "(1,28)|abc|{}", "(15,45)|abc|{}", "(15,41)|abc|{}", "(19,41)|abc|{}", "(1,27)|abc|{}", "(14,45)|abc|{}", "(15,46)|abc|{}", "(16,45)|abc|{}", "(20,41)|abc|{}", "(2,27)|abc|{}", "(1,26)|abc|{}", "(13,45)|abc|{}", "(15,47)|abc|{}", "(17,45)|abc|{}", "(21,41)|abc|{}", "(3,27)|abc|{}", "(1,25)|abc|{}", "(13,46)|abc|{}", "(14,47)|abc|{}", "(22,41)|abc|{}", "(21,40)|abc|{}", "(3,26)|abc|{}", "(1,24)|abc|{}", "(13,47)|abc|{}", "(23,41)|abc|{}", "(21,39)|abc|{}", "(3,25)|abc|{}", "(1,23)|abc|{}", "(12,47)|abc|{}", "(23,42)|abc|{}", "(24,41)|abc|{}", "(22,39)|abc|{}", "(4,25)|abc|{}", "(2,23)|abc|{}", "(11,47)|abc|{}", "(23,43)|abc|{}", "(25,41)|abc|{}", "(23,39)|abc|{}", "(5,25)|abc|{}", "(3,23)|abc|{}", "(11,48)|abc|{}", "(11,46)|abc|{}", "(22,43)|abc|{}", "(23,44)|abc|{}", "(24,43)|abc|{}", "(25,42)|abc|{}", "(25,40)|abc|{}", "(23,38)|abc|{}", "(6,25)|abc|{}", "(11,49)|abc|{}", "(11,45)|abc|{}", "(21,43)|abc|{}", "(23,45)|abc|{}", "(25,43)|abc|{}", "(25,39)|abc|{}", "(23,37)|abc|{}", "(7,25)|abc|{}", "(12,49)|abc|{}", "(10,45)|abc|{}", "(24,45)|abc|{}", "(25,44)|abc|{}", "(26,43)|abc|{}", "(26,39)|abc|{}", "(25,38)|abc|{}", "(22,37)|abc|{}", "(23,36)|abc|{}", "(8,25)|abc|{}", "(13,49)|abc|{}", "(9,45)|abc|{}", "(25,45)|abc|{}", "(27,43)|abc|{}", "(27,39)|abc|{}", "(25,37)|abc|{}", "(21,37)|abc|{}", "(23,35)|abc|{}", "(9,25)|abc|{}", "(8,45)|abc|{}", "(26,45)|abc|{}", "(27,42)|abc|{}", "(27,38)|abc|{}", "(26,37)|abc|{}", "(25,36)|abc|{}", "(21,36)|abc|{}", "(22,35)|abc|{}", "(24,35)|abc|{}", "(23,34)|abc|{}", "(9,24)|abc|{}", "(7,45)|abc|{}", "(27,45)|abc|{}", "(27,41)|abc|{}", "(27,37)|abc|{}", "(25,35)|abc|{}", "(21,35)|abc|{}", "(23,33)|abc|{}", "(9,23)|abc|{}", "(7,44)|abc|{}", "(27,46)|abc|{}", "(28,45)|abc|{}", "(28,41)|abc|{}", "(27,36)|abc|{}", "(26,35)|abc|{}", "(25,34)|abc|{}", "(20,35)|abc|{}", "(22,33)|abc|{}", "(24,33)|abc|{}", "(23,32)|abc|{}", "(9,22)|abc|{}", "(7,43)|abc|{}", "(27,47)|abc|{}", "(29,45)|abc|{}", "(29,41)|abc|{}", "(27,35)|abc|{}", "(25,33)|abc|{}", "(19,35)|abc|{}", "(21,33)|abc|{}", "(23,31)|abc|{}", "(9,21)|abc|{}", "(8,43)|abc|{}", "(7,42)|abc|{}", "(28,47)|abc|{}", "(29,44)|abc|{}", "(29,42)|abc|{}", "(29,40)|abc|{}", "(28,35)|abc|{}", "(27,34)|abc|{}", "(25,32)|abc|{}", "(19,34)|abc|{}", "(20,33)|abc|{}", "(21,32)|abc|{}", "(22,31)|abc|{}", "(23,30)|abc|{}", "(8,21)|abc|{}", "(9,43)|abc|{}", "(7,41)|abc|{}", "(29,47)|abc|{}", "(29,43)|abc|{}", "(29,39)|abc|{}", "(29,35)|abc|{}", "(27,33)|abc|{}", "(25,31)|abc|{}", "(19,33)|abc|{}", "(21,31)|abc|{}", "(23,29)|abc|{}", "(7,21)|abc|{}", "(9,42)|abc|{}", "(8,41)|abc|{}", "(29,48)|abc|{}", "(29,38)|abc|{}", "(29,36)|abc|{}", "(29,34)|abc|{}", "(28,33)|abc|{}", "(27,32)|abc|{}", "(26,31)|abc|{}", "(25,30)|abc|{}", "(19,32)|abc|{}", "(20,31)|abc|{}", "(22,29)|abc|{}", "(23,28)|abc|{}", "(7,22)|abc|{}", "(9,41)|abc|{}", "(29,49)|abc|{}", "(29,37)|abc|{}", "(29,33)|abc|{}", "(27,31)|abc|{}", "(25,29)|abc|{}", "(19,31)|abc|{}", "(21,29)|abc|{}", "(23,27)|abc|{}", "(7,23)|abc|{}", "(29,50)|abc|{}", "(29,32)|abc|{}", "(28,31)|abc|{}", "(26,29)|abc|{}", "(25,28)|abc|{}", "(18,31)|abc|{}", "(19,30)|abc|{}", "(20,29)|abc|{}", "(21,28)|abc|{}", "(24,27)|abc|{}", "(23,26)|abc|{}", "(6,23)|abc|{}", "(29,51)|abc|{}", "(29,31)|abc|{}", "(27,29)|abc|{}", "(25,27)|abc|{}", "(17,31)|abc|{}", "(19,29)|abc|{}", "(21,27)|abc|{}", "(23,25)|abc|{}", "(5,23)|abc|{}", "(29,52)|abc|{}", "(29,30)|abc|{}", "(28,29)|abc|{}", "(27,28)|abc|{}", "(26,27)|abc|{}", "(16,31)|abc|{}", "(19,28)|abc|{}", "(20,27)|abc|{}", "(21,26)|abc|{}", "(22,25)|abc|{}", "(24,25)|abc|{}", "(5,22)|abc|{}", "(29,53)|abc|{}", "(29,29)|abc|{}", "(27,27)|abc|{}", "(15,31)|abc|{}", "(19,27)|abc|{}", "(21,25)|abc|{}", "(25,25)|abc|{}", "(5,21)|abc|{}", "(28,53)|abc|{}", "(28,27)|abc|{}", "(27,26)|abc|{}", "(14,31)|abc|{}", "(18,27)|abc|{}", "(20,25)|abc|{}", "(21,24)|abc|{}", "(26,25)|abc|{}", "(4,21)|abc|{}", "(27,53)|abc|{}", "(29,27)|abc|{}", "(27,25)|abc|{}", "(13,31)|abc|{}", "(17,27)|abc|{}", "(19,25)|abc|{}", "(21,23)|abc|{}", "(3,21)|abc|{}", "(29,26)|abc|{}", "(28,25)|abc|{}", "(27,24)|abc|{}", "(13,30)|abc|{}", "(17,26)|abc|{}", "(18,25)|abc|{}", "(19,24)|abc|{}", "(20,23)|abc|{}", "(22,23)|abc|{}", "(21,22)|abc|{}", "(2,21)|abc|{}", "(29,25)|abc|{}", "(27,23)|abc|{}", "(13,29)|abc|{}", "(17,25)|abc|{}", "(19,23)|abc|{}", "(23,23)|abc|{}", "(21,21)|abc|{}", "(1,21)|abc|{}", "(29,24)|abc|{}", "(26,23)|abc|{}", "(28,23)|abc|{}", "(27,22)|abc|{}", "(13,28)|abc|{}", "(17,24)|abc|{}", "(18,23)|abc|{}", "(19,22)|abc|{}", "(23,22)|abc|{}", "(20,21)|abc|{}", "(22,21)|abc|{}", "(21,20)|abc|{}", "(1,20)|abc|{}", "(29,23)|abc|{}", "(25,23)|abc|{}", "(27,21)|abc|{}", "(13,27)|abc|{}", "(17,23)|abc|{}", "(19,21)|abc|{}", "(23,21)|abc|{}", "(21,19)|abc|{}", "(1,19)|abc|{}", "(25,22)|abc|{}", "(26,21)|abc|{}", "(28,21)|abc|{}", "(27,20)|abc|{}", "(14,27)|abc|{}", "(16,23)|abc|{}", "(17,22)|abc|{}", "(19,20)|abc|{}", "(24,21)|abc|{}", "(23,20)|abc|{}", "(20,19)|abc|{}", "(1,18)|abc|{}", "(25,21)|abc|{}", "(29,21)|abc|{}", "(27,19)|abc|{}", "(15,27)|abc|{}", "(15,23)|abc|{}", "(17,21)|abc|{}", "(19,19)|abc|{}", "(23,19)|abc|{}", "(1,17)|abc|{}", "(29,20)|abc|{}", "(26,19)|abc|{}", "(15,28)|abc|{}", "(15,26)|abc|{}", "(14,23)|abc|{}", "(15,24)|abc|{}", "(16,21)|abc|{}", "(17,20)|abc|{}", "(18,19)|abc|{}", "(24,19)|abc|{}", "(2,17)|abc|{}", "(1,16)|abc|{}", "(29,19)|abc|{}", "(25,19)|abc|{}", "(15,29)|abc|{}", "(15,25)|abc|{}", "(13,23)|abc|{}", "(15,21)|abc|{}", "(17,19)|abc|{}", "(3,17)|abc|{}", "(1,15)|abc|{}", "(25,18)|abc|{}", "(16,29)|abc|{}", "(14,25)|abc|{}", "(13,24)|abc|{}", "(13,22)|abc|{}", "(15,20)|abc|{}", "(16,19)|abc|{}", "(4,17)|abc|{}", "(3,16)|abc|{}", "(2,15)|abc|{}", "(25,17)|abc|{}", "(17,29)|abc|{}", "(13,25)|abc|{}", "(13,21)|abc|{}", "(15,19)|abc|{}", "(5,17)|abc|{}", "(3,15)|abc|{}", "(24,17)|abc|{}", "(12,25)|abc|{}", "(12,21)|abc|{}", "(14,19)|abc|{}", "(15,18)|abc|{}", "(5,16)|abc|{}", "(4,15)|abc|{}", "(3,14)|abc|{}", "(23,17)|abc|{}", "(11,25)|abc|{}", "(11,21)|abc|{}", "(13,19)|abc|{}", "(15,17)|abc|{}", "(5,15)|abc|{}", "(3,13)|abc|{}", "(23,16)|abc|{}", "(11,26)|abc|{}", "(11,24)|abc|{}", "(11,22)|abc|{}", "(11,20)|abc|{}", "(13,18)|abc|{}", "(14,17)|abc|{}", "(16,17)|abc|{}", "(15,16)|abc|{}", "(6,15)|abc|{}", "(2,13)|abc|{}", "(4,13)|abc|{}", "(23,15)|abc|{}", "(11,27)|abc|{}", "(11,23)|abc|{}", "(11,19)|abc|{}", "(13,17)|abc|{}", "(17,17)|abc|{}", "(15,15)|abc|{}", "(7,15)|abc|{}", "(1,13)|abc|{}", "(5,13)|abc|{}", "(22,15)|abc|{}", "(10,27)|abc|{}", "(11,28)|abc|{}", "(10,19)|abc|{}", "(11,18)|abc|{}", "(13,16)|abc|{}", "(18,17)|abc|{}", "(14,15)|abc|{}", "(8,15)|abc|{}", "(1,12)|abc|{}", "(6,13)|abc|{}", "(21,15)|abc|{}", "(9,27)|abc|{}", "(11,29)|abc|{}", "(9,19)|abc|{}", "(11,17)|abc|{}", "(13,15)|abc|{}", "(19,17)|abc|{}", "(9,15)|abc|{}", "(1,11)|abc|{}", "(7,13)|abc|{}", "(21,16)|abc|{}", "(8,27)|abc|{}", "(9,28)|abc|{}", "(10,29)|abc|{}", "(11,30)|abc|{}", "(8,19)|abc|{}", "(10,17)|abc|{}", "(11,16)|abc|{}", "(12,15)|abc|{}", "(20,17)|abc|{}", "(9,14)|abc|{}", "(2,11)|abc|{}", "(7,12)|abc|{}", "(21,17)|abc|{}", "(7,27)|abc|{}", "(9,29)|abc|{}", "(11,31)|abc|{}", "(7,19)|abc|{}", "(9,17)|abc|{}", "(11,15)|abc|{}", "(9,13)|abc|{}", "(3,11)|abc|{}", "(7,11)|abc|{}", "(6,27)|abc|{}", "(10,31)|abc|{}", "(11,32)|abc|{}", "(6,19)|abc|{}", "(7,18)|abc|{}", "(8,17)|abc|{}", "(11,14)|abc|{}", "(9,12)|abc|{}", "(4,11)|abc|{}", "(6,11)|abc|{}", "(8,11)|abc|{}", "(7,10)|abc|{}", "(5,27)|abc|{}", "(9,31)|abc|{}", "(11,33)|abc|{}", "(5,19)|abc|{}", "(7,17)|abc|{}", "(11,13)|abc|{}", "(9,11)|abc|{}", "(5,11)|abc|{}", "(7,9)|abc|{}", "(5,28)|abc|{}", "(9,32)|abc|{}", "(10,33)|abc|{}", "(4,19)|abc|{}", "(10,11)|abc|{}", "(9,10)|abc|{}", "(5,10)|abc|{}", "(6,9)|abc|{}", "(5,29)|abc|{}", "(9,33)|abc|{}", "(3,19)|abc|{}", "(11,11)|abc|{}", "(9,9)|abc|{}", "(5,9)|abc|{}", "(6,29)|abc|{}", "(8,33)|abc|{}", "(12,11)|abc|{}", "(11,10)|abc|{}", "(10,9)|abc|{}", "(4,9)|abc|{}", "(7,29)|abc|{}", "(7,33)|abc|{}", "(13,11)|abc|{}", "(11,9)|abc|{}", "(3,9)|abc|{}", "(7,30)|abc|{}", "(6,33)|abc|{}", "(7,32)|abc|{}", "(13,12)|abc|{}", "(2,9)|abc|{}", "(7,31)|abc|{}", "(5,33)|abc|{}", "(13,13)|abc|{}", "(1,9)|abc|{}", "(6,31)|abc|{}", "(4,33)|abc|{}", "(5,32)|abc|{}", "(14,13)|abc|{}", "(1,8)|abc|{}", "(5,31)|abc|{}", "(3,33)|abc|{}", "(15,13)|abc|{}", "(1,7)|abc|{}", "(4,31)|abc|{}", "(3,32)|abc|{}", "(16,13)|abc|{}", "(1,6)|abc|{}", "(3,31)|abc|{}", "(17,13)|abc|{}", "(1,5)|abc|{}", "(3,30)|abc|{}", "(17,14)|abc|{}", "(18,13)|abc|{}", "(17,15)|abc|{}", "(19,13)|abc|{}", "(18,15)|abc|{}", "(19,14)|abc|{}", "(20,13)|abc|{}", "(19,12)|abc|{}", "(19,15)|abc|{}", "(21,13)|abc|{}", "(19,11)|abc|{}", "(22,13)|abc|{}", "(20,11)|abc|{}", "(23,13)|abc|{}", "(21,11)|abc|{}", "(23,12)|abc|{}", "(23,11)|abc|{}", "(23,10)|abc|{}", "(23,9)|abc|{}", "(24,9)|abc|{}", "(25,9)|abc|{}", "(25,10)|abc|{}", "(26,9)|abc|{}", "(25,11)|abc|{}", "(27,9)|abc|{}", "(25,12)|abc|{}", "(25,13)|abc|{}", "(25,14)|abc|{}", "(26,13)|abc|{}", "(25,15)|abc|{}", "(27,13)|abc|{}", "(26,15)|abc|{}", "(28,13)|abc|{}", "(27,12)|abc|{}", "(27,15)|abc|{}", "(29,13)|abc|{}", "(27,11)|abc|{}", "(27,16)|abc|{}", "(29,14)|abc|{}", "(28,11)|abc|{}", "(27,17)|abc|{}", "(29,15)|abc|{}", "(29,11)|abc|{}", "(28,17)|abc|{}", "(29,16)|abc|{}", "(29,10)|abc|{}", "(29,17)|abc|{}", "(29,9)|abc|{}", "(29,8)|abc|{}", "(29,7)|abc|{}", "(28,7)|abc|{}", "(29,6)|abc|{}", "(27,7)|abc|{}", "(29,5)|abc|{}", "(26,7)|abc|{}", "(28,5)|abc|{}", "(29,4)|abc|{}", "(25,7)|abc|{}", "(27,5)|abc|{}", "(29,3)|abc|{}", "(24,7)|abc|{}", "(25,6)|abc|{}", "(27,4)|abc|{}", "(29,2)|abc|{}", "(23,7)|abc|{}", "(25,5)|abc|{}", "(27,3)|abc|{}", "(29,1)|abc|{}", "(23,6)|abc|{}", "(24,5)|abc|{}", "(25,4)|abc|{}", "(26,3)|abc|{}", "(27,2)|abc|{}", "(28,1)|abc|{}", "(23,5)|abc|{}", "(25,3)|abc|{}", "(27,1)|abc|{}", "(22,5)|abc|{}", "(25,2)|abc|{}", "(21,5)|abc|{}", "(25,1)|abc|{}", "(20,5)|abc|{}", "(21,6)|abc|{}", "(21,4)|abc|{}", "(24,1)|abc|{}", "(19,5)|abc|{}", "(21,7)|abc|{}", "(21,3)|abc|{}", "(23,1)|abc|{}", "(19,6)|abc|{}", "(19,4)|abc|{}", "(21,8)|abc|{}", "(20,3)|abc|{}", "(22,3)|abc|{}", "(22,1)|abc|{}", "(23,2)|abc|{}", "(19,7)|abc|{}", "(19,3)|abc|{}", "(21,9)|abc|{}", "(23,3)|abc|{}", "(21,1)|abc|{}", "(19,8)|abc|{}", "(18,3)|abc|{}", "(19,2)|abc|{}", "(20,9)|abc|{}", "(20,1)|abc|{}", "(19,9)|abc|{}", "(17,3)|abc|{}", "(19,1)|abc|{}", "(18,9)|abc|{}", "(16,3)|abc|{}", "(17,4)|abc|{}", "(18,1)|abc|{}", "(17,9)|abc|{}", "(15,3)|abc|{}", "(17,5)|abc|{}", "(17,1)|abc|{}", "(17,10)|abc|{}", "(17,8)|abc|{}", "(14,3)|abc|{}", "(15,2)|abc|{}", "(16,5)|abc|{}", "(17,6)|abc|{}", "(16,1)|abc|{}", "(17,11)|abc|{}", "(17,7)|abc|{}", "(13,3)|abc|{}", "(15,1)|abc|{}", "(15,5)|abc|{}", "(16,11)|abc|{}", "(16,7)|abc|{}", "(12,3)|abc|{}", "(13,4)|abc|{}", "(13,2)|abc|{}", "(14,1)|abc|{}", "(14,5)|abc|{}", "(15,6)|abc|{}", "(15,11)|abc|{}", "(15,7)|abc|{}", "(11,3)|abc|{}", "(13,5)|abc|{}", "(13,1)|abc|{}", "(15,10)|abc|{}", "(14,7)|abc|{}", "(10,3)|abc|{}", "(11,4)|abc|{}", "(12,5)|abc|{}", "(15,9)|abc|{}", "(13,7)|abc|{}", "(9,3)|abc|{}", "(11,5)|abc|{}", "(14,9)|abc|{}", "(13,8)|abc|{}", "(8,3)|abc|{}", "(11,6)|abc|{}", "(13,9)|abc|{}", "(7,3)|abc|{}", "(11,7)|abc|{}", "(7,2)|abc|{}", "(10,7)|abc|{}", "(7,1)|abc|{}", "(9,7)|abc|{}", "(6,1)|abc|{}", "(8,1)|abc|{}", "(9,6)|abc|{}", "(5,1)|abc|{}", "(9,1)|abc|{}", "(9,5)|abc|{}", "(4,1)|abc|{}", "(5,2)|abc|{}", "(10,1)|abc|{}", "(8,5)|abc|{}", "(3,1)|abc|{}", "(5,3)|abc|{}", "(11,1)|abc|{}", "(7,5)|abc|{}", "(5,4)|abc|{}", "(7,6)|abc|{}", "(5,5)|abc|{}", "(7,7)|abc|{}", "(6,7)|abc|{}", "(5,7)|abc|{}", "(4,7)|abc|{}", "(3,7)|abc|{}", "(3,6)|abc|{}", "(3,5)|abc|{}", "(3,4)|abc|{}", "(3,3)|abc|{}", "(2,3)|abc|{}", "(1,3)|abc|{}", "(1,2)|abc|{}", "(1,1)|abc|{}"], "abcd": ["(3,29)|abcd|{}", "(3,30)|abcd|{}", "(3,31)|abcd|{}", "(3,32)|abcd|{}", "(4,31)|abcd|{}", "(3,33)|abcd|{}", "(5,31)|abcd|{}", "(4,33)|abcd|{}", "(5,32)|abcd|{}", "(6,31)|abcd|{}", "(5,33)|abcd|{}", "(7,31)|abcd|{}", "(6,33)|abcd|{}", "(7,32)|abcd|{}", "(7,30)|abcd|{}", "(7,33)|abcd|{}", "(7,29)|abcd|{}", "(8,33)|abcd|{}", "(6,29)|abcd|{}", "(9,33)|abcd|{}", "(5,29)|abcd|{}", "(10,33)|abcd|{}", "(9,32)|abcd|{}", "(5,28)|abcd|{}", "(11,33)|abcd|{}", "(9,31)|abcd|{}", "(5,27)|abcd|{}", "(11,32)|abcd|{}", "(10,31)|abcd|{}", "(6,27)|abcd|{}", "(11,31)|abcd|{}", "(7,27)|abcd|{}", "(11,30)|abcd|{}", "(8,27)|abcd|{}", "(11,29)|abcd|{}", "(9,27)|abcd|{}", "(10,29)|abcd|{}", "(11,28)|abcd|{}", "(9,28)|abcd|{}", "(10,27)|abcd|{}", "(9,29)|abcd|{}", "(11,27)|abcd|{}", "(11,26)|abcd|{}", "(11,25)|abcd|{}", "(12,25)|abcd|{}", "(11,24)|abcd|{}", "(13,25)|abcd|{}", "(11,23)|abcd|{}", "(14,25)|abcd|{}", "(13,24)|abcd|{}", "(11,22)|abcd|{}", "(15,25)|abcd|{}", "(13,23)|abcd|{}", "(11,21)|abcd|{}", "(15,26)|abcd|{}", "(15,24)|abcd|{}", "(14,23)|abcd|{}", "(13,22)|abcd|{}", "(12,21)|abcd|{}", "(11,20)|abcd|{}", "(15,27)|abcd|{}", "(15,23)|abcd|{}", "(13,21)|abcd|{}", "(11,19)|abcd|{}", "(14,27)|abcd|{}", "(15,28)|abcd|{}", "(16,23)|abcd|{}", "(10,19)|abcd|{}", "(11,18)|abcd|{}", "(13,27)|abcd|{}", "(15,29)|abcd|{}", "(17,23)|abcd|{}", "(9,19)|abcd|{}", "(11,17)|abcd|{}", "(13,28)|abcd|{}", "(16,29)|abcd|{}", "(17,24)|abcd|{}", "(18,23)|abcd|{}", "(17,22)|abcd|{}", "(8,19)|abcd|{}", "(10,17)|abcd|{}", "(11,16)|abcd|{}", "(13,29)|abcd|{}", "(17,29)|abcd|{}", "(17,25)|abcd|{}", "(19,23)|abcd|{}", "(17,21)|abcd|{}", "(7,19)|abcd|{}", "(9,17)|abcd|{}", "(11,15)|abcd|{}", "(13,30)|abcd|{}", "(17,26)|abcd|{}", "(18,25)|abcd|{}", "(19,24)|abcd|{}", "(20,23)|abcd|{}", "(19,22)|abcd|{}", "(16,21)|abcd|{}", "(17,20)|abcd|{}", "(6,19)|abcd|{}", "(7,18)|abcd|{}", "(8,17)|abcd|{}", "(12,15)|abcd|{}", "(11,14)|abcd|{}", "(13,31)|abcd|{}", "(17,27)|abcd|{}", "(19,25)|abcd|{}", "(21,23)|abcd|{}", "(19,21)|abcd|{}", "(15,21)|abcd|{}", "(17,19)|abcd|{}", "(5,19)|abcd|{}", "(7,17)|abcd|{}", "(13,15)|abcd|{}", "(11,13)|abcd|{}", "(14,31)|abcd|{}", "(18,27)|abcd|{}", "(20,25)|abcd|{}", "(21,24)|abcd|{}", "(22,23)|abcd|{}", "(21,22)|abcd|{}", "(20,21)|abcd|{}", "(19,20)|abcd|{}", "(15,20)|abcd|{}", "(16,19)|abcd|{}", "(18,19)|abcd|{}", "(4,19)|abcd|{}", "(13,16)|abcd|{}", "(14,15)|abcd|{}", "(15,31)|abcd|{}", "(19,27)|abcd|{}", "(21,25)|abcd|{}", "(23,23)|abcd|{}", "(21,21)|abcd|{}", "(19,19)|abcd|{}", "(15,19)|abcd|{}", "(3,19)|abcd|{}", "(13,17)|abcd|{}", "(15,15)|abcd|{}", "(16,31)|abcd|{}", "(19,28)|abcd|{}", "(20,27)|abcd|{}", "(21,26)|abcd|{}", "(22,25)|abcd|{}", "(23,22)|abcd|{}", "(22,21)|abcd|{}", "(21,20)|abcd|{}", "(20,19)|abcd|{}", "(14,19)|abcd|{}", "(15,18)|abcd|{}", "(13,18)|abcd|{}", "(14,17)|abcd|{}", "(15,16)|abcd|{}", "(17,31)|abcd|{}", "(19,29)|abcd|{}", "(21,27)|abcd|{}", "(23,25)|abcd|{}", "(23,21)|abcd|{}", "(21,19)|abcd|{}", "(13,19)|abcd|{}", "(15,17)|abcd|{}", "(18,31)|abcd|{}", "(19,30)|abcd|{}", "(20,29)|abcd|{}", "(21,28)|abcd|{}", "(23,26)|abcd|{}", "(24,25)|abcd|{}", "(24,21)|abcd|{}", "(23,20)|abcd|{}", "(16,17)|abcd|{}", "(19,31)|abcd|{}", "(21,29)|abcd|{}", "(23,27)|abcd|{}", "(25,25)|abcd|{}", "(25,21)|abcd|{}", "(23,19)|abcd|{}", "(17,17)|abcd|{}", "(19,32)|abcd|{}", "(20,31)|abcd|{}", "(22,29)|abcd|{}", "(23,28)|abcd|{}", "(24,27)|abcd|{}", "(26,25)|abcd|{}", "(25,22)|abcd|{}", "(26,21)|abcd|{}", "(24,19)|abcd|{}", "(18,17)|abcd|{}", "(19,33)|abcd|{}", "(21,31)|abcd|{}", "(23,29)|abcd|{}", "(25,27)|abcd|{}", "(27,25)|abcd|{}", "(25,23)|abcd|{}", "(27,21)|abcd|{}", "(25,19)|abcd|{}", "(19,17)|abcd|{}", "(19,34)|abcd|{}", "(20,33)|abcd|{}", "(21,32)|abcd|{}", "(22,31)|abcd|{}", "(23,30)|abcd|{}", "(25,28)|abcd|{}", "(26,27)|abcd|{}", "(27,26)|abcd|{}", "(28,25)|abcd|{}", "(27,24)|abcd|{}", "(26,23)|abcd|{}", "(27,22)|abcd|{}", "(28,21)|abcd|{}", "(27,20)|abcd|{}", "(26,19)|abcd|{}", "(25,18)|abcd|{}", "(20,17)|abcd|{}", "(19,35)|abcd|{}", "(21,33)|abcd|{}", "(23,31)|abcd|{}", "(25,29)|abcd|{}", "(27,27)|abcd|{}", "(29,25)|abcd|{}", "(27,23)|abcd|{}", "(29,21)|abcd|{}", "(27,19)|abcd|{}", "(25,17)|abcd|{}", "(21,17)|abcd|{}", "(20,35)|abcd|{}", "(22,33)|abcd|{}", "(23,32)|abcd|{}", "(25,30)|abcd|{}", "(26,29)|abcd|{}", "(27,28)|abcd|{}", "(28,27)|abcd|{}", "(29,26)|abcd|{}", "(29,24)|abcd|{}", "(28,23)|abcd|{}", "(29,20)|abcd|{}", "(24,17)|abcd|{}", "(21,16)|abcd|{}", "(21,35)|abcd|{}", "(23,33)|abcd|{}", "(25,31)|abcd|{}", "(27,29)|abcd|{}", "(29,27)|abcd|{}", "(29,23)|abcd|{}", "(29,19)|abcd|{}", "(23,17)|abcd|{}", "(21,15)|abcd|{}", "(21,36)|abcd|{}", "(22,35)|abcd|{}", "(23,34)|abcd|{}", "(24,33)|abcd|{}", "(25,32)|abcd|{}", "(26,31)|abcd|{}", "(28,29)|abcd|{}", "(23,16)|abcd|{}", "(22,15)|abcd|{}", "(21,37)|abcd|{}", "(23,35)|abcd|{}", "(25,33)|abcd|{}", "(27,31)|abcd|{}", "(29,29)|abcd|{}", "(23,15)|abcd|{}", "(22,37)|abcd|{}", "(23,36)|abcd|{}", "(24,35)|abcd|{}", "(25,34)|abcd|{}", "(27,32)|abcd|{}", "(28,31)|abcd|{}", "(29,30)|abcd|{}", "(23,37)|abcd|{}", "(25,35)|abcd|{}", "(27,33)|abcd|{}", "(29,31)|abcd|{}", "(23,38)|abcd|{}", "(25,36)|abcd|{}", "(26,35)|abcd|{}", "(27,34)|abcd|{}", "(28,33)|abcd|{}", "(29,32)|abcd|{}", "(23,39)|abcd|{}", "(25,37)|abcd|{}", "(27,35)|abcd|{}", "(29,33)|abcd|{}", "(22,39)|abcd|{}", "(25,38)|abcd|{}", "(26,37)|abcd|{}", "(27,36)|abcd|{}", "(28,35)|abcd|{}", "(29,34)|abcd|{}", "(21,39)|abcd|{}", "(25,39)|abcd|{}", "(27,37)|abcd|{}", "(29,35)|abcd|{}", "(21,40)|abcd|{}", "(25,40)|abcd|{}", "(26,39)|abcd|{}", "(27,38)|abcd|{}", "(29,36)|abcd|{}", "(21,41)|abcd|{}", "(25,41)|abcd|{}", "(27,39)|abcd|{}", "(29,37)|abcd|{}", "(20,41)|abcd|{}", "(22,41)|abcd|{}", "(24,41)|abcd|{}", "(25,42)|abcd|{}", "(29,38)|abcd|{}", "(19,41)|abcd|{}", "(23,41)|abcd|{}", "(25,43)|abcd|{}", "(29,39)|abcd|{}", "(18,41)|abcd|{}", "(23,42)|abcd|{}", "(24,43)|abcd|{}", "(25,44)|abcd|{}", "(26,43)|abcd|{}", "(29,40)|abcd|{}", "(17,41)|abcd|{}", "(23,43)|abcd|{}", "(25,45)|abcd|{}", "(27,43)|abcd|{}", "(29,41)|abcd|{}", "(16,41)|abcd|{}", "(17,42)|abcd|{}", "(22,43)|abcd|{}", "(23,44)|abcd|{}", "(24,45)|abcd|{}", "(26,45)|abcd|{}", "(27,42)|abcd|{}", "(28,41)|abcd|{}", "(29,42)|abcd|{}", "(15,41)|abcd|{}", "(17,43)|abcd|{}", "(21,43)|abcd|{}", "(23,45)|abcd|{}", "(27,45)|abcd|{}", "(27,41)|abcd|{}", "(29,43)|abcd|{}", "(15,42)|abcd|{}", "(16,43)|abcd|{}", "(18,43)|abcd|{}", "(27,46)|abcd|{}", "(28,45)|abcd|{}", "(29,44)|abcd|{}", "(15,43)|abcd|{}", "(19,43)|abcd|{}", "(27,47)|abcd|{}", "(29,45)|abcd|{}", "(15,44)|abcd|{}", "(19,44)|abcd|{}", "(28,47)|abcd|{}", "(15,45)|abcd|{}", "(19,45)|abcd|{}", "(29,47)|abcd|{}", "(14,45)|abcd|{}", "(15,46)|abcd|{}", "(16,45)|abcd|{}", "(19,46)|abcd|{}", "(20,45)|abcd|{}", "(29,48)|abcd|{}", "(13,45)|abcd|{}", "(15,47)|abcd|{}", "(17,45)|abcd|{}", "(19,47)|abcd|{}", "(21,45)|abcd|{}", "(29,49)|abcd|{}", "(13,46)|abcd|{}", "(14,47)|abcd|{}", "(18,47)|abcd|{}", "(19,48)|abcd|{}", "(21,46)|abcd|{}", "(29,50)|abcd|{}", "(13,47)|abcd|{}", "(17,47)|abcd|{}", "(19,49)|abcd|{}", "(21,47)|abcd|{}", "(29,51)|abcd|{}", "(12,47)|abcd|{}", "(17,48)|abcd|{}", "(18,49)|abcd|{}", "(20,49)|abcd|{}", "(22,47)|abcd|{}", "(29,52)|abcd|{}", "(11,47)|abcd|{}", "(17,49)|abcd|{}", "(21,49)|abcd|{}", "(23,47)|abcd|{}", "(29,53)|abcd|{}", "(11,48)|abcd|{}", "(11,46)|abcd|{}", "(16,49)|abcd|{}", "(22,49)|abcd|{}", "(24,47)|abcd|{}", "(28,53)|abcd|{}", "(11,49)|abcd|{}", "(11,45)|abcd|{}", "(15,49)|abcd|{}", "(23,49)|abcd|{}", "(25,47)|abcd|{}", "(27,53)|abcd|{}", "(12,49)|abcd|{}", "(10,45)|abcd|{}", "(15,50)|abcd|{}", "(24,49)|abcd|{}", "(25,48)|abcd|{}", "(27,52)|abcd|{}", "(13,49)|abcd|{}", "(9,45)|abcd|{}", "(15,51)|abcd|{}", "(25,49)|abcd|{}", "(27,51)|abcd|{}", "(8,45)|abcd|{}", "(14,51)|abcd|{}", "(26,51)|abcd|{}", "(27,50)|abcd|{}", "(7,45)|abcd|{}", "(13,51)|abcd|{}", "(25,51)|abcd|{}", "(27,49)|abcd|{}", "(7,44)|abcd|{}", "(12,51)|abcd|{}", "(25,52)|abcd|{}", "(7,43)|abcd|{}", "(11,51)|abcd|{}", "(25,53)|abcd|{}", "(8,43)|abcd|{}", "(7,42)|abcd|{}", "(10,51)|abcd|{}", "(24,53)|abcd|{}", "(25,54)|abcd|{}", "(9,43)|abcd|{}", "(7,41)|abcd|{}", "(9,51)|abcd|{}", "(23,53)|abcd|{}", "(25,55)|abcd|{}", "(9,42)|abcd|{}", "(8,41)|abcd|{}", "(9,50)|abcd|{}", "(22,53)|abcd|{}", "(24,55)|abcd|{}", "(25,56)|abcd|{}", "(9,41)|abcd|{}", "(9,49)|abcd|{}", "(21,53)|abcd|{}", "(23,55)|abcd|{}", "(25,57)|abcd|{}", "(9,48)|abcd|{}", "(20,53)|abcd|{}", "(21,52)|abcd|{}", "(22,55)|abcd|{}", "(23,56)|abcd|{}", "(26,57)|abcd|{}", "(9,47)|abcd|{}", "(19,53)|abcd|{}", "(21,51)|abcd|{}", "(21,55)|abcd|{}", "(23,57)|abcd|{}", "(27,57)|abcd|{}", "(8,47)|abcd|{}", "(19,54)|abcd|{}", "(19,52)|abcd|{}", "(20,51)|abcd|{}", "(22,51)|abcd|{}", "(20,55)|abcd|{}", "(21,56)|abcd|{}", "(22,57)|abcd|{}", "(23,58)|abcd|{}", "(27,58)|abcd|{}", "(27,56)|abcd|{}", "(7,47)|abcd|{}", "(19,55)|abcd|{}", "(19,51)|abcd|{}", "(23,51)|abcd|{}", "(21,57)|abcd|{}", "(23,59)|abcd|{}", "(27,59)|abcd|{}", "(27,55)|abcd|{}", "(6,47)|abcd|{}", "(18,55)|abcd|{}", "(19,56)|abcd|{}", "(18,51)|abcd|{}", "(22,59)|abcd|{}", "(23,60)|abcd|{}", "(26,59)|abcd|{}", "(27,60)|abcd|{}", "(28,55)|abcd|{}", "(5,47)|abcd|{}", "(17,55)|abcd|{}", "(19,57)|abcd|{}", "(17,51)|abcd|{}", "(21,59)|abcd|{}", "(23,61)|abcd|{}", "(25,59)|abcd|{}", "(27,61)|abcd|{}", "(29,55)|abcd|{}", "(5,46)|abcd|{}", "(17,56)|abcd|{}", "(17,54)|abcd|{}", "(19,58)|abcd|{}", "(17,52)|abcd|{}", "(20,59)|abcd|{}", "(21,60)|abcd|{}", "(24,61)|abcd|{}", "(28,61)|abcd|{}", "(29,56)|abcd|{}", "(5,45)|abcd|{}", "(17,57)|abcd|{}", "(17,53)|abcd|{}", "(19,59)|abcd|{}", "(21,61)|abcd|{}", "(25,61)|abcd|{}", "(29,61)|abcd|{}", "(29,57)|abcd|{}", "(4,45)|abcd|{}", "(5,44)|abcd|{}", "(17,58)|abcd|{}", "(19,60)|abcd|{}", "(20,61)|abcd|{}", "(25,62)|abcd|{}", "(29,62)|abcd|{}", "(29,60)|abcd|{}", "(29,58)|abcd|{}", "(3,45)|abcd|{}", "(5,43)|abcd|{}", "(17,59)|abcd|{}", "(19,61)|abcd|{}", "(25,63)|abcd|{}", "(29,63)|abcd|{}", "(29,59)|abcd|{}", "(2,45)|abcd|{}", "(4,43)|abcd|{}", "(5,42)|abcd|{}", "(16,59)|abcd|{}", "(17,60)|abcd|{}", "(18,61)|abcd|{}", "(19,62)|abcd|{}", "(24,63)|abcd|{}", "(25,64)|abcd|{}", "(28,63)|abcd|{}", "(1,45)|abcd|{}", "(3,43)|abcd|{}", "(5,41)|abcd|{}", "(15,59)|abcd|{}", "(17,61)|abcd|{}", "(19,63)|abcd|{}", "(23,63)|abcd|{}", "(25,65)|abcd|{}", "(27,63)|abcd|{}", "(1,44)|abcd|{}", "(2,43)|abcd|{}", "(4,41)|abcd|{}", "(5,40)|abcd|{}", "(14,59)|abcd|{}", "(15,60)|abcd|{}", "(17,62)|abcd|{}", "(19,64)|abcd|{}", "(20,63)|abcd|{}", "(22,63)|abcd|{}", "(24,65)|abcd|{}", "(25,66)|abcd|{}", "(27,64)|abcd|{}", "(1,43)|abcd|{}", "(3,41)|abcd|{}", "(5,39)|abcd|{}", "(13,59)|abcd|{}", "(15,61)|abcd|{}", "(17,63)|abcd|{}", "(19,65)|abcd|{}", "(21,63)|abcd|{}", "(23,65)|abcd|{}", "(25,67)|abcd|{}", "(27,65)|abcd|{}", "(1,42)|abcd|{}", "(2,41)|abcd|{}", "(3,40)|abcd|{}", "(6,39)|abcd|{}", "(12,59)|abcd|{}", "(13,60)|abcd|{}", "(14,61)|abcd|{}", "(15,62)|abcd|{}", "(16,63)|abcd|{}", "(17,64)|abcd|{}", "(20,65)|abcd|{}", "(21,64)|abcd|{}", "(23,66)|abcd|{}", "(25,68)|abcd|{}", "(26,67)|abcd|{}", "(28,65)|abcd|{}", "(1,41)|abcd|{}", "(3,39)|abcd|{}", "(7,39)|abcd|{}", "(11,59)|abcd|{}", "(13,61)|abcd|{}", "(15,63)|abcd|{}", "(17,65)|abcd|{}", "(21,65)|abcd|{}", "(23,67)|abcd|{}", "(25,69)|abcd|{}", "(27,67)|abcd|{}", "(29,65)|abcd|{}", "(2,39)|abcd|{}", "(7,38)|abcd|{}", "(11,60)|abcd|{}", "(11,58)|abcd|{}", "(15,64)|abcd|{}", "(16,65)|abcd|{}", "(22,67)|abcd|{}", "(24,69)|abcd|{}", "(26,69)|abcd|{}", "(27,68)|abcd|{}", "(29,66)|abcd|{}", "(1,39)|abcd|{}", "(7,37)|abcd|{}", "(11,61)|abcd|{}", "(11,57)|abcd|{}", "(15,65)|abcd|{}", "(21,67)|abcd|{}", "(23,69)|abcd|{}", "(27,69)|abcd|{}", "(29,67)|abcd|{}", "(1,38)|abcd|{}", "(6,37)|abcd|{}", "(8,37)|abcd|{}", "(10,61)|abcd|{}", "(12,57)|abcd|{}", "(14,65)|abcd|{}", "(21,68)|abcd|{}", "(22,69)|abcd|{}", "(28,69)|abcd|{}", "(29,68)|abcd|{}", "(1,37)|abcd|{}", "(5,37)|abcd|{}", "(9,37)|abcd|{}", "(9,61)|abcd|{}", "(13,57)|abcd|{}", "(13,65)|abcd|{}", "(21,69)|abcd|{}", "(29,69)|abcd|{}", "(2,37)|abcd|{}", "(4,37)|abcd|{}", "(9,38)|abcd|{}", "(10,37)|abcd|{}", "(8,61)|abcd|{}", "(9,62)|abcd|{}", "(9,60)|abcd|{}", "(13,56)|abcd|{}", "(12,65)|abcd|{}", "(13,64)|abcd|{}", "(20,69)|abcd|{}", "(3,37)|abcd|{}", "(9,39)|abcd|{}", "(11,37)|abcd|{}", "(7,61)|abcd|{}", "(9,63)|abcd|{}", "(9,59)|abcd|{}", "(13,55)|abcd|{}", "(11,65)|abcd|{}", "(13,63)|abcd|{}", "(19,69)|abcd|{}", "(10,39)|abcd|{}", "(11,38)|abcd|{}", "(12,37)|abcd|{}", "(7,60)|abcd|{}", "(8,63)|abcd|{}", "(10,63)|abcd|{}", "(9,58)|abcd|{}", "(12,55)|abcd|{}", "(14,55)|abcd|{}", "(13,54)|abcd|{}", "(10,65)|abcd|{}", "(11,66)|abcd|{}", "(11,64)|abcd|{}", "(12,63)|abcd|{}", "(18,69)|abcd|{}", "(11,39)|abcd|{}", "(13,37)|abcd|{}", "(7,59)|abcd|{}", "(7,63)|abcd|{}", "(11,63)|abcd|{}", "(9,57)|abcd|{}", "(11,55)|abcd|{}", "(15,55)|abcd|{}", "(13,53)|abcd|{}", "(9,65)|abcd|{}", "(11,67)|abcd|{}", "(17,69)|abcd|{}", "(11,40)|abcd|{}", "(14,37)|abcd|{}", "(6,59)|abcd|{}", "(6,63)|abcd|{}", "(7,64)|abcd|{}", "(8,57)|abcd|{}", "(9,56)|abcd|{}", "(10,55)|abcd|{}", "(11,54)|abcd|{}", "(15,56)|abcd|{}", "(15,54)|abcd|{}", "(12,53)|abcd|{}", "(14,53)|abcd|{}", "(8,65)|abcd|{}", "(9,66)|abcd|{}", "(12,67)|abcd|{}", "(16,69)|abcd|{}", "(17,68)|abcd|{}", "(11,41)|abcd|{}", "(15,37)|abcd|{}", "(5,59)|abcd|{}", "(5,63)|abcd|{}", "(7,65)|abcd|{}", "(7,57)|abcd|{}", "(9,55)|abcd|{}", "(11,53)|abcd|{}", "(15,57)|abcd|{}", "(15,53)|abcd|{}", "(9,67)|abcd|{}", "(13,67)|abcd|{}", "(15,69)|abcd|{}", "(17,67)|abcd|{}", "(11,42)|abcd|{}", "(15,38)|abcd|{}", "(15,36)|abcd|{}", "(5,60)|abcd|{}", "(5,58)|abcd|{}", "(4,63)|abcd|{}", "(5,64)|abcd|{}", "(5,62)|abcd|{}", "(7,66)|abcd|{}", "(6,57)|abcd|{}", "(7,56)|abcd|{}", "(8,55)|abcd|{}", "(9,54)|abcd|{}", "(10,53)|abcd|{}", "(8,67)|abcd|{}", "(13,68)|abcd|{}", "(14,69)|abcd|{}", "(15,68)|abcd|{}", "(16,67)|abcd|{}", "(18,67)|abcd|{}", "(11,43)|abcd|{}", "(15,39)|abcd|{}", "(15,35)|abcd|{}", "(5,61)|abcd|{}", "(5,57)|abcd|{}", "(3,63)|abcd|{}", "(5,65)|abcd|{}", "(7,67)|abcd|{}", "(7,55)|abcd|{}", "(9,53)|abcd|{}", "(13,69)|abcd|{}", "(15,67)|abcd|{}", "(19,67)|abcd|{}", "(12,43)|abcd|{}", "(14,39)|abcd|{}", "(16,39)|abcd|{}", "(4,57)|abcd|{}", "(2,63)|abcd|{}", "(3,62)|abcd|{}", "(4,65)|abcd|{}", "(7,68)|abcd|{}", "(6,55)|abcd|{}", "(7,54)|abcd|{}", "(8,53)|abcd|{}", "(13,43)|abcd|{}", "(13,39)|abcd|{}", "(17,39)|abcd|{}", "(3,57)|abcd|{}", "(1,63)|abcd|{}", "(3,61)|abcd|{}", "(3,65)|abcd|{}", "(7,69)|abcd|{}", "(5,55)|abcd|{}", "(7,53)|abcd|{}", "(13,42)|abcd|{}", "(13,40)|abcd|{}", "(18,39)|abcd|{}", "(17,38)|abcd|{}", "(2,57)|abcd|{}", "(3,56)|abcd|{}", "(1,64)|abcd|{}", "(1,62)|abcd|{}", "(2,61)|abcd|{}", "(3,60)|abcd|{}", "(3,66)|abcd|{}", "(6,69)|abcd|{}", "(8,69)|abcd|{}", "(4,55)|abcd|{}", "(5,54)|abcd|{}", "(6,53)|abcd|{}", "(7,52)|abcd|{}", "(13,41)|abcd|{}", "(19,39)|abcd|{}", "(17,37)|abcd|{}", "(1,57)|abcd|{}", "(3,55)|abcd|{}", "(1,65)|abcd|{}", "(1,61)|abcd|{}", "(3,59)|abcd|{}", "(3,67)|abcd|{}", "(5,69)|abcd|{}", "(9,69)|abcd|{}", "(5,53)|abcd|{}", "(7,51)|abcd|{}", "(19,38)|abcd|{}", "(18,37)|abcd|{}", "(17,36)|abcd|{}", "(1,58)|abcd|{}", "(1,56)|abcd|{}", "(1,66)|abcd|{}", "(1,60)|abcd|{}", "(2,67)|abcd|{}", "(4,67)|abcd|{}", "(4,69)|abcd|{}", "(5,68)|abcd|{}", "(10,69)|abcd|{}", "(4,53)|abcd|{}", "(7,50)|abcd|{}", "(19,37)|abcd|{}", "(17,35)|abcd|{}", "(1,59)|abcd|{}", "(1,55)|abcd|{}", "(1,67)|abcd|{}", "(5,67)|abcd|{}", "(3,69)|abcd|{}", "(11,69)|abcd|{}", "(3,53)|abcd|{}", "(7,49)|abcd|{}", "(17,34)|abcd|{}", "(1,54)|abcd|{}", "(1,68)|abcd|{}", "(2,69)|abcd|{}", "(2,53)|abcd|{}", "(6,49)|abcd|{}", "(17,33)|abcd|{}", "(1,53)|abcd|{}", "(1,69)|abcd|{}", "(5,49)|abcd|{}", "(16,33)|abcd|{}", "(4,49)|abcd|{}", "(15,33)|abcd|{}", "(3,49)|abcd|{}", "(14,33)|abcd|{}", "(2,49)|abcd|{}", "(3,50)|abcd|{}", "(13,33)|abcd|{}", "(1,49)|abcd|{}", "(3,51)|abcd|{}", "(13,34)|abcd|{}", "(1,50)|abcd|{}", "(1,48)|abcd|{}", "(2,51)|abcd|{}", "(4,51)|abcd|{}", "(13,35)|abcd|{}", "(1,51)|abcd|{}", "(1,47)|abcd|{}", "(5,51)|abcd|{}", "(12,35)|abcd|{}", "(2,47)|abcd|{}", "(11,35)|abcd|{}", "(3,47)|abcd|{}", "(10,35)|abcd|{}", "(9,35)|abcd|{}", "(8,35)|abcd|{}", "(7,35)|abcd|{}", "(6,35)|abcd|{}", "(5,35)|abcd|{}", "(4,35)|abcd|{}", "(3,35)|abcd|{}", "(2,35)|abcd|{}", "(1,35)|abcd|{}", "(1,34)|abcd|{}", "(1,33)|abcd|{}", "(1,32)|abcd|{}", "(1,31)|abcd|{}", "(1,30)|abcd|{}", "(1,29)|abcd|{}", "(1,28)|abcd|{}", "(1,27)|abcd|{}", "(2,27)|abcd|{}", "(1,26)|abcd|{}", "(3,27)|abcd|{}", "(1,25)|abcd|{}", "(3,26)|abcd|{}", "(1,24)|abcd|{}", "(3,25)|abcd|{}", "(1,23)|abcd|{}", "(4,25)|abcd|{}", "(2,23)|abcd|{}", "(5,25)|abcd|{}", "(3,23)|abcd|{}", "(6,25)|abcd|{}", "(7,25)|abcd|{}", "(8,25)|abcd|{}", "(9,25)|abcd|{}", "(9,24)|abcd|{}", "(9,23)|abcd|{}", "(9,22)|abcd|{}", "(9,21)|abcd|{}", "(8,21)|abcd|{}", "(7,21)|abcd|{}", "(7,22)|abcd|{}", "(7,23)|abcd|{}", "(6,23)|abcd|{}", "(5,23)|abcd|{}", "(5,22)|abcd|{}", "(5,21)|abcd|{}", "(4,21)|abcd|{}", "(3,21)|abcd|{}", "(2,21)|abcd|{}", "(1,21)|abcd|{}", "(1,20)|abcd|{}", "(1,19)|abcd|{}", "(1,18)|abcd|{}", "(1,17)|abcd|{}", "(2,17)|abcd|{}", "(1,16)|abcd|{}", "(3,17)|abcd|{}", "(1,15)|abcd|{}", "(4,17)|abcd|{}", "(3,16)|abcd|{}", "(2,15)|abcd|{}", "(5,17)|abcd|{}", "(3,15)|abcd|{}", "(5,16)|abcd|{}", "(4,15)|abcd|{}", "(3,14)|abcd|{}", "(5,15)|abcd|{}", "(3,13)|abcd|{}", "(6,15)|abcd|{}", "(2,13)|abcd|{}", "(4,13)|abcd|{}", "(7,15)|abcd|{}", "(1,13)|abcd|{}", "(5,13)|abcd|{}", "(8,15)|abcd|{}", "(1,12)|abcd|{}", "(6,13)|abcd|{}", "(9,15)|abcd|{}", "(1,11)|abcd|{}", "(7,13)|abcd|{}", "(9,14)|abcd|{}", "(2,11)|abcd|{}", "(7,12)|abcd|{}", "(9,13)|abcd|{}", "(3,11)|abcd|{}", "(7,11)|abcd|{}", "(9,12)|abcd|{}", "(4,11)|abcd|{}", "(6,11)|abcd|{}", "(8,11)|abcd|{}", "(7,10)|abcd|{}", "(9,11)|abcd|{}", "(5,11)|abcd|{}", "(7,9)|abcd|{}", "(10,11)|abcd|{}", "(9,10)|abcd|{}", "(5,10)|abcd|{}", "(6,9)|abcd|{}", "(11,11)|abcd|{}", "(9,9)|abcd|{}", "(5,9)|abcd|{}", "(12,11)|abcd|{}", "(11,10)|abcd|{}", "(10,9)|abcd|{}", "(4,9)|abcd|{}", "(13,11)|abcd|{}", "(11,9)|abcd|{}", "(3,9)|abcd|{}", "(13,12)|abcd|{}", "(2,9)|abcd|{}", "(13,13)|abcd|{}", "(1,9)|abcd|{}", "(14,13)|abcd|{}", "(1,8)|abcd|{}", "(15,13)|abcd|{}", "(1,7)|abcd|{}", "(16,13)|abcd|{}", "(1,6)|abcd|{}", "(17,13)|abcd|{}", "(1,5)|abcd|{}", "(17,14)|abcd|{}", "(18,13)|abcd|{}", "(17,15)|abcd|{}", "(19,13)|abcd|{}", "(18,15)|abcd|{}", "(19,14)|abcd|{}", "(20,13)|abcd|{}", "(19,12)|abcd|{}", "(19,15)|abcd|{}", "(21,13)|abcd|{}", "(19,11)|abcd|{}", "(22,13)|abcd|{}", "(20,11)|abcd|{}", "(23,13)|abcd|{}", "(21,11)|abcd|{}", "(23,12)|abcd|{}", "(23,11)|abcd|{}", "(23,10)|abcd|{}", "(23,9)|abcd|{}", "(24,9)|abcd|{}", "(25,9)|abcd|{}", "(25,10)|abcd|{}", "(26,9)|abcd|{}", "(25,11)|abcd|{}", "(27,9)|abcd|{}", "(25,12)|abcd|{}", "(25,13)|abcd|{}", "(25,14)|abcd|{}", "(26,13)|abcd|{}", "(25,15)|abcd|{}", "(27,13)|abcd|{}", "(26,15)|abcd|{}", "(28,13)|abcd|{}", "(27,12)|abcd|{}", "(27,15)|abcd|{}", "(29,13)|abcd|{}", "(27,11)|abcd|{}", "(27,16)|abcd|{}", "(29,14)|abcd|{}", "(28,11)|abcd|{}", "(27,17)|abcd|{}", "(29,15)|abcd|{}", "(29,11)|abcd|{}", "(28,17)|abcd|{}", "(29,16)|abcd|{}", "(29,10)|abcd|{}", "(29,17)|abcd|{}", "(29,9)|abcd|{}", "(29,8)|abcd|{}", "(29,7)|abcd|{}", "(28,7)|abcd|{}", "(29,6)|abcd|{}", "(27,7)|abcd|{}", "(29,5)|abcd|{}", "(26,7)|abcd|{}", "(28,5)|abcd|{}", "(29,4)|abcd|{}", "(25,7)|abcd|{}", "(27,5)|abcd|{}", "(29,3)|abcd|{}", "(24,7)|abcd|{}", "(25,6)|abcd|{}", "(27,4)|abcd|{}", "(29,2)|abcd|{}", "(23,7)|abcd|{}", "(25,5)|abcd|{}", "(27,3)|abcd|{}", "(29,1)|abcd|{}", "(23,6)|abcd|{}", "(24,5)|abcd|{}", "(25,4)|abcd|{}", "(26,3)|abcd|{}", "(27,2)|abcd|{}", "(28,1)|abcd|{}", "(23,5)|abcd|{}", "(25,3)|abcd|{}", "(27,1)|abcd|{}", "(22,5)|abcd|{}", "(25,2)|abcd|{}", "(21,5)|abcd|{}", "(25,1)|abcd|{}", "(20,5)|abcd|{}", "(21,6)|abcd|{}", "(21,4)|abcd|{}", "(24,1)|abcd|{}", "(19,5)|abcd|{}", "(21,7)|abcd|{}", "(21,3)|abcd|{}", "(23,1)|abcd|{}", "(19,6)|abcd|{}", "(19,4)|abcd|{}", "(21,8)|abcd|{}", "(20,3)|abcd|{}", "(22,3)|abcd|{}", "(22,1)|abcd|{}", "(23,2)|abcd|{}", "(19,7)|abcd|{}", "(19,3)|abcd|{}", "(21,9)|abcd|{}", "(23,3)|abcd|{}", "(21,1)|abcd|{}", "(19,8)|abcd|{}", "(18,3)|abcd|{}", "(19,2)|abcd|{}", "(20,9)|abcd|{}", "(20,1)|abcd|{}", "(19,9)|abcd|{}", "(17,3)|abcd|{}", "(19,1)|abcd|{}", "(18,9)|abcd|{}", "(16,3)|abcd|{}", "(17,4)|abcd|{}", "(18,1)|abcd|{}", "(17,9)|abcd|{}", "(15,3)|abcd|{}", "(17,5)|abcd|{}", "(17,1)|abcd|{}", "(17,10)|abcd|{}", "(17,8)|abcd|{}", "(14,3)|abcd|{}", "(15,2)|abcd|{}", "(16,5)|abcd|{}", "(17,6)|abcd|{}", "(16,1)|abcd|{}", "(17,11)|abcd|{}", "(17,7)|abcd|{}", "(13,3)|abcd|{}", "(15,1)|abcd|{}", "(15,5)|abcd|{}", "(16,11)|abcd|{}", "(16,7)|abcd|{}", "(12,3)|abcd|{}", "(13,4)|abcd|{}", "(13,2)|abcd|{}", "(14,1)|abcd|{}", "(14,5)|abcd|{}", "(15,6)|abcd|{}", "(15,11)|abcd|{}", "(15,7)|abcd|{}", "(11,3)|abcd|{}", "(13,5)|abcd|{}", "(13,1)|abcd|{}", "(15,10)|abcd|{}", "(14,7)|abcd|{}", "(10,3)|abcd|{}", "(11,4)|abcd|{}", "(12,5)|abcd|{}", "(15,9)|abcd|{}", "(13,7)|abcd|{}", "(9,3)|abcd|{}", "(11,5)|abcd|{}", "(14,9)|abcd|{}", "(13,8)|abcd|{}", "(8,3)|abcd|{}", "(11,6)|abcd|{}", "(13,9)|abcd|{}", "(7,3)|abcd|{}", "(11,7)|abcd|{}", "(7,2)|abcd|{}", "(10,7)|abcd|{}", "(7,1)|abcd|{}", "(9,7)|abcd|{}", "(6,1)|abcd|{}", "(8,1)|abcd|{}", "(9,6)|abcd|{}", "(5,1)|abcd|{}", "(9,1)|abcd|{}", "(9,5)|abcd|{}", "(4,1)|abcd|{}", "(5,2)|abcd|{}", "(10,1)|abcd|{}", "(8,5)|abcd|{}", "(3,1)|abcd|{}", "(5,3)|abcd|{}", "(11,1)|abcd|{}", "(7,5)|abcd|{}", "(5,4)|abcd|{}", "(7,6)|abcd|{}", "(5,5)|abcd|{}", "(7,7)|abcd|{}", "(6,7)|abcd|{}", "(5,7)|abcd|{}", "(4,7)|abcd|{}", "(3,7)|abcd|{}", "(3,6)|abcd|{}", "(3,5)|abcd|{}", "(3,4)|abcd|{}", "(3,3)|abcd|{}", "(2,3)|abcd|{}", "(1,3)|abcd|{}", "(1,2)|abcd|{}", "(1,1)|abcd|{}"]}, "armadilhas": [], "algoritmos": {"BFS": {"caminho": ["(1,1)|-|{}", "(1,2)|-|{}", "(1,3)|-|{}", "(2,3)|-|{}", "(3,3)|-|{}", "(3,4)|-|{}", "(3,5)|-|{}", "(3,6)|-|{}", "(3,7)|-|{}", "(4,7)|-|{}", "(5,7)|-|{}", "(6,7)|-|{}", "(7,7)|-|{}", "(7,6)|-|{}", "(7,5)|-|{}", "(8,5)|-|{}", "(9,5)|-|{}", "(9,6)|-|{}", "(9,7)|-|{}", "(10,7)|-|{}", "(11,7)|-|{}", "(11,6)|-|{}", "(11,5)|-|{}", "(12,5)|-|{}", "(13,5)|-|{}", "(14,5)|-|{}", "(15,5)|-|{}", "(16,5)|-|{}", "(17,5)|-|{}", "(17,4)|-|{}", "(17,3)|-|{}", "(18,3)|-|{}", "(19,3)|-|{}", "(19,4)|-|{}", "(19,5)|-|{}", "(20,5)|-|{}", "(21,5)|-|{}", "(22,5)|-|{}", "(23,5)|-|{}", "(24,5)|-|{}", "(25,5)|-|{}", "(25,4)|-|{}", "(25,3)|-|{}", "(26,3)|-|{}", "(27,3)|-|{}", "(27,4)|-|{}", "(27,5)|a|{}", "(28,5)|a|{}", "(29,5)|a|{}", "(29,6)|a|{}", "(29,7)|a|{}", "(29,8)|a|{}", "(29,9)|a|{}", "(29,10)|a|{}", "(29,11)|a|{}", "(28,11)|a|{}", "(27,11)|a|{}", "(27,12)|a|{}", "(27,13)|a|{}", "(26,13)|a|{}", "(25,13)|a|{}", "(25,12)|a|{}", "(25,11)|a|{}", "(25,10)|a|{}", "(25,9)|a|{}", "(24,9)|a|{}", "(23,9)|a|{}", "(23,10)|a|{}", "(23,11)|a|{}", "(23,12)|a|{}", "(23,13)|a|{}", "(22,13)|a|{}", "(21,13)|a|{}", "(20,13)|a|{}", "(19,13)|a|{}", "(18,13)|a|{}", "(17,13)|a|{}", "(16,13)|a|{}", "(15,13)|a|{}", "(14,13)|a|{}", "(13,13)|a|{}", "(13,12)|a|{}", "(13,11)|a|{}", "(12,11)|a|{}", "(11,11)|a|{}", "(10,11)|a|{}", "(9,11)|a|{}", "(8,11)|a|{}", "(7,11)|a|{}", "(7,12)|a|{}", "(7,13)|a|{}", "(6,13)|a|{}", "(5,13)|a|{}", "(4,13)|a|{}", "(3,13)|a|{}", "(3,14)|a|{}", "(3,15)|a|{}", "(2,15)|a|{}", "(1,15)|a|{}", "(1,16)|a|{}", "(1,17)|a|{}", "(1,18)|a|{}", "(1,19)|a|{}", "(1,20)|a|{}", "(1,21)|a|{}", "(2,21)|a|{}", "(3,21)|a|{}", "(4,21)|a|{}", "(5,21)|a|{}", "(5,22)|a|{}", "(5,23)|a|{}", "(6,23)|a|{}", "(7,23)|a|{}", "(7,22)|a|{}", "(7,21)|a|{}", "(8,21)|a|{}", "(9,21)|a|{}", "(9,22)|a|{}", "(9,23)|a|{}", "(9,24)|a|{}", "(9,25)|a|{}", "(8,25)|a|{}", "(7,25)|a|{}", "(6,25)|a|{}", "(5,25)|a|{}", "(4,25)|a|{}", "(3,25)|a|{}", "(3,26)|a|{}", "(3,27)|a|{}", "(2,27)|a|{}", "(1,27)|a|{}", "(1,26)|a|{}", "(1,25)|a|{}", "(1,24)|a|{}", "(1,23)|a|{}", "(2,23)|a|{}", "(3,23)|ab|{}", "(2,23)|ab|{}", "(1,23)|ab|{}", "(1,24)|ab|{}", "(1,25)|ab|{}", "(1,26)|ab|{}", "(1,27)|ab|{}", "(1,28)|ab|{}", "(1,29)|ab|{}", "(1,30)|ab|{}", "(1,31)|ab|{}", "(1,32)|ab|{}", "(1,33)|ab|{}", "(1,34)|ab|{}", "(1,35)|ab|{}", "(2,35)|ab|{}", "(3,35)|ab|{}", "(4,35)|ab|{}", "(5,35)|ab|{}", "(6,35)|ab|{}", "(7,35)|ab|{}", "(8,35)|ab|{}", "(9,35)|ab|{}", "(10,35)|ab|{}", "(11,35)|ab|{}", "(12,35)|ab|{}", "(13,35)|ab|{}", "(13,34)|ab|{}", "(13,33)|ab|{}", "(14,33)|ab|{}", "(15,33)|ab|{}", "(16,33)|ab|{}", "(17,33)|ab|{}", "(17,34)|ab|{}", "(17,35)|ab|{}", "(17,36)|ab|{}", "(17,37)|ab|{}", "(17,38)|ab|{}", "(17,39)|ab|{}", "(16,39)|ab|{}", "(15,39)|ab|{}", "(15,38)|ab|{}", "(15,37)|ab|{}", "(14,37)|ab|{}", "(13,37)|ab|{}", "(12,37)|ab|{}", "(11,37)|ab|{}", "(10,37)|ab|{}", "(9,37)|ab|{}", "(8,37)|ab|{}", "(7,37)|ab|{}", "(6,37)|ab|{}", "(5,37)|abc|{}", "(6,37)|abc|{}", "(7,37)|abc|{}", "(7,38)|abc|{}", "(7,39)|abc|{}", "(6,39)|abc|{}", "(5,39)|abc|{}", "(5,40)|abc|{}", "(5,41)|abc|{}", "(5,42)|abc|{}", "(5,43)|abc|{}", "(5,44)|abc|{}", "(5,45)|abc|{}", "(5,46)|abc|{}", "(5,47)|abc|{}", "(6,47)|abc|{}", "(7,47)|abc|{}", "(8,47)|abc|{}", "(9,47)|abc|{}", "(9,48)|abc|{}", "(9,49)|abc|{}", "(9,50)|abc|{}", "(9,51)|abc|{}", "(10,51)|abc|{}", "(11,51)|abc|{}", "(12,51)|abc|{}", "(13,51)|abc|{}", "(14,51)|abc|{}", "(15,51)|abc|{}", "(15,50)|abc|{}", "(15,49)|abc|{}", "(16,49)|abc|{}", "(17,49)|abc|{}", "(18,49)|abc|{}", "(19,49)|abc|{}", "(19,48)|abc|{}", "(19,47)|abc|{}", "(19,46)|abc|{}", "(19,45)|abc|{}", "(19,44)|abc|{}", "(19,43)|abc|{}", "(18,43)|abc|{}", "(17,43)|abc|{}", "(17,42)|abc|{}", "(17,41)|abc|{}", "(18,41)|abc|{}", "(19,41)|abc|{}", "(20,41)|abc|{}", "(21,41)|abc|{}", "(21,40)|abc|{}", "(21,39)|abc|{}", "(22,39)|abc|{}", "(23,39)|abc|{}", "(23,38)|abc|{}", "(23,37)|abc|{}", "(22,37)|abc|{}", "(21,37)|abc|{}", "(21,36)|abc|{}", "(21,35)|abc|{}", "(20,35)|abc|{}", "(19,35)|abc|{}", "(19,34)|abc|{}", "(19,33)|abc|{}", "(19,32)|abc|{}", "(19,31)|abc|{}", "(18,31)|abc|{}", "(17,31)|abc|{}", "(16,31)|abc|{}", "(15,31)|abc|{}", "(14,31)|abc|{}", "(13,31)|abc|{}", "(13,30)|abc|{}", "(13,29)|abc|{}", "(13,28)|abc|{}", "(13,27)|abc|{}", "(14,27)|abc|{}", "(15,27)|abc|{}", "(15,26)|abc|{}", "(15,25)|abc|{}", "(14,25)|abc|{}", "(13,25)|abc|{}", "(12,25)|abc|{}", "(11,25)|abc|{}", "(11,26)|abc|{}", "(11,27)|abc|{}", "(10,27)|abc|{}", "(9,27)|abc|{}", "(8,27)|abc|{}", "(7,27)|abc|{}", "(6,27)|abc|{}", "(5,27)|abc|{}", "(5,28)|abc|{}", "(5,29)|abc|{}", "(6,29)|abc|{}", "(7,29)|abc|{}", "(7,30)|abc|{}", "(7,31)|abc|{}", "(6,31)|abc|{}", "(5,31)|abc|{}", "(4,31)|abc|{}", "(3,31)|abc|{}", "(3,30)|abc|{}", "(3,29)|abcd|{}", "(3,30)|abcd|{}", "(3,31)|abcd|{}", "(3,32)|abcd|{}", "(3,33)|abcd|{}", "(4,33)|abcd|{}", "(5,33)|abcd|{}", "(6,33)|abcd|{}", "(7,33)|abcd|{}", "(8,33)|abcd|{}", "(9,33)|abcd|{}", "(10,33)|abcd|{}", "(11,33)|abcd|{}", "(11,32)|abcd|{}", "(11,31)|abcd|{}", "(11,30)|abcd|{}", "(11,29)|abcd|{}", "(11,28)|abcd|{}", "(11,27)|abcd|{}", "(11,26)|abcd|{}", "(11,25)|abcd|{}", "(12,25)|abcd|{}", "(13,25)|abcd|{}", "(14,25)|abcd|{}", "(15,25)|abcd|{}", "(15,26)|abcd|{}", "(15,27)|abcd|{}", "(14,27)|abcd|{}", "(13,27)|abcd|{}", "(13,28)|abcd|{}", "(13,29)|abcd|{}", "(13,30)|abcd|{}", "(13,31)|abcd|{}", "(14,31)|abcd|{}", "(15,31)|abcd|{}", "(16,31)|abcd|{}", "(17,31)|abcd|{}", "(18,31)|abcd|{}", "(19,31)|abcd|{}", "(19,32)|abcd|{}", "(19,33)|abcd|{}", "(19,34)|abcd|{}", "(19,35)|abcd|{}", "(20,35)|abcd|{}", "(21,35)|abcd|{}", "(22,35)|abcd|{}", "(23,35)|abcd|{}", "(24,35)|abcd|{}", "(25,35)|abcd|{}", "(25,36)|abcd|{}", "(25,37)|abcd|{}", "(25,38)|abcd|{}", "(25,39)|abcd|{}", "(25,40)|abcd|{}", "(25,41)|abcd|{}", "(25,42)|abcd|{}", "(25,43)|abcd|{}", "(25,44)|abcd|{}", "(25,45)|abcd|{}", "(26,45)|abcd|{}", "(27,45)|abcd|{}", "(27,46)|abcd|{}", "(27,47)|abcd|{}", "(28,47)|abcd|{}", "(29,47)|abcd|{}", "(29,48)|abcd|{}", "(29,49)|abcd|{}", "(29,50)|abcd|{}", "(29,51)|abcd|{}", "(29,52)|abcd|{}", "(29,53)|abcd|{}", "(28,53)|abcd|{}", "(27,53)|abcd|{}", "(27,52)|abcd|{}", "(27,51)|abcd|{}", "(26,51)|abcd|{}", "(25,51)|abcd|{}", "(25,52)|abcd|{}", "(25,53)|abcd|{}", "(25,54)|abcd|{}", "(25,55)|abcd|{}", "(24,55)|abcd|{}", "(23,55)|abcd|{}", "(23,56)|abcd|{}", "(23,57)|abcd|{}", "(23,58)|abcd|{}", "(23,59)|abcd|{}", "(23,60)|abcd|{}", "(23,61)|abcd|{}", "(24,61)|abcd|{}", "(25,61)|abcd|{}", "(25,62)|abcd|{}", "(25,63)|abcd|{}", "(25,64)|abcd|{}", "(25,65)|abcd|{}", "(25,66)|abcd|{}", "(25,67)|abcd|{}", "(25,68)|abcd|{}", "(25,69)|abcd|{}", "(26,69)|abcd|{}", "(27,69)|abcd|{}", "(28,69)|abcd|{}", "(29,69)|abcd|{}"], "status": "OK", "motivo": ""}, "DIJKSTRA": {"caminho": ["(1,1)|-|{}", "(1,2)|-|{}", "(1,3)|-|{}", "(2,3)|-|{}", "(3,3)|-|{}", "(3,4)|-|{}", "(3,5)|-|{}", "(3,6)|-|{}", "(3,7)|-|{}", "(4,7)|-|{}", "(5,7)|-|{}", "(6,7)|-|{}", "(7,7)|-|{}", "(7,6)|-|{}", "(7,5)|-|{}", "(8,5)|-|{}", "(9,5)|-|{}", "(9,6)|-|{}", "(9,7)|-|{}", "(10,7)|-|{}", "(11,7)|-|{}", "(11,6)|-|{}", "(11,5)|-|{}", "(12,5)|-|{}", "(13,5)|-|{}", "(13,4)|-|{}", "(13,3)|-|{}", "(14,3)|-|{}", "(15,3)|-|{}", "(15,2)|-|{}", "(15,1)|-|{}", "(16,1)|-|{}", "(17,1)|-|{}", "(18,1)|-|{}", "(19,1)|-|{}", "(20,1)|-|{}", "(21,1)|-|{}", "(22,1)|-|{}", "(23,1)|-|{}", "(24,1)|-|{}", "(25,1)|-|{}", "(25,2)|-|{}", "(25,3)|-|{}", "(26,3)|-|{}", "(27,3)|-|{}", "(27,4)|-|{}", "(27,5)|a|{}", "(28,5)|a|{}", "(29,5)|a|{}", "(29,6)|a|{}", "(29,7)|a|{}", "(29,8)|a|{}", "(29,9)|a|{}", "(29,10)|a|{}", "(29,11)|a|{}", "(28,11)|a|{}", "(27,11)|a|{}", "(27,12)|a|{}", "(27,13)|a|{}", "(26,13)|a|{}", "(25,13)|a|{}", "(25,12)|a|{}", "(25,11)|a|{}", "(25,10)|a|{}", "(25,9)|a|{}", "(24,9)|a|{}", "(23,9)|a|{}", "(23,10)|a|{}", "(23,11)|a|{}", "(23,12)|a|{}", "(23,13)|a|{}", "(22,13)|a|{}", "(21,13)|a|{}", "(20,13)|a|{}", "(19,13)|a|{}", "(18,13)|a|{}", "(17,13)|a|{}", "(16,13)|a|{}", "(15,13)|a|{}", "(14,13)|a|{}", "(13,13)|a|{}", "(13,12)|a|{}", "(13,11)|a|{}", "(12,11)|a|{}", "(11,11)|a|{}", "(10,11)|a|{}", "(9,11)|a|{}", "(9,12)|a|{}", "(9,13)|a|{}", "(9,14)|a|{}", "(9,15)|a|{}", "(8,15)|a|{}", "(7,15)|a|{}", "(6,15)|a|{}", "(5,15)|a|{}", "(5,16)|a|{}", "(5,17)|a|{}", "(4,17)|a|{}", "(3,17)|a|{}", "(2,17)|a|{}", "(1,17)|a|{}", "(1,18)|a|{}", "(1,19)|a|{}", "(1,20)|a|{}", "(1,21)|a|{}", "(2,21)|a|{}", "(3,21)|a|{}", "(4,21)|a|{}", "(5,21)|a|{}", "(5,22)|a|{}", "(5,23)|a|{}", "(6,23)|a|{}", "(7,23)|a|{}", "(7,22)|a|{}", "(7,21)|a|{}", "(8,21)|a|{}", "(9,21)|a|{}", "(9,22)|a|{}", "(9,23)|a|{}", "(9,24)|a|{}", "(9,25)|a|{}", "(8,25)|a|{}", "(7,25)|a|{}", "(6,25)|a|{}", "(5,25)|a|{}", "(4,25)|a|{}", "(3,25)|a|{}", "(3,26)|a|{}", "(3,27)|a|{}", "(2,27)|a|{}", "(1,27)|a|{}", "(1,26)|a|{}", "(1,25)|a|{}", "(1,24)|a|{}", "(1,23)|a|{}", "(2,23)|a|{}", "(3,23)|ab|{}", "(2,23)|ab|{}", "(1,23)|ab|{}", "(1,24)|ab|{}", "(1,25)|ab|{}", "(1,26)|ab|{}", "(1,27)|ab|{}", "(1,28)|ab|{}", "(1,29)|ab|{}", "(1,30)|ab|{}", "(1,31)|ab|{}", "(1,32)|ab|{}", "(1,33)|ab|{}", "(1,34)|ab|{}", "(1,35)|ab|{}", "(2,35)|ab|{}", "(3,35)|ab|{}", "(4,35)|ab|{}", "(5,35)|ab|{}", "(6,35)|ab|{}", "(7,35)|ab|{}", "(8,35)|ab|{}", "(9,35)|ab|{}", "(10,35)|ab|{}", "(11,35)|ab|{}", "(12,35)|ab|{}", "(13,35)|ab|{}", "(13,34)|ab|{}", "(13,33)|ab|{}", "(14,33)|ab|{}", "(15,33)|ab|{}", "(16,33)|ab|{}", "(17,33)|ab|{}", "(17,34)|ab|{}", "(17,35)|ab|{}", "(17,36)|ab|{}", "(17,37)|ab|{}", "(17,38)|ab|{}", "(17,39)|ab|{}", "(16,39)|ab|{}", "(15,39)|ab|{}", "(15,38)|ab|{}", "(15,37)|ab|{}", "(14,37)|ab|{}", "(13,37)|ab|{}", "(12,37)|ab|{}", "(11,37)|ab|{}", "(10,37)|ab|{}", "(9,37)|ab|{}", "(8,37)|ab|{}", "(7,37)|ab|{}", "(6,37)|ab|{}", "(5,37)|abc|{}", "(6,37)|abc|{}", "(7,37)|abc|{}", "(7,38)|abc|{}", "(7,39)|abc|{}", "(6,39)|abc|{}", "(5,39)|abc|{}", "(5,40)|abc|{}", "(5,41)|abc|{}", "(5,42)|abc|{}", "(5,43)|abc|{}", "(5,44)|abc|{}", "(5,45)|abc|{}", "(5,46)|abc|{}", "(5,47)|abc|{}", "(6,47)|abc|{}", "(7,47)|abc|{}", "(8,47)|abc|{}", "(9,47)|abc|{}", "(9,48)|abc|{}", "(9,49)|abc|{}", "(9,50)|abc|{}", "(9,51)|abc|{}", "(10,51)|abc|{}", "(11,51)|abc|{}", "(12,51)|abc|{}", "(13,51)|abc|{}", "(14,51)|abc|{}", "(15,51)|abc|{}", "(15,50)|abc|{}", "(15,49)|abc|{}", "(16,49)|abc|{}", "(17,49)|abc|{}", "(18,49)|abc|{}", "(19,49)|abc|{}", "(19,48)|abc|{}", "(19,47)|abc|{}", "(19,46)|abc|{}", "(19,45)|abc|{}", "(19,44)|abc|{}", "(19,43)|abc|{}", "(18,43)|abc|{}", "(17,43)|abc|{}", "(17,42)|abc|{}", "(17,41)|abc|{}", "(18,41)|abc|{}", "(19,41)|abc|{}", "(20,41)|abc|{}", "(21,41)|abc|{}", "(22,41)|abc|{}", "(23,41)|abc|{}", "(24,41)|abc|{}", "(25,41)|abc|{}", "(25,40)|abc|{}", "(25,39)|abc|{}", "(25,38)|abc|{}", "(25,37)|abc|{}", "(25,36)|abc|{}", "(25,35)|abc|{}", "(24,35)|abc|{}", "(23,35)|abc|{}", "(22,35)|abc|{}", "(21,35)|abc|{}", "(20,35)|abc|{}", "(19,35)|abc|{}", "(19,34)|abc|{}", "(19,33)|abc|{}", "(19,32)|abc|{}", "(19,31)|abc|{}", "(19,30)|abc|{}", "(19,29)|abc|{}", "(19,28)|abc|{}", "(19,27)|abc|{}", "(18,27)|abc|{}", "(17,27)|abc|{}", "(17,26)|abc|{}", "(17,25)|abc|{}", "(17,24)|abc|{}", "(17,23)|abc|{}", "(16,23)|abc|{}", "(15,23)|abc|{}", "(14,23)|abc|{}", "(13,23)|abc|{}", "(13,24)|abc|{}", "(13,25)|abc|{}", "(12,25)|abc|{}", "(11,25)|abc|{}", "(11,26)|abc|{}", "(11,27)|abc|{}", "(11,28)|abc|{}", "(11,29)|abc|{}", "(11,30)|abc|{}", "(11,31)|abc|{}", "(10,31)|abc|{}", "(9,31)|abc|{}", "(9,32)|abc|{}", "(9,33)|abc|{}", "(8,33)|abc|{}", "(7,33)|abc|{}", "(7,32)|abc|{}", "(7,31)|abc|{}", "(6,31)|abc|{}", "(5,31)|abc|{}", "(4,31)|abc|{}", "(3,31)|abc|{}", "(3,30)|abc|{}", "(3,29)|abcd|{}", "(3,30)|abcd|{}", "(3,31)|abcd|{}", "(4,31)|abcd|{}", "(5,31)|abcd|{}", "(6,31)|abcd|{}", "(7,31)|abcd|{}", "(7,32)|abcd|{}", "(7,33)|abcd|{}", "(8,33)|abcd|{}", "(9,33)|abcd|{}", "(9,32)|abcd|{}", "(9,31)|abcd|{}", "(10,31)|abcd|{}", "(11,31)|abcd|{}", "(11,30)|abcd|{}", "(11,29)|abcd|{}", "(11,28)|abcd|{}", "(11,27)|abcd|{}", "(11,26)|abcd|{}", "(11,25)|abcd|{}", "(12,25)|abcd|{}", "(13,25)|abcd|{}", "(13,24)|abcd|{}", "(13,23)|abcd|{}", "(14,23)|abcd|{}", "(15,23)|abcd|{}", "(16,23)|abcd|{}", "(17,23)|abcd|{}", "(17,24)|abcd|{}", "(17,25)|abcd|{}", "(17,26)|abcd|{}", "(17,27)|abcd|{}", "(18,27)|abcd|{}", "(19,27)|abcd|{}", "(19,28)|abcd|{}", "(19,29)|abcd|{}", "(19,30)|abcd|{}", "(19,31)|abcd|{}", "(19,32)|abcd|{}", "(19,33)|abcd|{}", "(19,34)|abcd|{}", "(19,35)|abcd|{}", "(20,35)|abcd|{}", "(21,35)|abcd|{}", "(22,35)|abcd|{}", "(23,35)|abcd|{}", "(24,35)|abcd|{}", "(25,35)|abcd|{}", "(25,36)|abcd|{}", "(25,37)|abcd|{}", "(25,38)|abcd|{}", "(25,39)|abcd|{}", "(25,40)|abcd|{}", "(25,41)|abcd|{}", "(25,42)|abcd|{}", "(25,43)|abcd|{}", "(25,44)|abcd|{}", "(25,45)|abcd|{}", "(26,45)|abcd|{}", "(27,45)|abcd|{}", "(27,46)|abcd|{}", "(27,47)|abcd|{}", "(28,47)|abcd|{}", "(29,47)|abcd|{}", "(29,48)|abcd|{}", "(29,49)|abcd|{}", "(29,50)|abcd|{}", "(29,51)|abcd|{}", "(29,52)|abcd|{}", "(29,53)|abcd|{}", "(28,53)|abcd|{}", "(27,53)|abcd|{}", "(27,52)|abcd|{}", "(27,51)|abcd|{}", "(26,51)|abcd|{}", "(25,51)|abcd|{}", "(25,52)|abcd|{}", "(25,53)|abcd|{}", "(25,54)|abcd|{}", "(25,55)|abcd|{}", "(24,55)|abcd|{}", "(23,55)|abcd|{}", "(23,56)|abcd|{}", "(23,57)|abcd|{}", "(23,58)|abcd|{}", "(23,59)|abcd|{}", "(23,60)|abcd|{}", "(23,61)|abcd|{}", "(24,61)|abcd|{}", "(25,61)|abcd|{}", "(25,62)|abcd|{}", "(25,63)|abcd|{}", "(25,64)|abcd|{}", "(25,65)|abcd|{}", "(25,66)|abcd|{}", "(25,67)|abcd|{}", "(25,68)|abcd|{}", "(25,69)|abcd|{}", "(26,69)|abcd|{}", "(27,69)|abcd|{}", "(28,69)|abcd|{}", "(29,69)|abcd|{}"], "status": "OK", "motivo": ""}, "BELLMAN_FORD": {"caminho": ["(1,1)|-|{}", "(1,2)|-|{}", "(1,3)|-|{}", "(2,3)|-|{}", "(3,3)|-|{}", "(3,4)|-|{}", "(3,5)|-|{}", "(3,6)|-|{}", "(3,7)|-|{}", "(4,7)|-|{}", "(5,7)|-|{}", "(6,7)|-|{}", "(7,7)|-|{}", "(7,6)|-|{}", "(7,5)|-|{}", "(8,5)|-|{}", "(9,5)|-|{}", "(9,6)|-|{}", "(9,7)|-|{}", "(10,7)|-|{}", "(11,7)|-|{}", "(11,6)|-|{}", "(11,5)|-|{}", "(12,5)|-|{}", "(13,5)|-|{}", "(13,4)|-|{}", "(13,3)|-|{}", "(14,3)|-|{}", "(15,3)|-|{}", "(15,2)|-|{}", "(15,1)|-|{}", "(16,1)|-|{}", "(17,1)|-|{}", "(18,1)|-|{}", "(19,1)|-|{}", "(20,1)|-|{}", "(21,1)|-|{}", "(22,1)|-|{}", "(23,1)|-|{}", "(24,1)|-|{}", "(25,1)|-|{}", "(25,2)|-|{}", "(25,3)|-|{}", "(26,3)|-|{}", "(27,3)|-|{}", "(27,4)|-|{}", "(27,5)|a|{}", "(28,5)|a|{}", "(29,5)|a|{}", "(29,6)|a|{}", "(29,7)|a|{}", "(29,8)|a|{}", "(29,9)|a|{}", "(29,10)|a|{}", "(29,11)|a|{}", "(28,11)|a|{}", "(27,11)|a|{}", "(27,12)|a|{}", "(27,13)|a|{}", "(26,13)|a|{}", "(25,13)|a|{}", "(25,12)|a|{}", "(25,11)|a|{}", "(25,10)|a|{}", "(25,9)|a|{}", "(24,9)|a|{}", "(23,9)|a|{}", "(23,10)|a|{}", "(23,11)|a|{}", "(23,12)|a|{}", "(23,13)|a|{}", "(22,13)|a|{}", "(21,13)|a|{}", "(20,13)|a|{}", "(19,13)|a|{}", "(18,13)|a|{}", "(17,13)|a|{}", "(16,13)|a|{}", "(15,13)|a|{}", "(14,13)|a|{}", "(13,13)|a|{}", "(13,12)|a|{}", "(13,11)|a|{}", "(12,11)|a|{}", "(11,11)|a|{}", "(10,11)|a|{}", "(9,11)|a|{}", "(9,12)|a|{}", "(9,13)|a|{}", "(9,14)|a|{}", "(9,15)|a|{}", "(8,15)|a|{}", "(7,15)|a|{}", "(6,15)|a|{}", "(5,15)|a|{}", "(5,16)|a|{}", "(5,17)|a|{}", "(4,17)|a|{}", "(3,17)|a|{}", "(2,17)|a|{}", "(1,17)|a|{}", "(1,18)|a|{}", "(1,19)|a|{}", "(1,20)|a|{}", "(1,21)|a|{}", "(2,21)|a|{}", "(3,21)|a|{}", "(4,21)|a|{}", "(5,21)|a|{}", "(5,22)|a|{}", "(5,23)|a|{}", "(6,23)|a|{}", "(7,23)|a|{}", "(7,22)|a|{}", "(7,21)|a|{}", "(8,21)|a|{}", "(9,21)|a|{}", "(9,22)|a|{}", "(9,23)|a|{}", "(9,24)|a|{}", "(9,25)|a|{}", "(8,25)|a|{}", "(7,25)|a|{}", "(6,25)|a|{}", "(5,25)|a|{}", "(4,25)|a|{}", "(3,25)|a|{}", "(3,26)|a|{}", "(3,27)|a|{}", "(2,27)|a|{}", "(1,27)|a|{}", "(1,26)|a|{}", "(1,25)|a|{}", "(1,24)|a|{}", "(1,23)|a|{}", "(2,23)|a|{}", "(3,23)|ab|{}", "(2,23)|ab|{}", "(1,23)|ab|{}", "(1,24)|ab|{}", "(1,25)|ab|{}", "(1,26)|ab|{}", "(1,27)|ab|{}", "(1,28)|ab|{}", "(1,29)|ab|{}", "(1,30)|ab|{}", "(1,31)|ab|{}", "(1,32)|ab|{}", "(1,33)|ab|{}", "(1,34)|ab|{}", "(1,35)|ab|{}", "(2,35)|ab|{}", "(3,35)|ab|{}", "(4,35)|ab|{}", "(5,35)|ab|{}", "(6,35)|ab|{}", "(7,35)|ab|{}", "(8,35)|ab|{}", "(9,35)|ab|{}", "(10,35)|ab|{}", "(11,35)|ab|{}", "(12,35)|ab|{}", "(13,35)|ab|{}", "(13,34)|ab|{}", "(13,33)|ab|{}", "(14,33)|ab|{}", "(15,33)|ab|{}", "(16,33)|ab|{}", "(17,33)|ab|{}", "(17,34)|ab|{}", "(17,35)|ab|{}", "(17,36)|ab|{}", "(17,37)|ab|{}", "(17,38)|ab|{}", "(17,39)|ab|{}", "(16,39)|ab|{}", "(15,39)|ab|{}", "(15,38)|ab|{}", "(15,37)|ab|{}", "(14,37)|ab|{}", "(13,37)|ab|{}", "(12,37)|ab|{}", "(11,37)|ab|{}", "(10,37)|ab|{}", "(9,37)|ab|{}", "(8,37)|ab|{}", "(7,37)|ab|{}", "(6,37)|ab|{}", "(5,37)|abc|{}", "(6,37)|abc|{}", "(7,37)|abc|{}", "(7,38)|abc|{}", "(7,39)|abc|{}", "(6,39)|abc|{}", "(5,39)|abc|{}", "(5,40)|abc|{}", "(5,41)|abc|{}", "(5,42)|abc|{}", "(5,43)|abc|{}", "(5,44)|abc|{}", "(5,45)|abc|{}", "(5,46)|abc|{}", "(5,47)|abc|{}", "(6,47)|abc|{}", "(7,47)|abc|{}", "(8,47)|abc|{}", "(9,47)|abc|{}", "(9,48)|abc|{}", "(9,49)|abc|{}", "(9,50)|abc|{}", "(9,51)|abc|{}", "(10,51)|abc|{}", "(11,51)|abc|{}", "(12,51)|abc|{}", "(13,51)|abc|{}", "(14,51)|abc|{}", "(15,51)|abc|{}", "(15,50)|abc|{}", "(15,49)|abc|{}", "(16,49)|abc|{}", "(17,49)|abc|{}", "(18,49)|abc|{}", "(19,49)|abc|{}", "(19,48)|abc|{}", "(19,47)|abc|{}", "(19,46)|abc|{}", "(19,45)|abc|{}", "(19,44)|abc|{}", "(19,43)|abc|{}", "(18,43)|abc|{}", "(17,43)|abc|{}", "(17,42)|abc|{}", "(17,41)|abc|{}", "(18,41)|abc|{}", "(19,41)|abc|{}", "(20,41)|abc|{}", "(21,41)|abc|{}", "(22,41)|abc|{}", "(23,41)|abc|{}", "(24,41)|abc|{}", "(25,41)|abc|{}", "(25,40)|abc|{}", "(25,39)|abc|{}", "(25,38)|abc|{}", "(25,37)|abc|{}", "(25,36)|abc|{}", "(25,35)|abc|{}", "(24,35)|abc|{}", "(23,35)|abc|{}", "(22,35)|abc|{}", "(21,35)|abc|{}", "(20,35)|abc|{}", "(19,35)|abc|{}", "(19,34)|abc|{}", "(19,33)|abc|{}", "(19,32)|abc|{}", "(19,31)|abc|{}", "(19,30)|abc|{}", "(19,29)|abc|{}", "(19,28)|abc|{}", "(19,27)|abc|{}", "(18,27)|abc|{}", "(17,27)|abc|{}", "(17,26)|abc|{}", "(17,25)|abc|{}", "(17,24)|abc|{}", "(17,23)|abc|{}", "(16,23)|abc|{}", "(15,23)|abc|{}", "(14,23)|abc|{}", "(13,23)|abc|{}", "(13,24)|abc|{}", "(13,25)|abc|{}", "(12,25)|abc|{}", "(11,25)|abc|{}", "(11,26)|abc|{}", "(11,27)|abc|{}", "(11,28)|abc|{}", "(11,29)|abc|{}", "(11,30)|abc|{}", "(11,31)|abc|{}", "(10,31)|abc|{}", "(9,31)|abc|{}", "(9,32)|abc|{}", "(9,33)|abc|{}", "(8,33)|abc|{}", "(7,33)|abc|{}", "(7,32)|abc|{}", "(7,31)|abc|{}", "(6,31)|abc|{}", "(5,31)|abc|{}", "(4,31)|abc|{}", "(3,31)|abc|{}", "(3,30)|abc|{}", "(3,29)|abcd|{}", "(3,30)|abcd|{}", "(3,31)|abcd|{}", "(4,31)|abcd|{}", "(5,31)|abcd|{}", "(6,31)|abcd|{}", "(7,31)|abcd|{}", "(7,32)|abcd|{}", "(7,33)|abcd|{}", "(8,33)|abcd|{}", "(9,33)|abcd|{}", "(9,32)|abcd|{}", "(9,31)|abcd|{}", "(10,31)|abcd|{}", "(11,31)|abcd|{}", "(11,30)|abcd|{}", "(11,29)|abcd|{}", "(11,28)|abcd|{}", "(11,27)|abcd|{}", "(11,26)|abcd|{}", "(11,25)|abcd|{}", "(12,25)|abcd|{}", "(13,25)|abcd|{}", "(13,24)|abcd|{}", "(13,23)|abcd|{}", "(14,23)|abcd|{}", "(15,23)|abcd|{}", "(16,23)|abcd|{}", "(17,23)|abcd|{}", "(17,24)|abcd|{}", "(17,25)|abcd|{}", "(17,26)|abcd|{}", "(17,27)|abcd|{}", "(18,27)|abcd|{}", "(19,27)|abcd|{}", "(19,28)|abcd|{}", "(19,29)|abcd|{}", "(19,30)|abcd|{}", "(19,31)|abcd|{}", "(19,32)|abcd|{}", "(19,33)|abcd|{}", "(19,34)|abcd|{}", "(19,35)|abcd|{}", "(20,35)|abcd|{}", "(21,35)|abcd|{}", "(22,35)|abcd|{}", "(23,35)|abcd|{}", "(24,35)|abcd|{}", "(25,35)|abcd|{}", "(25,36)|abcd|{}", "(25,37)|abcd|{}", "(25,38)|abcd|{}", "(25,39)|abcd|{}", "(25,40)|abcd|{}", "(25,41)|abcd|{}", "(25,42)|abcd|{}", "(25,43)|abcd|{}", "(25,44)|abcd|{}", "(25,45)|abcd|{}", "(26,45)|abcd|{}", "(27,45)|abcd|{}", "(27,46)|abcd|{}", "(27,47)|abcd|{}", "(28,47)|abcd|{}", "(29,47)|abcd|{}", "(29,48)|abcd|{}", "(29,49)|abcd|{}", "(29,50)|abcd|{}", "(29,51)|abcd|{}", "(29,52)|abcd|{}", "(29,53)|abcd|{}", "(28,53)|abcd|{}", "(27,53)|abcd|{}", "(27,52)|abcd|{}", "(27,51)|abcd|{}", "(26,51)|abcd|{}", "(25,51)|abcd|{}", "(25,52)|abcd|{}", "(25,53)|abcd|{}", "(25,54)|abcd|{}", "(25,55)|abcd|{}", "(24,55)|abcd|{}", "(23,55)|abcd|{}", "(23,56)|abcd|{}", "(23,57)|abcd|{}", "(23,58)|abcd|{}", "(23,59)|abcd|{}", "(23,60)|abcd|{}", "(23,61)|abcd|{}", "(24,61)|abcd|{}", "(25,61)|abcd|{}", "(25,62)|abcd|{}", "(25,63)|abcd|{}", "(25,64)|abcd|{}", "(25,65)|abcd|{}", "(25,66)|abcd|{}", "(25,67)|abcd|{}", "(25,68)|abcd|{}", "(25,69)|abcd|{}", "(26,69)|abcd|{}", "(27,69)|abcd|{}", "(28,69)|abcd|{}", "(29,69)|abcd|{}"], "status": "OK", "motivo": ""}}, "nota": ""}]};
+
+  const ALGS = [
+    { id: "BFS", nome: "BFS", crit: "menos passos" },
+    { id: "DIJKSTRA", nome: "Dijkstra", crit: "menor custo" },
+    { id: "BELLMAN_FORD", nome: "Bellman-Ford", crit: "menor custo" }
+  ];
+  const CORES = ["#2A78D6", "#EB6834", "#1BAF7A", "#E87BA4", "#6250D6", "#008300"];
+  const CUSTO = { ",": 3, "~": 5, "*": -2 };
+  const SETA = { ">": "→", "<": "←", "^": "↑", "v": "↓" };
+  const DIR = { "-1,0": "norte", "0,1": "leste", "1,0": "sul", "0,-1": "oeste" };
+  const RX = /^\((\d+),(\d+)\)\|([a-z]+|-)\|\{([\d,]*)\}$/;
+  const $ = s => document.querySelector(s);
+
+  const svg = $("#mapa"), gEst = $("#estatico"), gDin = $("#dinamico");
+  const estado = { mapa: null, alg: "BFS", passo: 0, tocando: false, vel: 2, camada: "todas", armadilhas: true, timer: null };
+  let M = null;
+
+  function ler(r) {
+    const m = RX.exec(r);
+    if (!m) throw new Error("Rótulo fora do formato (l,c)|chaves|{bônus}: " + r);
+    return { l: +m[1], c: +m[2], k: m[3] === "-" ? "" : m[3], b: m[4] ? m[4].split(",").map(Number) : [], rotulo: r };
+  }
+  const nomeCamada = k => (k ? "{" + k.split("").join(",") + "}" : "sem chaves");
+  const curtoCamada = k => (k ? k : "–");
+
+  function nomeCasa(ch) {
+    if ("abcd".includes(ch)) return "chave " + ch;
+    if ("ABCD".includes(ch)) return "porta " + ch;
+    if (SETA[ch]) return "esteira " + SETA[ch];
+    return ({ ".": "chão", "S": "início", "G": "saída", ",": "lama", "~": "água", "+": "bônus", "*": "fonte", "#": "parede" })[ch] || ch;
+  }
+  function custoEntrada(grade, a, b) {
+    const ch = grade[b.l][b.c];
+    if (ch === "+") return b.b.length > a.b.length ? -4 : 1;
+    return CUSTO[ch] ?? 1;
+  }
+
+  function preparar(id) {
+    const d = DADOS.mapas.find(m => m.id === id);
+    const grade = d.grade;
+    const chaves = Object.keys(d.camadas).map(k => (k === "-" ? "" : k))
+      .sort((a, b) => a.length - b.length || a.localeCompare(b));
+    const idx = Object.fromEntries(chaves.map((k, i) => [k, i]));
+    const estados = {};
+    for (const [k, lista] of Object.entries(d.camadas)) estados[k === "-" ? "" : k] = lista.map(ler);
+    const armadilhas = (d.armadilhas || []).map(ler);
+    const caminhos = {};
+    for (const a of ALGS) {
+      const info = d.algoritmos[a.id] || { caminho: [], status: "—" };
+      const E = (info.caminho || []).map(ler);
+      const custos = [0];
+      for (let i = 1; i < E.length; i++) custos.push(custos[i - 1] + custoEntrada(grade, E[i - 1], E[i]));
+      caminhos[a.id] = { E, custos, status: info.status, motivo: info.motivo || "" };
+    }
+    const total = Object.values(estados).reduce((s, l) => s + l.length, 0);
+    return { d, grade, chaves, idx, estados, armadilhas, caminhos, total,
+             altura: grade.length, largura: Math.max(...grade.map(l => l.length)) };
+  }
+
+  const desloc = k => (M.chaves.length < 2 ? 0 : (M.idx[k] - (M.chaves.length - 1) / 2) * 0.16);
+  const cor = k => CORES[M.idx[k] % CORES.length];
+  const visivel = k => estado.camada === "todas" || estado.camada === k;
+  const caminhoAtual = () => M.caminhos[estado.alg];
+
+  function desenharEstatico() {
+    const { grade, altura, largura } = M;
+    svg.setAttribute("viewBox", `-1.05 -1.05 ${largura + 1.25} ${altura + 1.25}`);
+    let s = "";
+    for (let c = 0; c < largura; c++) s += `<text class="coord" x="${c + 0.5}" y="-0.32" text-anchor="middle">${c}</text>`;
+    for (let l = 0; l < altura; l++) s += `<text class="coord" x="-0.28" y="${l + 0.62}" text-anchor="end">${l}</text>`;
+    for (let l = 0; l < altura; l++) {
+      for (let c = 0; c < grade[l].length; c++) {
+        const ch = grade[l][c];
+        const cls = ch === "#" ? "c-parede" : ch === "~" ? "c-agua" : ch === "," ? "c-lama" : "c-chao";
+        s += `<rect class="casa ${cls}" x="${c}" y="${l}" width="1" height="1"/>`;
+        let txt = null;
+        if ("SGabcdABCD+*".includes(ch)) txt = ch;
+        else if (SETA[ch]) txt = SETA[ch];
+        if (txt) s += `<text class="simbolo" x="${c + 0.5}" y="${l + 0.52}">${txt}</text>`;
+      }
+    }
+    gEst.innerHTML = s;
+  }
+
+  function estrela(x, y, r, preenchimento) {
+    let p = [];
+    for (let i = 0; i < 10; i++) {
+      const ang = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * 0.45 : r;
+      p.push((x + rr * Math.cos(ang)).toFixed(3) + "," + (y + rr * Math.sin(ang)).toFixed(3));
+    }
+    return `<polygon points="${p.join(" ")}" fill="${preenchimento}" stroke="#1A1A18" stroke-width=".035" stroke-linejoin="round"/>`;
+  }
+
+  function desenharDinamico() {
+    const { E } = caminhoAtual();
+    let s = "";
+    for (const k of M.chaves) {
+      if (!visivel(k)) continue;
+      const dx = desloc(k);
+      for (const e of M.estados[k]) {
+        s += `<circle cx="${e.c + 0.5 + dx}" cy="${e.l + 0.5 + dx}" r=".1" fill="${cor(k)}" opacity=".55"/>`;
+      }
+    }
+    if (estado.armadilhas) {
+      for (const t of M.armadilhas) {
+        if (!visivel(t.k)) continue;
+        const x = t.c + 0.5, y = t.l + 0.5;
+        s += `<circle class="anel-armadilha" cx="${x}" cy="${y}" r=".38"/>`;
+        s += `<line class="x-armadilha" x1="${x - .13}" y1="${y - .13}" x2="${x + .13}" y2="${y + .13}"/>`;
+        s += `<line class="x-armadilha" x1="${x - .13}" y1="${y + .13}" x2="${x + .13}" y2="${y - .13}"/>`;
+      }
+    }
+    if (E.length) {
+      for (let i = 0; i < E.length - 1; i++) {
+        const a = E[i], b = E[i + 1], da = desloc(a.k), db = desloc(b.k);
+        const andado = i < estado.passo;
+        const op = visivel(a.k) ? (andado ? 1 : .22) : (andado ? .28 : .1);
+        s += `<line x1="${a.c + .5 + da}" y1="${a.l + .5 + da}" x2="${b.c + .5 + db}" y2="${b.l + .5 + db}" ` +
+             `stroke="${cor(a.k)}" stroke-width="${andado ? .15 : .09}" stroke-linecap="round" opacity="${op}"` +
+             (andado ? "" : ` stroke-dasharray=".12 .14"`) + `/>`;
+      }
+      const e0 = E[0], d0 = desloc(e0.k);
+      s += `<circle cx="${e0.c + .5 + d0}" cy="${e0.l + .5 + d0}" r=".2" fill="#FFFFFF" stroke="${cor(e0.k)}" stroke-width=".08"/>`;
+      for (let i = 1; i <= estado.passo; i++) {
+        if (E[i].k !== E[i - 1].k) s += estrela(E[i].c + .5, E[i].l + .5, .36, cor(E[i].k));
+      }
+      const p = E[estado.passo], dp = desloc(p.k), cx = p.c + .5 + dp, cy = p.l + .5 + dp;
+      s += `<circle class="jogador-pulso" cx="${cx}" cy="${cy}" r=".42" stroke="${cor(p.k)}"/>`;
+      s += `<circle cx="${cx}" cy="${cy}" r=".27" fill="${cor(p.k)}" stroke="#FFFFFF" stroke-width=".08"/>`;
+    }
+    gDin.innerHTML = s;
+  }
+
+  function textoEvento(i) {
+    const { E } = caminhoAtual(), g = M.grade;
+    const b = E[i];
+    if (i === 0) return { txt: `Estado inicial em (${b.l},${b.c}), sem chaves e sem bônus consumidos.`, cor: cor(b.k) };
+    const a = E[i - 1], ch = g[b.l][b.c], origem = g[a.l][a.c];
+    const dir = DIR[(b.l - a.l) + "," + (b.c - a.c)] || "?";
+    const partes = [];
+    if (SETA[origem]) partes.push(`A esteira ${SETA[origem]} só deixa sair para o ${dir}.`);
+    else partes.push(`Andou para o ${dir}.`);
+    if (b.k.length > a.k.length) {
+      const nova = [...b.k].filter(x => !a.k.includes(x)).join(",");
+      partes.push(`Pegou a chave ${nova}: o arco muda da camada ${curtoCamada(a.k)} para a camada ${curtoCamada(b.k)}.`);
+    } else if ("ABCD".includes(ch)) {
+      partes.push(`Atravessou a porta ${ch} porque já tem a chave ${ch.toLowerCase()}.`);
+    }
+    if (ch === "~") partes.push("Água: custa 5.");
+    else if (ch === ",") partes.push("Lama: custa 3.");
+    else if (ch === "+") partes.push(b.b.length > a.b.length ? "Bônus consumido: vale −4." : "Bônus já usado: agora custa 1.");
+    else if (ch === "*") partes.push("Fonte de energia: vale −2.");
+    if (ch === "G") partes.push("Chegou à saída. Daqui sai só o arco de custo 0 até o ALVO.");
+    return { txt: partes.join(" "), cor: cor(b.k) };
+  }
+
+  function atualizarPainel() {
+    const cam = caminhoAtual();
+    const ok = cam.E.length > 0;
+    const N = Math.max(cam.E.length - 1, 0);
+    $("#rPasso").max = N;
+    $("#rPasso").value = estado.passo;
+    $("#txtPasso").textContent = ok ? `${estado.passo} / ${N}` : "—";
+    for (const id of ["bInicio", "bVolta", "bPlay", "bAvanca", "bFim", "rPasso"]) $("#" + id).disabled = !ok;
+
+    if (!ok) {
+      $("#txtPassoPainel").textContent = cam.status;
+      $("#txtRotulo").textContent = "sem percurso";
+      for (const id of ["dPos", "dCasa", "dChaves", "dBonus", "dCustoPasso", "dCusto"]) $("#" + id).textContent = "—";
+      const ev = $("#txtEvento");
+      ev.textContent = cam.motivo || "Este algoritmo não produziu caminho neste mapa.";
+      ev.style.setProperty("--cor-evento", "var(--trap)");
+      return;
+    }
+    const e = cam.E[estado.passo];
+    $("#txtPassoPainel").textContent = `passo ${estado.passo} de ${N}`;
+    $("#txtRotulo").textContent = e.rotulo;
+    $("#dPos").textContent = `(${e.l}, ${e.c})`;
+    $("#dCasa").textContent = nomeCasa(M.grade[e.l][e.c]);
+    $("#dChaves").innerHTML = e.k
+      ? `<span class="camada-chip"><i class="bolinha" style="background:${cor(e.k)}"></i>{${e.k.split("").join(",")}}</span>`
+      : "nenhuma";
+    $("#dBonus").textContent = e.b.length ? `{${e.b.join(",")}}` : "nenhum";
+    const cp = estado.passo === 0 ? null : cam.custos[estado.passo] - cam.custos[estado.passo - 1];
+    $("#dCustoPasso").textContent = cp === null ? "—" : (cp > 0 ? "+" + cp : String(cp).replace("-", "−"));
+    $("#dCusto").textContent = String(cam.custos[estado.passo]).replace("-", "−");
+    const ev = textoEvento(estado.passo);
+    $("#txtEvento").textContent = ev.txt;
+    $("#txtEvento").style.setProperty("--cor-evento", ev.cor);
+  }
+
+  function montarComparacao() {
+    const tb = $("#tbComp");
+    tb.innerHTML = "";
+    for (const a of ALGS) {
+      const cam = M.caminhos[a.id];
+      const ok = cam.status === "OK" && cam.E.length;
+      const tr = document.createElement("tr");
+      tr.tabIndex = 0;
+      tr.dataset.alg = a.id;
+      tr.setAttribute("aria-selected", String(a.id === estado.alg));
+      tr.innerHTML =
+        `<td>${a.nome}</td>` +
+        `<td class="num">${ok ? cam.E.length - 1 : "—"}</td>` +
+        `<td class="num">${ok ? String(cam.custos[cam.custos.length - 1]).replace("-", "−") : "—"}</td>` +
+        `<td class="num"><span class="status ${cam.status === "OK" ? "ok" : "ruim"}">${cam.status}</span></td>`;
+      tr.addEventListener("click", () => escolherAlg(a.id));
+      tr.addEventListener("keydown", ev => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); escolherAlg(a.id); } });
+      tb.appendChild(tr);
+    }
+  }
+
+  function montarCamadas() {
+    const box = $("#chipsCamada");
+    box.innerHTML = "";
+    const opcoes = [{ k: "todas", txt: "todas", n: M.total }].concat(M.chaves.map(k => ({ k, txt: nomeCamada(k), n: M.estados[k].length })));
+    for (const o of opcoes) {
+      const b = document.createElement("button");
+      b.className = "chip";
+      b.type = "button";
+      b.setAttribute("aria-pressed", String(estado.camada === o.k));
+      b.innerHTML = (o.k === "todas" ? "" : `<i class="bolinha" style="background:${cor(o.k)}"></i>`) +
+                    `${o.txt} <span class="n">${o.n}</span>`;
+      b.addEventListener("click", () => { estado.camada = o.k; montarCamadas(); desenharDinamico(); });
+      box.appendChild(b);
+    }
+    const n = M.armadilhas.length;
+    $("#txtArmadilhas").textContent = n
+      ? `Realçar estados-armadilha (${n})`
+      : "Realçar estados-armadilha (nenhum neste mapa)";
+  }
+
+  function montarFatos() {
+    const d = M.d;
+    $("#fatos").innerHTML =
+      `<span><b>${M.altura} × ${M.largura}</b> casas</span>` +
+      `<span><b>${M.total}</b> estados alcançáveis</span>` +
+      `<span><b>${M.chaves.length}</b> ${M.chaves.length === 1 ? "camada" : "camadas"}</span>` +
+      `<span><b>${M.armadilhas.length}</b> ${M.armadilhas.length === 1 ? "estado-armadilha" : "estados-armadilha"}</span>` +
+      `<span>${({ enunciado: "mapa do enunciado", grupo: "mapa do grupo" })[d.origem] || "mapa de demonstração"}</span>`;
+    let leg = M.chaves.map(k => `<span><i class="bolinha" style="background:${cor(k)}"></i>${nomeCamada(k)}</span>`).join("");
+    leg += `<span><i class="amostra" style="background:var(--board-wall)"></i>parede</span>`;
+    if (M.grade.some(l => l.includes("~"))) leg += `<span><i class="amostra" style="background:var(--board-water)"></i>água (5)</span>`;
+    if (M.grade.some(l => l.includes(","))) leg += `<span><i class="amostra" style="background:var(--board-mud)"></i>lama (3)</span>`;
+    leg += `<span>★ chave coletada</span><span>◯ início</span>`;
+    if (M.armadilhas.length) leg += `<span style="color:var(--trap)">◌ estado-armadilha</span>`;
+    $("#legenda").innerHTML = leg;
+  }
+
+  function renderizar() { desenharDinamico(); atualizarPainel(); }
+
+  function parar() {
+    estado.tocando = false;
+    clearTimeout(estado.timer);
+    $("#bPlay").setAttribute("aria-label", "Reproduzir");
+    $("#iconePlay").innerHTML = '<path d="M7 5v14l12-7z"/>';
+  }
+  function tocar() {
+    const N = caminhoAtual().E.length - 1;
+    if (N <= 0) return;
+    if (estado.passo >= N) estado.passo = 0;
+    estado.tocando = true;
+    $("#bPlay").setAttribute("aria-label", "Pausar");
+    $("#iconePlay").innerHTML = '<path d="M7 5h4v14H7zM13 5h4v14h-4z"/>';
+    const tique = () => {
+      if (!estado.tocando) return;
+      if (estado.passo >= N) { parar(); return; }
+      estado.passo++;
+      renderizar();
+      estado.timer = setTimeout(tique, 1000 / estado.vel);
+    };
+    renderizar();
+    estado.timer = setTimeout(tique, 1000 / estado.vel);
+  }
+  function irPara(p) {
+    const N = Math.max(caminhoAtual().E.length - 1, 0);
+    estado.passo = Math.max(0, Math.min(N, p));
+    renderizar();
+  }
+
+  function escolherAlg(id) {
+    parar();
+    estado.alg = id;
+    estado.passo = 0;
+    for (const b of document.querySelectorAll("#segAlg button")) b.setAttribute("aria-pressed", String(b.dataset.alg === id));
+    for (const tr of document.querySelectorAll("#tbComp tr")) tr.setAttribute("aria-selected", String(tr.dataset.alg === id));
+    renderizar();
+  }
+  function escolherMapa(id) {
+    parar();
+    estado.mapa = id;
+    estado.passo = 0;
+    estado.camada = "todas";
+    M = preparar(id);
+    desenharEstatico();
+    montarFatos();
+    montarComparacao();
+    montarCamadas();
+    $("#rodape").textContent = M.d.nota || "";
+    renderizar();
+  }
+
+  function iniciar() {
+    if (!DADOS || !DADOS.mapas || !DADOS.mapas.length) {
+      $("#barra").hidden = true;
+      $("#grade").hidden = true;
+      $("#vazio").hidden = false;
+      return;
+    }
+    if (DADOS.selo) { $("#selo").textContent = DADOS.selo; $("#selo").hidden = false; }
+    const sel = $("#selMapa");
+    for (const m of DADOS.mapas) {
+      const o = document.createElement("option");
+      o.value = m.id;
+      o.textContent = m.titulo;
+      sel.appendChild(o);
+    }
+    sel.addEventListener("change", () => escolherMapa(sel.value));
+
+    const seg = $("#segAlg");
+    for (const a of ALGS) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.dataset.alg = a.id;
+      b.setAttribute("aria-pressed", String(a.id === estado.alg));
+      b.innerHTML = `${a.nome}<small>${a.crit}</small>`;
+      b.addEventListener("click", () => escolherAlg(a.id));
+      seg.appendChild(b);
+    }
+
+    $("#bPlay").addEventListener("click", () => (estado.tocando ? parar() : tocar()));
+    $("#bInicio").addEventListener("click", () => { parar(); irPara(0); });
+    $("#bFim").addEventListener("click", () => { parar(); irPara(Infinity); });
+    $("#bVolta").addEventListener("click", () => { parar(); irPara(estado.passo - 1); });
+    $("#bAvanca").addEventListener("click", () => { parar(); irPara(estado.passo + 1); });
+    $("#rPasso").addEventListener("input", e => { parar(); irPara(+e.target.value); });
+    const rVel = $("#rVel");
+    const mostrarVel = () => { $("#txtVel").textContent = `${estado.vel} ${estado.vel === 1 ? "passo" : "passos"}/s`; };
+    rVel.addEventListener("input", () => { estado.vel = +rVel.value; mostrarVel(); });
+    mostrarVel();
+    $("#cArmadilhas").addEventListener("change", e => { estado.armadilhas = e.target.checked; desenharDinamico(); });
+
+    document.addEventListener("keydown", e => {
+      const alvo = e.target.tagName;
+      if (alvo === "INPUT" || alvo === "SELECT" || alvo === "BUTTON" || alvo === "TR") return;
+      if (e.key === "ArrowRight") { parar(); irPara(estado.passo + 1); }
+      else if (e.key === "ArrowLeft") { parar(); irPara(estado.passo - 1); }
+      else if (e.key === "Home") { parar(); irPara(0); }
+      else if (e.key === "End") { parar(); irPara(Infinity); }
+      else if (e.key === " ") { e.preventDefault(); estado.tocando ? parar() : tocar(); }
+    });
+
+    escolherMapa(DADOS.mapas[0].id);
+  }
+
+  iniciar();
+})();
+</script>
+</body>
+</html>
