@@ -1,0 +1,1151 @@
+{
+  "dataset": {
+    "fonte": "Transfermarkt Datasets (dcaribou), snapshot de 05/09/2026",
+    "funil": [
+      {
+        "etapa": "transferências no arquivo bruto",
+        "linhas": 175165
+      },
+      {
+        "etapa": "até 2026-07-06",
+        "linhas": 174645
+      },
+      {
+        "etapa": "com valor pago e valor de mercado",
+        "linhas": 86667
+      },
+      {
+        "etapa": "sem pseudo-clubes",
+        "linhas": 86574
+      },
+      {
+        "etapa": "sem self-loops",
+        "linhas": 86574
+      },
+      {
+        "etapa": "sem empréstimos",
+        "linhas": 36442
+      }
+    ],
+    "V": 4739,
+    "E": 31626,
+    "densidade": 0.001408518324767289,
+    "arcos_peso_negativo_pct": 79.14,
+    "peso_min": -180000000,
+    "peso_mediana": -250000.0,
+    "peso_max": 115000000,
+    "temporal": {
+      "V": 21703,
+      "E": 52290
+    }
+  },
+  "bfs": [
+    {
+      "fonte": 294,
+      "nome": "Benfica",
+      "alcancados": 3203,
+      "nao_alcancados": 1536,
+      "excentricidade": 11,
+      "camadas": [
+        1,
+        87,
+        742,
+        1183,
+        743,
+        281,
+        106,
+        34,
+        17,
+        6,
+        2,
+        1
+      ],
+      "ordem_primeiros": [
+        "Benfica",
+        "Arsenal",
+        "Roma",
+        "Atlético",
+        "Leverkusen",
+        "Mönchengladbach",
+        "Frankfurt",
+        "Bayern Munich",
+        "Liverpool",
+        "Fenerbahçe",
+        "RSC Anderlecht",
+        "Freiburg"
+      ]
+    },
+    {
+      "fonte": 418,
+      "nome": "Real Madrid",
+      "alcancados": 3203,
+      "nao_alcancados": 1536,
+      "excentricidade": 11,
+      "camadas": [
+        1,
+        38,
+        421,
+        1095,
+        959,
+        460,
+        145,
+        53,
+        22,
+        6,
+        2,
+        1
+      ],
+      "ordem_primeiros": [
+        "Real Madrid",
+        "AC Milan",
+        "Arsenal",
+        "Roma",
+        "Atlético",
+        "Leverkusen",
+        "Frankfurt",
+        "Everton",
+        "FC Schalke 04",
+        "Inter",
+        "Freiburg",
+        "Besiktas"
+      ]
+    },
+    {
+      "fonte": 221,
+      "nome": "Santos",
+      "alcancados": 3203,
+      "nao_alcancados": 1536,
+      "excentricidade": 10,
+      "camadas": [
+        1,
+        50,
+        572,
+        1184,
+        856,
+        364,
+        114,
+        40,
+        15,
+        6,
+        1
+      ],
+      "ordem_primeiros": [
+        "Santos",
+        "Roma",
+        "Inter",
+        "M. Tel Aviv",
+        "Barcelona",
+        "Tottenham",
+        "Grêmio",
+        "Marseille",
+        "Estudiantes LP",
+        "Benfica",
+        "Atlético-MG",
+        "Lazio"
+      ]
+    }
+  ],
+  "dfs": [
+    {
+      "fonte": 294,
+      "nome": "Benfica",
+      "alcancados": 3203,
+      "arcos": {
+        "arvore": 3202,
+        "retorno": 13875,
+        "avanco": 10951,
+        "cruzamento": 1349
+      },
+      "tem_ciclo": true,
+      "ordem_primeiros": [
+        "Benfica",
+        "Arsenal",
+        "Leverkusen",
+        "1.FC K'lautern",
+        "1.FC Köln",
+        "1.FC Nuremberg",
+        "Arm. Bielefeld",
+        "Mönchengladbach",
+        "Roma",
+        "AC Milan",
+        "Frankfurt",
+        "Dortmund"
+      ],
+      "exemplo_ciclo": {
+        "clubes": [
+          "1.FC K'lautern",
+          "1.FC Köln",
+          "1.FC Nuremberg",
+          "1.FC K'lautern"
+        ],
+        "peso_original": -4200000
+      }
+    },
+    {
+      "fonte": 418,
+      "nome": "Real Madrid",
+      "alcancados": 3203,
+      "arcos": {
+        "arvore": 3202,
+        "retorno": 13931,
+        "avanco": 10953,
+        "cruzamento": 1291
+      },
+      "tem_ciclo": true,
+      "ordem_primeiros": [
+        "Real Madrid",
+        "AC Milan",
+        "Roma",
+        "Leverkusen",
+        "1.FC K'lautern",
+        "1.FC Köln",
+        "1.FC Nuremberg",
+        "Arm. Bielefeld",
+        "Mönchengladbach",
+        "Arsenal",
+        "Everton",
+        "Hertha BSC"
+      ],
+      "exemplo_ciclo": {
+        "clubes": [
+          "AC Milan",
+          "Roma",
+          "AC Milan"
+        ],
+        "peso_original": 13650000
+      }
+    },
+    {
+      "fonte": 221,
+      "nome": "Santos",
+      "alcancados": 3203,
+      "arcos": {
+        "arvore": 3202,
+        "retorno": 13914,
+        "avanco": 10907,
+        "cruzamento": 1354
+      },
+      "tem_ciclo": true,
+      "ordem_primeiros": [
+        "Santos",
+        "Roma",
+        "AC Milan",
+        "Frankfurt",
+        "1.FC K'lautern",
+        "1.FC Köln",
+        "1.FC Nuremberg",
+        "Arm. Bielefeld",
+        "Mönchengladbach",
+        "Arsenal",
+        "Leverkusen",
+        "Dortmund"
+      ],
+      "exemplo_ciclo": {
+        "clubes": [
+          "Roma",
+          "AC Milan",
+          "Roma"
+        ],
+        "peso_original": 13650000
+      }
+    }
+  ],
+  "dijkstra": {
+    "transformacao": {
+      "formula": "w' = w - min(w)",
+      "deslocamento_eur": 180000000,
+      "motivo": "Dijkstra recusa pesos negativos e 79% dos arcos são negativos; o deslocamento torna todo peso >= 0, mas soma a mesma constante por arco e por isso favorece caminhos com menos arcos."
+    },
+    "pares": [
+      {
+        "origem": "Santos",
+        "destino": "PSG",
+        "status": "OK",
+        "arcos": 2,
+        "custo_transformado": 317500000,
+        "custo_original": -42500000,
+        "caminho": [
+          "Santos",
+          "Inter",
+          "PSG"
+        ],
+        "passos_bfs": 2,
+        "transferencias": {
+          "Santos -> Inter": [
+            "Gabriel Barbosa (16/17): 9.500.000"
+          ],
+          "Inter -> PSG": [
+            "Milan Škriniar (23/24): -50.000.000",
+            "Mauro Icardi (20/21): -10.000.000",
+            "Achraf Hakimi (21/22): 8.000.000"
+          ]
+        }
+      },
+      {
+        "origem": "Flamengo",
+        "destino": "Barcelona",
+        "status": "OK",
+        "arcos": 2,
+        "custo_transformado": 326200000,
+        "custo_original": -33800000,
+        "caminho": [
+          "Flamengo",
+          "Arsenal",
+          "Barcelona"
+        ],
+        "passos_bfs": 2,
+        "transferencias": {
+          "Flamengo -> Arsenal": [
+            "Pablo Marí (20/21): 1.200.000"
+          ],
+          "Arsenal -> Barcelona": [
+            "Héctor Bellerín (22/23): -20.000.000",
+            "Pierre-Emerick Aubameyang (21/22): -15.000.000"
+          ]
+        }
+      },
+      {
+        "origem": "River Plate",
+        "destino": "Bayern Munich",
+        "status": "OK",
+        "arcos": 2,
+        "custo_transformado": 295000000,
+        "custo_original": -65000000,
+        "caminho": [
+          "River Plate",
+          "Leipzig",
+          "Bayern Munich"
+        ],
+        "passos_bfs": 2,
+        "transferencias": {
+          "River Plate -> Leipzig": [
+            "Marcelo Saracchi (18/19): 7.500.000"
+          ],
+          "Leipzig -> Bayern Munich": [
+            "Konrad Laimer (23/24): -28.000.000",
+            "Marcel Sabitzer (21/22): -27.000.000",
+            "Dayot Upamecano (21/22): -17.500.000"
+          ]
+        }
+      },
+      {
+        "origem": "Boca Juniors",
+        "destino": "Real Madrid",
+        "status": "OK",
+        "arcos": 2,
+        "custo_transformado": 303500000,
+        "custo_original": -56500000,
+        "caminho": [
+          "Boca Juniors",
+          "Chelsea",
+          "Real Madrid"
+        ],
+        "passos_bfs": 2,
+        "transferencias": {
+          "Boca Juniors -> Chelsea": [
+            "Aarón Anselmino (24/25): 13.500.000"
+          ],
+          "Chelsea -> Real Madrid": [
+            "Antonio Rüdiger (22/23): -40.000.000",
+            "Thibaut Courtois (18/19): -30.000.000"
+          ]
+        }
+      },
+      {
+        "origem": "Ajax",
+        "destino": "Benfica",
+        "status": "OK",
+        "arcos": 2,
+        "custo_transformado": 326000000,
+        "custo_original": -34000000,
+        "caminho": [
+          "Ajax",
+          "Inter",
+          "Benfica"
+        ],
+        "passos_bfs": 2,
+        "transferencias": {
+          "Ajax -> Inter": [
+            "André Onana (22/23): -12.000.000",
+            "Davy Klaassen (23/24): -10.000.000"
+          ],
+          "Inter -> Benfica": [
+            "João Mário (21/22): -12.000.000"
+          ]
+        }
+      },
+      {
+        "origem": "Flamengo",
+        "destino": "Man Utd",
+        "status": "OK",
+        "arcos": 2,
+        "custo_transformado": 325200000,
+        "custo_original": -34800000,
+        "caminho": [
+          "Flamengo",
+          "Arsenal",
+          "Man Utd"
+        ],
+        "passos_bfs": 2,
+        "transferencias": {
+          "Flamengo -> Arsenal": [
+            "Pablo Marí (20/21): 1.200.000"
+          ],
+          "Arsenal -> Man Utd": [
+            "Alexis Sánchez (17/18): -36.000.000"
+          ]
+        }
+      }
+    ]
+  },
+  "bellman_ford": {
+    "sem_ciclo_negativo": {
+      "grafo": "temporal (clube, temporada)",
+      "ordem": 21703,
+      "tamanho": 52290,
+      "arcos_negativos": 27614,
+      "fonte": "Benfica (15/16)",
+      "ciclo_negativo": false,
+      "alcancados": 7027,
+      "distancias_negativas": 6391,
+      "menor_custo": {
+        "destino": "Bournemouth (27/28)",
+        "custo": -335460000,
+        "arcos": 12,
+        "caminho": [
+          "Benfica (15/16)",
+          "Benfica (16/17)",
+          "Benfica (17/18)",
+          "Benfica (18/19)",
+          "Benfica (19/20)",
+          "Frankfurt (20/21)",
+          "AC Milan (21/22)",
+          "Inter (22/23)",
+          "Inter (23/24)",
+          "PSG (24/25)",
+          "Real Madrid (25/26)",
+          "AC Milan (26/27)",
+          "Bournemouth (27/28)"
+        ],
+        "transferencias": {
+          "Benfica (19/20) -> Frankfurt (20/21)": [
+            "Luka Jović (19/20): -37.660.000"
+          ],
+          "Frankfurt (20/21) -> AC Milan (21/22)": [
+            "Ante Rebić (20/21): -25.300.000"
+          ],
+          "AC Milan (21/22) -> Inter (22/23)": [
+            "Hakan Çalhanoğlu (21/22): -35.000.000"
+          ],
+          "Inter (23/24) -> PSG (24/25)": [
+            "Milan Škriniar (23/24): -50.000.000"
+          ],
+          "PSG (24/25) -> Real Madrid (25/26)": [
+            "Kylian Mbappé (24/25): -180.000.000"
+          ],
+          "Real Madrid (25/26) -> AC Milan (26/27)": [
+            "Luka Modrić (25/26): -4.000.000"
+          ],
+          "AC Milan (26/27) -> Bournemouth (27/28)": [
+            "Álex Jiménez (26/27): -3.500.000"
+          ]
+        }
+      },
+      "dijkstra_johnson_confere": {
+        "nos_comparados": 7027,
+        "divergencias": 0
+      }
+    },
+    "com_ciclo_negativo": [
+      {
+        "grafo": "grafo de clubes completo",
+        "ordem": 4739,
+        "tamanho": 31626,
+        "fonte": "Real Madrid",
+        "alcancados": 3203,
+        "ciclo_negativo": true,
+        "segundos": 21.632,
+        "ciclo": {
+          "clubes": [
+            "Abdysh-Ata Kant",
+            "Alga Bishkek",
+            "Abdysh-Ata Kant"
+          ],
+          "custo": -100000,
+          "arcos": 2,
+          "transferencias": {
+            "Abdysh-Ata Kant -> Alga Bishkek": [
+              "Amir Zhaparov (22/23): -75.000"
+            ],
+            "Alga Bishkek -> Abdysh-Ata Kant": [
+              "Arlen Sharshenbekov (20/21): -25.000"
+            ]
+          }
+        }
+      },
+      {
+        "grafo": "recorte: os 40 clubes de maior grau total",
+        "ordem": 40,
+        "tamanho": 464,
+        "fonte": "Benfica",
+        "alcancados": 40,
+        "ciclo_negativo": true,
+        "segundos": 0.003,
+        "ciclo": {
+          "clubes": [
+            "Lyon",
+            "Lille",
+            "Lyon"
+          ],
+          "custo": -1000000,
+          "arcos": 2,
+          "transferencias": {
+            "Lyon -> Lille": [
+              "Yassine Benzia (15/16): -1.000.000"
+            ],
+            "Lille -> Lyon": [
+              "Thiago Mendes (19/20): -3.000.000",
+              "Martin Terrier (17/18): -1.000.000",
+              "Youssouf Koné (19/20): 4.000.000"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "ciclos_de_comprimento_2": {
+    "total": 1780,
+    "mais_negativos": [
+      {
+        "clubes": [
+          "Real Madrid",
+          "PSG"
+        ],
+        "ida": -30000000,
+        "volta": -180000000,
+        "soma": -210000000
+      },
+      {
+        "clubes": [
+          "Dortmund",
+          "Bayern Munich"
+        ],
+        "ida": -81000000,
+        "volta": -49300000,
+        "soma": -130300000
+      },
+      {
+        "clubes": [
+          "Dortmund",
+          "Man City"
+        ],
+        "ida": -103000000,
+        "volta": 0,
+        "soma": -103000000
+      },
+      {
+        "clubes": [
+          "Inter",
+          "Tottenham"
+        ],
+        "ida": -10000000,
+        "volta": -63000000,
+        "soma": -73000000
+      },
+      {
+        "clubes": [
+          "Bayern Munich",
+          "Liverpool"
+        ],
+        "ida": -16000000,
+        "volta": -44000000,
+        "soma": -60000000
+      },
+      {
+        "clubes": [
+          "Liverpool",
+          "Juventus"
+        ],
+        "ida": -30000000,
+        "volta": -23000000,
+        "soma": -53000000
+      },
+      {
+        "clubes": [
+          "Atlético",
+          "Barcelona"
+        ],
+        "ida": -10000000,
+        "volta": -39000000,
+        "soma": -49000000
+      },
+      {
+        "clubes": [
+          "AC Milan",
+          "Frankfurt"
+        ],
+        "ida": -20800000,
+        "volta": -25300000,
+        "soma": -46100000
+      },
+      {
+        "clubes": [
+          "Chelsea",
+          "Leipzig"
+        ],
+        "ida": -15000000,
+        "volta": -31000000,
+        "soma": -46000000
+      },
+      {
+        "clubes": [
+          "Shakhtar D.",
+          "Lyon"
+        ],
+        "ida": -20000000,
+        "volta": -25000000,
+        "soma": -45000000
+      }
+    ]
+  },
+  "desempenho": [
+    {
+      "algoritmo": "BFS",
+      "tarefa": "a partir do clube de maior grau de saída",
+      "tamanho_pct": 10,
+      "V": 214,
+      "E": 314,
+      "fonte": "Stade Reims",
+      "execucoes": 5,
+      "media_s": 2.7380000028642824e-05,
+      "mediana_s": 2.4699999812582973e-05,
+      "desvio_s": 6.039205267826515e-06,
+      "min_s": 2.27999998969608e-05,
+      "max_s": 3.7400000110210385e-05,
+      "memoria_pico_kb": 6.2
+    },
+    {
+      "algoritmo": "DFS",
+      "tarefa": "todos os nós (floresta DFS completa)",
+      "tamanho_pct": 10,
+      "V": 214,
+      "E": 314,
+      "fonte": "Stade Reims",
+      "execucoes": 5,
+      "media_s": 0.00013920000010330112,
+      "mediana_s": 0.00013140000010025688,
+      "desvio_s": 1.611908791122567e-05,
+      "min_s": 0.0001264000002265675,
+      "max_s": 0.00016539999978704145,
+      "memoria_pico_kb": 45.1
+    },
+    {
+      "algoritmo": "DIJKSTRA",
+      "tarefa": "a partir da mesma fonte, pesos deslocados",
+      "tamanho_pct": 10,
+      "V": 214,
+      "E": 314,
+      "fonte": "Stade Reims",
+      "execucoes": 5,
+      "media_s": 8.06400000328722e-05,
+      "mediana_s": 7.550000009359792e-05,
+      "desvio_s": 1.2519903956621662e-05,
+      "min_s": 7.270000014614197e-05,
+      "max_s": 0.00010249999968436896,
+      "memoria_pico_kb": 17.2
+    },
+    {
+      "algoritmo": "BELLMAN_FORD",
+      "tarefa": "a partir da mesma fonte, pesos originais",
+      "tamanho_pct": 10,
+      "V": 214,
+      "E": 314,
+      "fonte": "Stade Reims",
+      "execucoes": 5,
+      "media_s": 0.005642940000052476,
+      "mediana_s": 0.005640800000037416,
+      "desvio_s": 0.00011166113012385857,
+      "min_s": 0.005509600000095816,
+      "max_s": 0.005803999999898224,
+      "memoria_pico_kb": 13.0,
+      "ciclo_negativo": true
+    },
+    {
+      "algoritmo": "BFS",
+      "tarefa": "a partir do clube de maior grau de saída",
+      "tamanho_pct": 25,
+      "V": 743,
+      "E": 1965,
+      "fonte": "KAA Gent",
+      "execucoes": 5,
+      "media_s": 0.00016857999999047023,
+      "mediana_s": 0.0001629999997021514,
+      "desvio_s": 1.565669196473997e-05,
+      "min_s": 0.0001560000000608852,
+      "max_s": 0.00019460000021354062,
+      "memoria_pico_kb": 47.4
+    },
+    {
+      "algoritmo": "DFS",
+      "tarefa": "todos os nós (floresta DFS completa)",
+      "tamanho_pct": 25,
+      "V": 743,
+      "E": 1965,
+      "fonte": "KAA Gent",
+      "execucoes": 5,
+      "media_s": 0.0007253400001900445,
+      "mediana_s": 0.0006740000003446767,
+      "desvio_s": 0.00016705158791442627,
+      "min_s": 0.0006145000002106826,
+      "max_s": 0.0010202000003118883,
+      "memoria_pico_kb": 241.9
+    },
+    {
+      "algoritmo": "DIJKSTRA",
+      "tarefa": "a partir da mesma fonte, pesos deslocados",
+      "tamanho_pct": 25,
+      "V": 743,
+      "E": 1965,
+      "fonte": "KAA Gent",
+      "execucoes": 5,
+      "media_s": 0.00046844000016790235,
+      "mediana_s": 0.0004482000003918074,
+      "desvio_s": 5.495500893535858e-05,
+      "min_s": 0.0004339000001891691,
+      "max_s": 0.0005656000003000372,
+      "memoria_pico_kb": 91.4
+    },
+    {
+      "algoritmo": "BELLMAN_FORD",
+      "tarefa": "a partir da mesma fonte, pesos originais",
+      "tamanho_pct": 25,
+      "V": 743,
+      "E": 1965,
+      "fonte": "KAA Gent",
+      "execucoes": 5,
+      "media_s": 0.18616535999990447,
+      "mediana_s": 0.18313919999991413,
+      "desvio_s": 0.009223651296130031,
+      "min_s": 0.17740429999957996,
+      "max_s": 0.1976609999996981,
+      "memoria_pico_kb": 77.5,
+      "ciclo_negativo": true
+    },
+    {
+      "algoritmo": "BFS",
+      "tarefa": "a partir do clube de maior grau de saída",
+      "tamanho_pct": 50,
+      "V": 1900,
+      "E": 7695,
+      "fonte": "Benfica",
+      "execucoes": 5,
+      "media_s": 0.0006079800000406976,
+      "mediana_s": 0.000610300000062125,
+      "desvio_s": 3.0369836989952302e-05,
+      "min_s": 0.0005694000001312816,
+      "max_s": 0.0006407000000763219,
+      "memoria_pico_kb": 94.1
+    },
+    {
+      "algoritmo": "DFS",
+      "tarefa": "todos os nós (floresta DFS completa)",
+      "tamanho_pct": 50,
+      "V": 1900,
+      "E": 7695,
+      "fonte": "Benfica",
+      "execucoes": 5,
+      "media_s": 0.002435980000063864,
+      "mediana_s": 0.0023934000000735978,
+      "desvio_s": 7.062090355212559e-05,
+      "min_s": 0.0023771999999553373,
+      "max_s": 0.0025232000002688437,
+      "memoria_pico_kb": 945.7
+    },
+    {
+      "algoritmo": "DIJKSTRA",
+      "tarefa": "a partir da mesma fonte, pesos deslocados",
+      "tamanho_pct": 50,
+      "V": 1900,
+      "E": 7695,
+      "fonte": "Benfica",
+      "execucoes": 5,
+      "media_s": 0.0016104199999062985,
+      "mediana_s": 0.0015287000001080742,
+      "desvio_s": 0.00017551551775341163,
+      "min_s": 0.0014963999997235078,
+      "max_s": 0.00191259999974136,
+      "memoria_pico_kb": 148.1
+    },
+    {
+      "algoritmo": "BELLMAN_FORD",
+      "tarefa": "a partir da mesma fonte, pesos originais",
+      "tamanho_pct": 50,
+      "V": 1900,
+      "E": 7695,
+      "fonte": "Benfica",
+      "execucoes": 5,
+      "media_s": 2.1649561999998697,
+      "mediana_s": 2.144954599999892,
+      "desvio_s": 0.06305521995788783,
+      "min_s": 2.1175466999998207,
+      "max_s": 2.2755557999998928,
+      "memoria_pico_kb": 549.1,
+      "ciclo_negativo": true
+    },
+    {
+      "algoritmo": "BFS",
+      "tarefa": "a partir do clube de maior grau de saída",
+      "tamanho_pct": 75,
+      "V": 3276,
+      "E": 17966,
+      "fonte": "Benfica",
+      "execucoes": 5,
+      "media_s": 0.0012972000000445404,
+      "mediana_s": 0.0012246999999661057,
+      "desvio_s": 0.00015942902818979609,
+      "min_s": 0.0012031999999635445,
+      "max_s": 0.0015778000001773762,
+      "memoria_pico_kb": 187.6
+    },
+    {
+      "algoritmo": "DFS",
+      "tarefa": "todos os nós (floresta DFS completa)",
+      "tamanho_pct": 75,
+      "V": 3276,
+      "E": 17966,
+      "fonte": "Benfica",
+      "execucoes": 5,
+      "media_s": 0.005011459999968793,
+      "mediana_s": 0.004981399999905989,
+      "desvio_s": 0.0002956888363550291,
+      "min_s": 0.004627400000117632,
+      "max_s": 0.005360799999834853,
+      "memoria_pico_kb": 2220.0
+    },
+    {
+      "algoritmo": "DIJKSTRA",
+      "tarefa": "a partir da mesma fonte, pesos deslocados",
+      "tamanho_pct": 75,
+      "V": 3276,
+      "E": 17966,
+      "fonte": "Benfica",
+      "execucoes": 5,
+      "media_s": 0.0036152000001493435,
+      "mediana_s": 0.003544900000179041,
+      "desvio_s": 0.00024225995329963263,
+      "min_s": 0.0033926000000974454,
+      "max_s": 0.003991999999925611,
+      "memoria_pico_kb": 380.7
+    },
+    {
+      "algoritmo": "BELLMAN_FORD",
+      "tarefa": "a partir da mesma fonte, pesos originais",
+      "tamanho_pct": 75,
+      "V": 3276,
+      "E": 17966,
+      "fonte": "Benfica",
+      "execucoes": 5,
+      "media_s": 8.502259459999914,
+      "mediana_s": 8.520850799999607,
+      "desvio_s": 0.2690529273086004,
+      "min_s": 8.07082820000005,
+      "max_s": 8.77205580000009,
+      "memoria_pico_kb": null,
+      "ciclo_negativo": true
+    },
+    {
+      "algoritmo": "BFS",
+      "tarefa": "a partir do clube de maior grau de saída",
+      "tamanho_pct": 100,
+      "V": 4739,
+      "E": 31626,
+      "fonte": "Benfica",
+      "execucoes": 5,
+      "media_s": 0.002416339999945194,
+      "mediana_s": 0.00211219999982859,
+      "desvio_s": 0.0005857472304449666,
+      "min_s": 0.0020306000001255597,
+      "max_s": 0.0034147999999731837,
+      "memoria_pico_kb": 371.2
+    },
+    {
+      "algoritmo": "DFS",
+      "tarefa": "todos os nós (floresta DFS completa)",
+      "tamanho_pct": 100,
+      "V": 4739,
+      "E": 31626,
+      "fonte": "Benfica",
+      "execucoes": 5,
+      "media_s": 0.008140159999948082,
+      "mediana_s": 0.00805099999979575,
+      "desvio_s": 0.00030530062728318795,
+      "min_s": 0.00784380000004603,
+      "max_s": 0.008522699999957695,
+      "memoria_pico_kb": 3662.1
+    },
+    {
+      "algoritmo": "DIJKSTRA",
+      "tarefa": "a partir da mesma fonte, pesos deslocados",
+      "tamanho_pct": 100,
+      "V": 4739,
+      "E": 31626,
+      "fonte": "Benfica",
+      "execucoes": 5,
+      "media_s": 0.005629580000004353,
+      "mediana_s": 0.005443399999876419,
+      "desvio_s": 0.0005674295435678638,
+      "min_s": 0.005250100000012026,
+      "max_s": 0.006625099999837403,
+      "memoria_pico_kb": 606.2
+    },
+    {
+      "algoritmo": "BELLMAN_FORD",
+      "tarefa": "a partir da mesma fonte, pesos originais",
+      "tamanho_pct": 100,
+      "V": 4739,
+      "E": 31626,
+      "fonte": "Benfica",
+      "execucoes": 5,
+      "media_s": 22.00986186,
+      "mediana_s": 21.841704899999968,
+      "desvio_s": 0.36612264678738615,
+      "min_s": 21.692269900000156,
+      "max_s": 22.579289600000266,
+      "memoria_pico_kb": null,
+      "ciclo_negativo": true
+    }
+  ],
+  "escalabilidade": [
+    {
+      "algoritmo": "BFS",
+      "complexidade": "O(V + E)",
+      "tamanho_pct": 10,
+      "V": 214,
+      "E": 314,
+      "media_s": 2.7380000028642824e-05,
+      "tempo_relativo": 0.011331186848400409,
+      "teoria_relativa": 0.014519455520417984,
+      "ns_por_operacao": 51.85606066030838
+    },
+    {
+      "algoritmo": "BFS",
+      "complexidade": "O(V + E)",
+      "tamanho_pct": 25,
+      "V": 743,
+      "E": 1965,
+      "media_s": 0.00016857999999047023,
+      "tempo_relativo": 0.06976667190639309,
+      "teoria_relativa": 0.07446720747971951,
+      "ns_por_operacao": 62.25258493001116
+    },
+    {
+      "algoritmo": "BFS",
+      "complexidade": "O(V + E)",
+      "tamanho_pct": 50,
+      "V": 1900,
+      "E": 7695,
+      "media_s": 0.0006079800000406976,
+      "tempo_relativo": 0.25161194205057547,
+      "teoria_relativa": 0.2638526055272927,
+      "ns_por_operacao": 63.36425221893669
+    },
+    {
+      "algoritmo": "BFS",
+      "complexidade": "O(V + E)",
+      "tamanho_pct": 75,
+      "V": 3276,
+      "E": 17966,
+      "media_s": 0.0012972000000445404,
+      "tempo_relativo": 0.5368449804555496,
+      "teoria_relativa": 0.5841330950089372,
+      "ns_por_operacao": 61.067696075912835
+    },
+    {
+      "algoritmo": "BFS",
+      "complexidade": "O(V + E)",
+      "tamanho_pct": 100,
+      "V": 4739,
+      "E": 31626,
+      "media_s": 0.002416339999945194,
+      "tempo_relativo": 1.0,
+      "teoria_relativa": 1.0,
+      "ns_por_operacao": 66.44685824130877
+    },
+    {
+      "algoritmo": "DFS",
+      "complexidade": "O(V + E)",
+      "tamanho_pct": 10,
+      "V": 214,
+      "E": 314,
+      "media_s": 0.00013920000010330112,
+      "tempo_relativo": 0.017100400987718783,
+      "teoria_relativa": 0.014519455520417984,
+      "ns_por_operacao": 263.6363638320097
+    },
+    {
+      "algoritmo": "DFS",
+      "complexidade": "O(V + E)",
+      "tamanho_pct": 25,
+      "V": 743,
+      "E": 1965,
+      "media_s": 0.0007253400001900445,
+      "tempo_relativo": 0.08910635665572553,
+      "teoria_relativa": 0.07446720747971951,
+      "ns_por_operacao": 267.85081247785985
+    },
+    {
+      "algoritmo": "DFS",
+      "complexidade": "O(V + E)",
+      "tamanho_pct": 50,
+      "V": 1900,
+      "E": 7695,
+      "media_s": 0.002435980000063864,
+      "tempo_relativo": 0.2992545601166809,
+      "teoria_relativa": 0.2638526055272927,
+      "ns_por_operacao": 253.88014591598375
+    },
+    {
+      "algoritmo": "DFS",
+      "complexidade": "O(V + E)",
+      "tamanho_pct": 75,
+      "V": 3276,
+      "E": 17966,
+      "media_s": 0.005011459999968793,
+      "tempo_relativo": 0.6156463755013115,
+      "teoria_relativa": 0.5841330950089372,
+      "ns_por_operacao": 235.92222954377144
+    },
+    {
+      "algoritmo": "DFS",
+      "complexidade": "O(V + E)",
+      "tamanho_pct": 100,
+      "V": 4739,
+      "E": 31626,
+      "media_s": 0.008140159999948082,
+      "tempo_relativo": 1.0,
+      "teoria_relativa": 1.0,
+      "ns_por_operacao": 223.84600577335573
+    },
+    {
+      "algoritmo": "DIJKSTRA",
+      "complexidade": "O((V + E) log V)",
+      "tamanho_pct": 10,
+      "V": 214,
+      "E": 314,
+      "media_s": 8.06400000328722e-05,
+      "tempo_relativo": 0.014324336812481544,
+      "teoria_relativa": 0.009205446983887701,
+      "ns_por_operacao": 19.72846658880225
+    },
+    {
+      "algoritmo": "DIJKSTRA",
+      "complexidade": "O((V + E) log V)",
+      "tamanho_pct": 25,
+      "V": 743,
+      "E": 1965,
+      "media_s": 0.00046844000016790235,
+      "tempo_relativo": 0.08321047043785507,
+      "teoria_relativa": 0.05816451090901358,
+      "ns_por_operacao": 18.137757220555475
+    },
+    {
+      "algoritmo": "DIJKSTRA",
+      "complexidade": "O((V + E) log V)",
+      "tamanho_pct": 50,
+      "V": 1900,
+      "E": 7695,
+      "media_s": 0.0016104199999062985,
+      "tempo_relativo": 0.28606396923128424,
+      "teoria_relativa": 0.23535947131889964,
+      "ns_por_operacao": 15.409734925243571
+    },
+    {
+      "algoritmo": "DIJKSTRA",
+      "complexidade": "O((V + E) log V)",
+      "tamanho_pct": 75,
+      "V": 3276,
+      "E": 17966,
+      "media_s": 0.0036152000001493435,
+      "tempo_relativo": 0.6421793455544726,
+      "teoria_relativa": 0.5586517217124481,
+      "ns_por_operacao": 14.574003830234153
+    },
+    {
+      "algoritmo": "DIJKSTRA",
+      "complexidade": "O((V + E) log V)",
+      "tamanho_pct": 100,
+      "V": 4739,
+      "E": 31626,
+      "media_s": 0.005629580000004353,
+      "tempo_relativo": 1.0,
+      "teoria_relativa": 1.0,
+      "ns_por_operacao": 12.678377759057804
+    },
+    {
+      "algoritmo": "BELLMAN_FORD",
+      "complexidade": "O(V · E)",
+      "tamanho_pct": 10,
+      "V": 214,
+      "E": 314,
+      "media_s": 0.005642940000052476,
+      "tempo_relativo": 0.0002563823451480979,
+      "teoria_relativa": 0.0004483451190398459,
+      "ns_por_operacao": 83.97732007935704
+    },
+    {
+      "algoritmo": "BELLMAN_FORD",
+      "complexidade": "O(V · E)",
+      "tamanho_pct": 25,
+      "V": 743,
+      "E": 1965,
+      "media_s": 0.18616535999990447,
+      "tempo_relativo": 0.008458270260125316,
+      "teoria_relativa": 0.009741377940243167,
+      "ns_por_operacao": 127.51095722924013
+    },
+    {
+      "algoritmo": "BELLMAN_FORD",
+      "complexidade": "O(V · E)",
+      "tamanho_pct": 50,
+      "V": 1900,
+      "E": 7695,
+      "media_s": 2.1649561999998697,
+      "tempo_relativo": 0.09836300717245254,
+      "teoria_relativa": 0.0975508931025964,
+      "ns_por_operacao": 148.0767552409199
+    },
+    {
+      "algoritmo": "BELLMAN_FORD",
+      "complexidade": "O(V · E)",
+      "tamanho_pct": 75,
+      "V": 3276,
+      "E": 17966,
+      "media_s": 8.502259459999914,
+      "tempo_relativo": 0.3862931768532196,
+      "teoria_relativa": 0.39270308510629354,
+      "ns_por_operacao": 144.45715771358508
+    },
+    {
+      "algoritmo": "BELLMAN_FORD",
+      "complexidade": "O(V · E)",
+      "tamanho_pct": 100,
+      "V": 4739,
+      "E": 31626,
+      "media_s": 22.00986186,
+      "tempo_relativo": 1.0,
+      "teoria_relativa": 1.0,
+      "ns_por_operacao": 146.8541897683235
+    }
+  ],
+  "parametros": {
+    "tamanhos_pct": [
+      10,
+      25,
+      50,
+      75,
+      100
+    ],
+    "repeticoes": 5,
+    "semente": 42
+  }
+}

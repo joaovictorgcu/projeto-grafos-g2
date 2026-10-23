@@ -1,0 +1,43 @@
+{
+  "funil": [
+    {
+      "etapa": "transferências no arquivo bruto",
+      "linhas": 175165
+    },
+    {
+      "etapa": "até 2026-07-06",
+      "linhas": 174645
+    },
+    {
+      "etapa": "com valor pago e valor de mercado",
+      "linhas": 86667
+    },
+    {
+      "etapa": "sem pseudo-clubes",
+      "linhas": 86574
+    },
+    {
+      "etapa": "sem self-loops",
+      "linhas": 86574
+    },
+    {
+      "etapa": "sem empréstimos",
+      "linhas": 36442
+    }
+  ],
+  "V": 4739,
+  "E": 31626,
+  "transferencias_usadas": 36442,
+  "densidade": 0.001409,
+  "grau_medio": 6.67,
+  "arcos_peso_negativo_pct": 79.14,
+  "peso_min_eur": -180000000,
+  "peso_mediana_eur": -250000.0,
+  "peso_max_eur": 115000000,
+  "pares_ciclo_negativo_2": 1780,
+  "sha256": {
+    "transfers.csv.gz": "90326983daf7e6ac7aabdfe62b90936d9bf1dd2171e53dec75c3751eb1620a83",
+    "players.csv.gz": "d22e407981d5b51a79bf8ff59835729f3526f7dc3495a6d8ed2f852ed2e86403",
+    "clubs.csv.gz": "aa57ab56e87faffaea1e8697439a32caf10116d8f2f2dfb3a57193c0bb1d641b"
+  }
+}

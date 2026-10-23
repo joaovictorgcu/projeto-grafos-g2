@@ -1,0 +1,895 @@
+{
+  "estrutural": {
+    "linhas_brutas": 175165,
+    "colunas": {
+      "player_id": "int64",
+      "transfer_date": "datetime64[us]",
+      "transfer_season": "str",
+      "from_club_id": "int64",
+      "to_club_id": "int64",
+      "from_club_name": "str",
+      "to_club_name": "str",
+      "transfer_fee": "float64",
+      "market_value_in_eur": "float64",
+      "player_name": "str"
+    },
+    "inconsistencias": {
+      "valor_pago_negativo": 0,
+      "valor_mercado_zero_ou_negativo": 0,
+      "linhas_duplicadas": 0,
+      "data_invalida": 0,
+      "datas_depois_do_corte": 520,
+      "data_maxima": "2030-06-30",
+      "self_loops": 8
+    },
+    "funil": [
+      {
+        "etapa": "transferências no arquivo bruto",
+        "linhas": 175165
+      },
+      {
+        "etapa": "até 2026-07-06",
+        "linhas": 174645
+      },
+      {
+        "etapa": "com valor pago e valor de mercado",
+        "linhas": 86667
+      },
+      {
+        "etapa": "sem pseudo-clubes",
+        "linhas": 86574
+      },
+      {
+        "etapa": "sem self-loops",
+        "linhas": 86574
+      },
+      {
+        "etapa": "sem empréstimos",
+        "linhas": 36442
+      }
+    ]
+  },
+  "faltantes": {
+    "brutas_pct": {
+      "transfer_fee": 35.12,
+      "market_value_in_eur": 38.91,
+      "os_dois": 23.78
+    },
+    "por_temporada_pct": [
+      {
+        "temporada": 1993,
+        "transfer_fee": 50.0,
+        "market_value_in_eur": 100.0
+      },
+      {
+        "temporada": 1994,
+        "transfer_fee": 75.0,
+        "market_value_in_eur": 100.0
+      },
+      {
+        "temporada": 1995,
+        "transfer_fee": 25.0,
+        "market_value_in_eur": 100.0
+      },
+      {
+        "temporada": 1996,
+        "transfer_fee": 83.33,
+        "market_value_in_eur": 100.0
+      },
+      {
+        "temporada": 1997,
+        "transfer_fee": 55.56,
+        "market_value_in_eur": 100.0
+      },
+      {
+        "temporada": 1998,
+        "transfer_fee": 54.17,
+        "market_value_in_eur": 100.0
+      },
+      {
+        "temporada": 1999,
+        "transfer_fee": 71.88,
+        "market_value_in_eur": 100.0
+      },
+      {
+        "temporada": 2000,
+        "transfer_fee": 56.25,
+        "market_value_in_eur": 100.0
+      },
+      {
+        "temporada": 2001,
+        "transfer_fee": 51.0,
+        "market_value_in_eur": 100.0
+      },
+      {
+        "temporada": 2002,
+        "transfer_fee": 65.94,
+        "market_value_in_eur": 100.0
+      },
+      {
+        "temporada": 2003,
+        "transfer_fee": 63.24,
+        "market_value_in_eur": 100.0
+      },
+      {
+        "temporada": 2004,
+        "transfer_fee": 59.3,
+        "market_value_in_eur": 97.38
+      },
+      {
+        "temporada": 2005,
+        "transfer_fee": 54.36,
+        "market_value_in_eur": 90.55
+      },
+      {
+        "temporada": 2006,
+        "transfer_fee": 55.37,
+        "market_value_in_eur": 88.62
+      },
+      {
+        "temporada": 2007,
+        "transfer_fee": 54.44,
+        "market_value_in_eur": 83.93
+      },
+      {
+        "temporada": 2008,
+        "transfer_fee": 54.94,
+        "market_value_in_eur": 78.76
+      },
+      {
+        "temporada": 2009,
+        "transfer_fee": 53.35,
+        "market_value_in_eur": 75.0
+      },
+      {
+        "temporada": 2010,
+        "transfer_fee": 47.42,
+        "market_value_in_eur": 68.82
+      },
+      {
+        "temporada": 2011,
+        "transfer_fee": 47.21,
+        "market_value_in_eur": 67.01
+      },
+      {
+        "temporada": 2012,
+        "transfer_fee": 47.08,
+        "market_value_in_eur": 66.24
+      },
+      {
+        "temporada": 2013,
+        "transfer_fee": 44.99,
+        "market_value_in_eur": 61.19
+      },
+      {
+        "temporada": 2014,
+        "transfer_fee": 41.96,
+        "market_value_in_eur": 57.67
+      },
+      {
+        "temporada": 2015,
+        "transfer_fee": 39.68,
+        "market_value_in_eur": 51.8
+      },
+      {
+        "temporada": 2016,
+        "transfer_fee": 38.3,
+        "market_value_in_eur": 49.64
+      },
+      {
+        "temporada": 2017,
+        "transfer_fee": 37.24,
+        "market_value_in_eur": 45.45
+      },
+      {
+        "temporada": 2018,
+        "transfer_fee": 36.43,
+        "market_value_in_eur": 44.76
+      },
+      {
+        "temporada": 2019,
+        "transfer_fee": 34.98,
+        "market_value_in_eur": 41.16
+      },
+      {
+        "temporada": 2020,
+        "transfer_fee": 36.92,
+        "market_value_in_eur": 41.67
+      },
+      {
+        "temporada": 2021,
+        "transfer_fee": 33.09,
+        "market_value_in_eur": 33.6
+      },
+      {
+        "temporada": 2022,
+        "transfer_fee": 31.02,
+        "market_value_in_eur": 28.93
+      },
+      {
+        "temporada": 2023,
+        "transfer_fee": 28.48,
+        "market_value_in_eur": 24.99
+      },
+      {
+        "temporada": 2024,
+        "transfer_fee": 27.81,
+        "market_value_in_eur": 20.73
+      },
+      {
+        "temporada": 2025,
+        "transfer_fee": 24.95,
+        "market_value_in_eur": 16.25
+      },
+      {
+        "temporada": 2026,
+        "transfer_fee": 49.59,
+        "market_value_in_eur": 4.63
+      },
+      {
+        "temporada": 2027,
+        "transfer_fee": 23.08,
+        "market_value_in_eur": 0.0
+      }
+    ],
+    "valor_de_mercado_mediano": {
+      "quando_fee_falta": 250000.0,
+      "quando_fee_existe": 500000.0
+    },
+    "usadas_pct": {
+      "idade": 0.03,
+      "position": 0.01,
+      "foot": 2.27,
+      "height_in_cm": 0.84,
+      "agent_name": 32.79,
+      "country_of_citizenship": 0.0,
+      "liga": 26.85
+    }
+  },
+  "distribucional": {
+    "peso_transferencia": {
+      "min": -180000000.0,
+      "mediana": -250000.0,
+      "p90": 1025000.0,
+      "p99": 11500000.0,
+      "max": 122000000.0,
+      "media": -214240.4368585698
+    },
+    "peso_arco": {
+      "min": -180000000.0,
+      "mediana": -250000.0,
+      "p90": 1000000.0,
+      "p99": 13000000.0,
+      "max": 115000000.0,
+      "media": -246864.9212673117
+    },
+    "valor_pago": {
+      "min": 0.0,
+      "mediana": 0.0,
+      "p90": 5759000.000000015,
+      "p99": 35000000.0,
+      "max": 222000000.0,
+      "media": 2279928.242138192
+    },
+    "valor_mercado": {
+      "min": 10000.0,
+      "mediana": 600000.0,
+      "p90": 6000000.0,
+      "p99": 31179999.999993015,
+      "max": 180000000.0,
+      "media": 2494168.678996762
+    },
+    "grau_saida": {
+      "min": 0.0,
+      "mediana": 2.0,
+      "p90": 20.0,
+      "p99": 49.61999999999989,
+      "max": 87.0,
+      "media": 6.673559822747415
+    },
+    "grau_entrada": {
+      "min": 0.0,
+      "mediana": 1.0,
+      "p90": 23.0,
+      "p99": 58.0,
+      "max": 84.0,
+      "media": 6.673559822747415
+    },
+    "transferencias_gratuitas_pct": 54.9,
+    "transferencias_negativas_pct": 78.09,
+    "pagas_abaixo_do_mercado_pct": 51.41,
+    "massa_negativa_das_gratuitas_pct": 53.4,
+    "maiores_graus_saida": [
+      {
+        "clube": "Benfica",
+        "grau": 87
+      },
+      {
+        "clube": "Red Star",
+        "grau": 78
+      },
+      {
+        "clube": "Lyon",
+        "grau": 75
+      },
+      {
+        "clube": "Stade Rennais",
+        "grau": 74
+      },
+      {
+        "clube": "Olympiacos",
+        "grau": 71
+      },
+      {
+        "clube": "Inter",
+        "grau": 69
+      },
+      {
+        "clube": "RSC Anderlecht",
+        "grau": 68
+      },
+      {
+        "clube": "Sporting",
+        "grau": 68
+      },
+      {
+        "clube": "Porto",
+        "grau": 68
+      },
+      {
+        "clube": "Ajax",
+        "grau": 65
+      }
+    ],
+    "maiores_graus_entrada": [
+      {
+        "clube": "Fenerbahçe",
+        "grau": 84
+      },
+      {
+        "clube": "Olympiacos",
+        "grau": 82
+      },
+      {
+        "clube": "Udinese",
+        "grau": 81
+      },
+      {
+        "clube": "Roma",
+        "grau": 79
+      },
+      {
+        "clube": "Benfica",
+        "grau": 79
+      },
+      {
+        "clube": "Hellas Verona",
+        "grau": 78
+      },
+      {
+        "clube": "Genoa",
+        "grau": 76
+      },
+      {
+        "clube": "Trabzonspor",
+        "grau": 75
+      },
+      {
+        "clube": "Fiorentina",
+        "grau": 74
+      },
+      {
+        "clube": "Lille",
+        "grau": 71
+      }
+    ]
+  },
+  "relacional": {
+    "spearman_peso": {
+      "idade": -0.403,
+      "height_in_cm": 0.076,
+      "market_value_in_eur": -0.3,
+      "temporada": -0.142
+    },
+    "spearman_razao_pagas": {
+      "idade": -0.322,
+      "height_in_cm": 0.06,
+      "market_value_in_eur": -0.026,
+      "temporada": -0.13
+    },
+    "spearman_gratuita": {
+      "idade": 0.211,
+      "height_in_cm": -0.003,
+      "market_value_in_eur": -0.545,
+      "temporada": 0.048
+    },
+    "por_faixa_idade": [
+      {
+        "faixa_idade": "até 21",
+        "transferencias": 5887,
+        "negativas_pct": 62.09,
+        "gratuitas_pct": 45.51,
+        "peso_mediano": -50000.0,
+        "valor_mercado_mediano": 300000.0
+      },
+      {
+        "faixa_idade": "22-24",
+        "transferencias": 10665,
+        "negativas_pct": 71.8,
+        "gratuitas_pct": 46.66,
+        "peso_mediano": -150000.0,
+        "valor_mercado_mediano": 500000.0
+      },
+      {
+        "faixa_idade": "25-27",
+        "transferencias": 9458,
+        "negativas_pct": 80.32,
+        "gratuitas_pct": 52.2,
+        "peso_mediano": -300000.0,
+        "valor_mercado_mediano": 700000.0
+      },
+      {
+        "faixa_idade": "28-30",
+        "transferencias": 5989,
+        "negativas_pct": 88.98,
+        "gratuitas_pct": 63.82,
+        "peso_mediano": -500000.0,
+        "valor_mercado_mediano": 800000.0
+      },
+      {
+        "faixa_idade": "31-33",
+        "transferencias": 3039,
+        "negativas_pct": 94.31,
+        "gratuitas_pct": 76.64,
+        "peso_mediano": -500000.0,
+        "valor_mercado_mediano": 700000.0
+      },
+      {
+        "faixa_idade": "34+",
+        "transferencias": 1394,
+        "negativas_pct": 96.34,
+        "gratuitas_pct": 90.1,
+        "peso_mediano": -300000.0,
+        "valor_mercado_mediano": 400000.0
+      }
+    ],
+    "por_posicao": [
+      {
+        "position": "Attack",
+        "transferencias": 11049,
+        "negativas_pct": 73.26,
+        "gratuitas_pct": 48.49,
+        "peso_mediano": -240000.0,
+        "valor_mercado_mediano": 700000.0
+      },
+      {
+        "position": "Defender",
+        "transferencias": 11736,
+        "negativas_pct": 79.46,
+        "gratuitas_pct": 57.77,
+        "peso_mediano": -250000.0,
+        "valor_mercado_mediano": 500000.0
+      },
+      {
+        "position": "Goalkeeper",
+        "transferencias": 3730,
+        "negativas_pct": 86.62,
+        "gratuitas_pct": 70.54,
+        "peso_mediano": -200000.0,
+        "valor_mercado_mediano": 300000.0
+      },
+      {
+        "position": "Midfield",
+        "transferencias": 9922,
+        "negativas_pct": 78.61,
+        "gratuitas_pct": 52.74,
+        "peso_mediano": -300000.0,
+        "valor_mercado_mediano": 700000.0
+      }
+    ],
+    "por_pe": [
+      {
+        "foot": "both",
+        "transferencias": 1283,
+        "negativas_pct": 83.01,
+        "gratuitas_pct": 60.25,
+        "peso_mediano": -250000.0,
+        "valor_mercado_mediano": 450000.0
+      },
+      {
+        "foot": "left",
+        "transferencias": 8882,
+        "negativas_pct": 76.56,
+        "gratuitas_pct": 52.86,
+        "peso_mediano": -250000.0,
+        "valor_mercado_mediano": 600000.0
+      },
+      {
+        "foot": "right",
+        "transferencias": 25450,
+        "negativas_pct": 77.94,
+        "gratuitas_pct": 54.72,
+        "peso_mediano": -250000.0,
+        "valor_mercado_mediano": 600000.0
+      }
+    ],
+    "por_empresario": [
+      {
+        "tem_empresario": "com empresário",
+        "transferencias": 24491,
+        "negativas_pct": 75.95,
+        "gratuitas_pct": 51.04,
+        "peso_mediano": -250000.0,
+        "valor_mercado_mediano": 650000.0
+      },
+      {
+        "tem_empresario": "sem empresário",
+        "transferencias": 11951,
+        "negativas_pct": 82.46,
+        "gratuitas_pct": 62.82,
+        "peso_mediano": -240000.0,
+        "valor_mercado_mediano": 400000.0
+      }
+    ],
+    "por_liga_destino": [
+      {
+        "liga": "A1",
+        "transferencias": 388,
+        "negativas_pct": 81.44,
+        "gratuitas_pct": 53.87,
+        "peso_mediano": -300000.0,
+        "valor_mercado_mediano": 500000.0
+      },
+      {
+        "liga": "ARG1",
+        "transferencias": 1002,
+        "negativas_pct": 81.14,
+        "gratuitas_pct": 50.4,
+        "peso_mediano": -375000.0,
+        "valor_mercado_mediano": 750000.0
+      },
+      {
+        "liga": "BE1",
+        "transferencias": 942,
+        "negativas_pct": 67.41,
+        "gratuitas_pct": 31.85,
+        "peso_mediano": -300000.0,
+        "valor_mercado_mediano": 900000.0
+      },
+      {
+        "liga": "BRA1",
+        "transferencias": 927,
+        "negativas_pct": 72.06,
+        "gratuitas_pct": 37.54,
+        "peso_mediano": -500000.0,
+        "valor_mercado_mediano": 1500000.0
+      },
+      {
+        "liga": "C1",
+        "transferencias": 359,
+        "negativas_pct": 76.6,
+        "gratuitas_pct": 44.01,
+        "peso_mediano": -350000.0,
+        "valor_mercado_mediano": 750000.0
+      },
+      {
+        "liga": "COL1",
+        "transferencias": 418,
+        "negativas_pct": 98.09,
+        "gratuitas_pct": 90.67,
+        "peso_mediano": -350000.0,
+        "valor_mercado_mediano": 400000.0
+      },
+      {
+        "liga": "DK1",
+        "transferencias": 584,
+        "negativas_pct": 76.37,
+        "gratuitas_pct": 47.43,
+        "peso_mediano": -250000.0,
+        "valor_mercado_mediano": 450000.0
+      },
+      {
+        "liga": "ES1",
+        "transferencias": 1349,
+        "negativas_pct": 66.72,
+        "gratuitas_pct": 34.77,
+        "peso_mediano": -700000.0,
+        "valor_mercado_mediano": 3000000.0
+      },
+      {
+        "liga": "FR1",
+        "transferencias": 1364,
+        "negativas_pct": 55.87,
+        "gratuitas_pct": 27.57,
+        "peso_mediano": -250000.0,
+        "valor_mercado_mediano": 2000000.0
+      },
+      {
+        "liga": "GB1",
+        "transferencias": 1924,
+        "negativas_pct": 36.64,
+        "gratuitas_pct": 14.45,
+        "peso_mediano": 950000.0,
+        "valor_mercado_mediano": 6000000.0
+      },
+      {
+        "liga": "GR1",
+        "transferencias": 1118,
+        "negativas_pct": 93.11,
+        "gratuitas_pct": 77.64,
+        "peso_mediano": -400000.0,
+        "valor_mercado_mediano": 450000.0
+      },
+      {
+        "liga": "IT1",
+        "transferencias": 2036,
+        "negativas_pct": 53.78,
+        "gratuitas_pct": 22.64,
+        "peso_mediano": -125000.0,
+        "valor_mercado_mediano": 2500000.0
+      },
+      {
+        "liga": "JAP1",
+        "transferencias": 312,
+        "negativas_pct": 86.54,
+        "gratuitas_pct": 73.08,
+        "peso_mediano": -245000.0,
+        "valor_mercado_mediano": 450000.0
+      },
+      {
+        "liga": "KR1",
+        "transferencias": 342,
+        "negativas_pct": 84.8,
+        "gratuitas_pct": 62.28,
+        "peso_mediano": -300000.0,
+        "valor_mercado_mediano": 500000.0
+      },
+      {
+        "liga": "L1",
+        "transferencias": 1599,
+        "negativas_pct": 65.1,
+        "gratuitas_pct": 25.64,
+        "peso_mediano": -400000.0,
+        "valor_mercado_mediano": 2500000.0
+      },
+      {
+        "liga": "MEX1",
+        "transferencias": 487,
+        "negativas_pct": 59.55,
+        "gratuitas_pct": 29.77,
+        "peso_mediano": -390000.0,
+        "valor_mercado_mediano": 2000000.0
+      },
+      {
+        "liga": "MLS1",
+        "transferencias": 951,
+        "negativas_pct": 75.29,
+        "gratuitas_pct": 33.44,
+        "peso_mediano": -400000.0,
+        "valor_mercado_mediano": 1000000.0
+      },
+      {
+        "liga": "NL1",
+        "transferencias": 1032,
+        "negativas_pct": 80.04,
+        "gratuitas_pct": 51.55,
+        "peso_mediano": -325000.0,
+        "valor_mercado_mediano": 650000.0
+      },
+      {
+        "liga": "NO1",
+        "transferencias": 456,
+        "negativas_pct": 75.22,
+        "gratuitas_pct": 41.01,
+        "peso_mediano": -200000.0,
+        "valor_mercado_mediano": 400000.0
+      },
+      {
+        "liga": "PL1",
+        "transferencias": 667,
+        "negativas_pct": 92.5,
+        "gratuitas_pct": 57.57,
+        "peso_mediano": -400000.0,
+        "valor_mercado_mediano": 500000.0
+      },
+      {
+        "liga": "PO1",
+        "transferencias": 1159,
+        "negativas_pct": 77.05,
+        "gratuitas_pct": 55.57,
+        "peso_mediano": -350000.0,
+        "valor_mercado_mediano": 700000.0
+      },
+      {
+        "liga": "RO1",
+        "transferencias": 648,
+        "negativas_pct": 94.29,
+        "gratuitas_pct": 75.31,
+        "peso_mediano": -300000.0,
+        "valor_mercado_mediano": 400000.0
+      },
+      {
+        "liga": "RU1",
+        "transferencias": 1260,
+        "negativas_pct": 76.59,
+        "gratuitas_pct": 41.98,
+        "peso_mediano": -300000.0,
+        "valor_mercado_mediano": 700000.0
+      },
+      {
+        "liga": "SA1",
+        "transferencias": 537,
+        "negativas_pct": 64.8,
+        "gratuitas_pct": 47.3,
+        "peso_mediano": -150000.0,
+        "valor_mercado_mediano": 900000.0
+      },
+      {
+        "liga": "SC1",
+        "transferencias": 548,
+        "negativas_pct": 83.94,
+        "gratuitas_pct": 66.79,
+        "peso_mediano": -250000.0,
+        "valor_mercado_mediano": 350000.0
+      },
+      {
+        "liga": "SE1",
+        "transferencias": 379,
+        "negativas_pct": 82.32,
+        "gratuitas_pct": 51.19,
+        "peso_mediano": -210000.0,
+        "valor_mercado_mediano": 400000.0
+      },
+      {
+        "liga": "SER1",
+        "transferencias": 539,
+        "negativas_pct": 95.36,
+        "gratuitas_pct": 75.51,
+        "peso_mediano": -250000.0,
+        "valor_mercado_mediano": 300000.0
+      },
+      {
+        "liga": "TR1",
+        "transferencias": 1371,
+        "negativas_pct": 86.07,
+        "gratuitas_pct": 56.09,
+        "peso_mediano": -600000.0,
+        "valor_mercado_mediano": 1000000.0
+      },
+      {
+        "liga": "TS1",
+        "transferencias": 398,
+        "negativas_pct": 69.6,
+        "gratuitas_pct": 34.42,
+        "peso_mediano": -200000.0,
+        "valor_mercado_mediano": 400000.0
+      },
+      {
+        "liga": "UKR1",
+        "transferencias": 1051,
+        "negativas_pct": 91.44,
+        "gratuitas_pct": 74.88,
+        "peso_mediano": -200000.0,
+        "valor_mercado_mediano": 300000.0
+      },
+      {
+        "liga": "fora das ligas cobertas",
+        "transferencias": 9785,
+        "negativas_pct": 91.92,
+        "gratuitas_pct": 81.37,
+        "peso_mediano": -175000.0,
+        "valor_mercado_mediano": 200000.0
+      }
+    ]
+  },
+  "outliers": {
+    "peso_iqr": {
+      "q1": -650000.0,
+      "q3": -50000.0,
+      "limite_inferior": -1550000.0,
+      "limite_superior": 850000.0,
+      "outliers": 8069,
+      "outliers_pct": 22.14
+    },
+    "log10_razao_pagas_iqr": {
+      "q1": -0.27954545896739114,
+      "q3": 0.17609125905568124,
+      "limite_inferior": -0.9630005360019998,
+      "limite_superior": 0.8595463360902899,
+      "outliers": 713,
+      "outliers_pct": 4.34
+    },
+    "maiores_em_modulo": [
+      {
+        "jogador": "Kylian Mbappé",
+        "de": "PSG",
+        "para": "Real Madrid",
+        "temporada": "24/25",
+        "valor_pago": 0.0,
+        "valor_mercado": 180000000.0,
+        "peso": -180000000
+      },
+      {
+        "jogador": "Neymar",
+        "de": "Barcelona",
+        "para": "PSG",
+        "temporada": "17/18",
+        "valor_pago": 222000000.0,
+        "valor_mercado": 100000000.0,
+        "peso": 122000000
+      },
+      {
+        "jogador": "Ousmane Dembélé",
+        "de": "Dortmund",
+        "para": "Barcelona",
+        "temporada": "17/18",
+        "valor_pago": 148000000.0,
+        "valor_mercado": 33000000.0,
+        "peso": 115000000
+      },
+      {
+        "jogador": "Erling Haaland",
+        "de": "Dortmund",
+        "para": "Man City",
+        "temporada": "22/23",
+        "valor_pago": 60000000.0,
+        "valor_mercado": 150000000.0,
+        "peso": -90000000
+      },
+      {
+        "jogador": "Lionel Messi",
+        "de": "Barcelona",
+        "para": "PSG",
+        "temporada": "21/22",
+        "valor_pago": 0.0,
+        "valor_mercado": 80000000.0,
+        "peso": -80000000
+      },
+      {
+        "jogador": "Enzo Fernández",
+        "de": "Benfica",
+        "para": "Chelsea",
+        "temporada": "22/23",
+        "valor_pago": 121000000.0,
+        "valor_mercado": 55000000.0,
+        "peso": 66000000
+      },
+      {
+        "jogador": "Trent Alexander-Arnold",
+        "de": "Liverpool",
+        "para": "Real Madrid",
+        "temporada": "25/26",
+        "valor_pago": 10000000.0,
+        "valor_mercado": 75000000.0,
+        "peso": -65000000
+      },
+      {
+        "jogador": "Christian Eriksen",
+        "de": "Tottenham",
+        "para": "Inter",
+        "temporada": "19/20",
+        "valor_pago": 27000000.0,
+        "valor_mercado": 90000000.0,
+        "peso": -63000000
+      },
+      {
+        "jogador": "Antony",
+        "de": "Ajax",
+        "para": "Man Utd",
+        "temporada": "22/23",
+        "valor_pago": 95000000.0,
+        "valor_mercado": 35000000.0,
+        "peso": 60000000
+      },
+      {
+        "jogador": "Kylian Mbappé",
+        "de": "Monaco",
+        "para": "PSG",
+        "temporada": "18/19",
+        "valor_pago": 180000000.0,
+        "valor_mercado": 120000000.0,
+        "peso": 60000000
+      }
+    ]
+  }
+}
