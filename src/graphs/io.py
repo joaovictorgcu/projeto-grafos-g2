@@ -120,3 +120,9 @@ def ler_mapa(caminho) -> Mapa:
     caminho = Path(caminho)
     texto = caminho.read_text(encoding="utf-8-sig")
     return interpretar_mapa(texto, nome=caminho.stem)
+
+
+def ler_dataset(pasta):
+    from .dataset import carregar_dataset
+
+    return carregar_dataset(pasta)
