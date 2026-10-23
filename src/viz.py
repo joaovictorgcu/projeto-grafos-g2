@@ -48,7 +48,7 @@ _ROTULO = re.compile(r"^\((\d+),(\d+)\)\|([a-z]+|-)\|\{([\d,]*)\}$")
 def ler_mapa(caminho):
     """Linhas do mapa, sem os comentários (;) e sem linhas vazias."""
     # Só o necessário para desenhar; a leitura/validação de verdade é do src/graphs/io.py.
-    with open(caminho, encoding="utf-8") as f:
+    with open(caminho, encoding="utf-8-sig") as f:
         return [l.rstrip("\r\n") for l in f if l.strip() and not l.startswith(";")]
 
 
