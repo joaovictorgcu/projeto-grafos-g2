@@ -324,3 +324,14 @@ normalizar pelo maior grafo deixa medida e teoria na mesma escala sem eixo duplo
 fontes. Insight: o pico fica no nível 3 e quase tudo está a até 4 transferências — mundo pequeno.
 Por que esse gráfico: linha porque o nível é ordenado; três séries no mesmo eixo para comparar as
 fontes.
+
+**A4 — `a4_caminhos.png` (algoritmos).** Para os 6 pares do Dijkstra, uma barra com o custo
+original do caminho encontrado, a rota escrita ao lado e o número de arcos do Dijkstra contra o de
+passos da BFS. Insight: nos 6 pares o caminho "mais barato" tem os mesmos 2 arcos do caminho mais
+curto. Com o deslocamento de +180 mi por arco, cada arco a mais custa muito, e o Dijkstra acaba
+devolvendo um caminho mínimo em número de arcos, escolhendo entre esses o de menor custo original.
+É a evidência visual do limite do deslocamento discutido na seção 3. O Bellman-Ford fica de fora
+porque o grafo de clubes tem ciclo negativo e, portanto, não tem caminho mínimo. Por que esse
+gráfico: barras horizontais ordenadas para comparar o custo entre pares com nomes longos, com uma
+só cor porque todos os pares são do mesmo algoritmo; a rota e a contagem de arcos ficam escritas
+na linha, já que o ponto é ver que a contagem é igual em todas.
