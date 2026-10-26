@@ -289,8 +289,8 @@ def tempos(relatorio, saida):
     ax.barh(y, ms, xerr=[l["desvio_s"] * 1000 for l in linhas], color=[CORES[list(NOMES_ALG).index(l["algoritmo"])]
                                                                       for l in linhas],
             height=0.6, error_kw={"ecolor": TEXTO_2, "capsize": 3, "lw": 1})
-    for yi, v in enumerate(ms):
-        ax.text(v * 1.15, yi, f"{v:,.1f} ms".replace(",", "X").replace(".", ",").replace("X", "."),
+    for yi, (v, l) in enumerate(zip(ms, linhas)):
+        ax.text((v + l["desvio_s"] * 1000) * 1.15, yi, f"{v:,.1f} ms".replace(",", "X").replace(".", ",").replace("X", "."),
                 va="center", fontsize=9, color=TEXTO)
     ax.set_xscale("log")
     ax.set_yticks(y, [f"{NOMES_ALG[l['algoritmo']]}\n{l['tarefa']}" for l in linhas], fontsize=8.5)
@@ -345,6 +345,39 @@ def camadas_bfs(relatorio, saida):
     return salvar(fig, Path(saida) / "a3_camadas_bfs.png")
 
 
+# [IA] Claude Code (Claude Opus 5.5) – comparação dos caminhos do Dijkstra com os da BFS nos pares do relatório; revisado por Caio
+def caminhos(relatorio, saida):
+    dij = relatorio["dijkstra"]
+    pares = [p for p in dij["pares"] if p["status"] == "OK"]
+    pares.sort(key=lambda p: p["custo_original"])
+    desloc = dij["transformacao"]["deslocamento_eur"]
+    iguais = sum(p["arcos"] == p["passos_bfs"] for p in pares)
+
+    fig, ax = plt.subplots(figsize=(10, 0.62 * len(pares) + 1.6))
+    y = np.arange(len(pares))
+    custos = [p["custo_original"] for p in pares]
+    ax.barh(y, custos, color=CORES[2], height=0.55)
+    ax.axvline(0, color=TEXTO_2, lw=1)
+    for yi, p in enumerate(pares):
+        ax.text(p["custo_original"] * 1.02, yi, f"{milhoes(p['custo_original'])}", ha="right", va="center",
+                fontsize=9, color=TEXTO)
+        ax.text(0.02 * max(abs(c) for c in custos), yi,
+                f"{' → '.join(p['caminho'])}   ·   Dijkstra: {p['arcos']} arcos · BFS: {p['passos_bfs']} passos",
+                ha="left", va="center", fontsize=8.5, color=TEXTO_2)
+    ax.set_yticks(y, [f"{p['origem']} → {p['destino']}" for p in pares], fontsize=9)
+    ax.set_xlim(min(custos) * 1.35, abs(min(custos)) * 1.6)
+    ax.xaxis.set_major_formatter(FuncFormatter(lambda v, _: milhoes(v) if v else "0"))
+    ax.set_xlabel("custo original do caminho do Dijkstra (soma de valor pago − valor de mercado, EUR)")
+    ax.grid(axis="y", visible=False)
+    ax.set_title(f"Caminhos do Dijkstra contra a BFS: em {iguais} de {len(pares)} pares, "
+                 f"o caminho mais barato tem o mesmo número de arcos que o mais curto\n"
+                 f"o deslocamento de {milhoes(desloc)} por arco pesa mais que a diferença entre as transferências")
+    rodape(fig, f"Dijkstra no grafo de clubes com w' = w + {milhoes(desloc)} (todo peso ≥ 0); o custo mostrado é o "
+                f"original. BFS = menor número de transferências entre os mesmos clubes. Bellman-Ford não tem "
+                f"caminho mínimo aqui: o grafo de clubes tem ciclo negativo (ver o relatório).")
+    return salvar(fig, Path(saida) / "a4_caminhos.png")
+
+
 def gerar_todas(dataset, saida):
     d = carregar_dataset(dataset)
     t = enriquecer(d, dataset)
@@ -353,6 +386,7 @@ def gerar_todas(dataset, saida):
         graus(d, saida), pesos(t, saida), faltantes(d, saida), relacoes(t, saida), outliers(t, saida),
         explanatoria_caminho(relatorio, saida), explanatoria_ligas(t, saida),
         tempos(relatorio, saida), escalabilidade(relatorio, saida), camadas_bfs(relatorio, saida),
+        caminhos(relatorio, saida),
     ]
 
 

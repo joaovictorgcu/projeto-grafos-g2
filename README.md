@@ -182,7 +182,7 @@ O `viz_parte2` lê o `parte2_report.json`, então rode o `--benchmark` antes.
 | `ficha_dataset.json` | funil do recorte e números do grafo |
 | `e1_graus.png` … `e5_outliers.png` | visualizações exploratórias |
 | `x1_explanatoria_caminho.png`, `x2_explanatoria_ligas.png` | visualizações explanatórias |
-| `a1_tempos.png`, `a2_escalabilidade.png`, `a3_camadas_bfs.png` | comparação dos algoritmos |
+| `a1_tempos.png`, `a2_escalabilidade.png`, `a3_camadas_bfs.png`, `a4_caminhos.png` | comparação dos algoritmos: tempo, comportamento e caminhos |
 
 A interpretação dos resultados e as notas analíticas de cada gráfico estão em
 `docs/parte2/relatorio_parte2.md`.
