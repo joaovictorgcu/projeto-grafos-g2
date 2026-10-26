@@ -94,6 +94,25 @@ Na barra lateral escolhe-se o mapa (ou envia-se um `.txt`, como o mapa surpresa)
 chaves, bônus consumidos e custo acumulado a cada passo; os estados-armadilha ficam marcados e,
 embaixo, há a comparação dos três algoritmos no mesmo mapa.
 
+**Comparação lado a lado (bônus).** Em *Modo*, na barra lateral, escolha *Comparação lado a lado*.
+Cada lado tem o seu algoritmo e a sua opção de fonte consumível, e o lado B pode usar outro mapa.
+Os dois percursos andam juntos, com o mesmo controle de passo; quem chega primeiro espera em G.
+A tela mostra:
+
+- uma frase-resumo da diferença (quem chega com menos passos, quem sai mais barato e em que passo
+  os percursos se separam), ou qual lado não tem solução e por quê (`RECUSA`, `CICLO_NEGATIVO`,
+  `SEM_SOLUCAO`);
+- os dois tabuleiros, cada um com passos até G, custo final (no B, a diferença para o A), custo e
+  chaves no passo atual;
+- os dois percursos sobrepostos na mesma grade, com as casas que só um deles usa marcadas, e a
+  curva de custo acumulado por passo;
+- a tabela passo a passo com os rótulos dos dois lados e o tamanho do grafo de estados de cada um.
+
+Em *Exemplos prontos* há comparações já montadas: BFS × Dijkstra no m01, m03 e m08 (menos passos
+contra menor custo), BFS × Bellman-Ford no m05 (o desvio pelos bônus), Dijkstra × Bellman-Ford no
+m05 (recusa por peso negativo), fonte infinita × consumível no m06 (o ciclo negativo some) e
+m02 × m07 (com e sem solução).
+
 ### Comandos do enunciado (dependem do `src/solve.py`)
 
 ```
