@@ -137,3 +137,10 @@ def bellman_ford(grafo, origem):
             return dist, pai, (ciclo, custo)
 
     return dist, pai, None
+
+
+# — [IA] Claude – estados-armadilha (transposto + BFS a partir do ALVO) gerado pela IA; testado e integrado por mim
+def estados_armadilha(grafo, alvo="ALVO"):
+    """Nós alcançáveis a partir do início que não chegam ao alvo (o BFS roda no transposto)."""
+    chegam_ao_alvo, _ = bfs(grafo.transposto(), alvo)
+    return [n for n in grafo.nos() if n != alvo and n not in chegam_ao_alvo]
