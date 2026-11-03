@@ -36,15 +36,16 @@ e revisar significa commitar alguma coisa lá — um teste, uma correção, uma 
 
 - [x] Checkpoint de 12/10: proposta do dataset da Parte 2 e apresentação (`docs/checkpoint_12-10/`)
 - [x] Mapas fornecidos (m01 a m08) em `data/mapas/`
-- [ ] Parte 1: labirintos com chaves e portas (grafo de estados)
+- [x] Parte 1: labirintos com chaves e portas (grafo de estados)
   - [x] leitura e validação dos mapas, `G_pos` e `G_est`, `arestas_<mapa>.csv`
   - [x] figuras da Seção 8 e labirinto interativo (Streamlit)
-  - [ ] `src/solve.py` (o `src/cli.py` já despacha `--mapa` para ele)
-  - [ ] `metricas_global.json`, `camadas.json`, `graus_<mapa>.csv`, `comparacao_modelagem.csv`,
+  - [x] `src/solve.py`: os comandos `--mapa` do enunciado pelo `src/cli.py`
+  - [x] `metricas_global.json`, `camadas.json`, `graus_<mapa>.csv`, `comparacao_modelagem.csv`,
         `solucoes.csv`, `dfs_classificacao.csv`, `percurso_m03.json`, `ciclo_negativo_m06.json`,
-        `armadilhas_m04.csv`, `armadilhas_m07.csv`
-  - [ ] os 2 mapas do grupo em `data/mapas_grupo/`
+        `armadilhas_m04.csv`, `armadilhas_m07.csv` (`python -m src.analise`)
+  - [x] os 2 mapas do grupo em `data/mapas_grupo/`
 - [x] Parte 2: rede de transferências entre clubes (`out/parte2/` e `docs/parte2/`)
+  - [x] gráficos revisados e prompts da declaração de IA (`docs/parte2/prompts_declaracao_uso_ia.txt`)
 - [ ] Declaração de Uso de IA assinada (`docs/DECLARACAO_IA.pdf`)
 - [ ] PDF final (manual + técnica, com a matriz de contribuição)
 - [ ] Entrega final (26/11/2026)
@@ -66,7 +67,7 @@ Todos os comandos abaixo rodam a partir da raiz do repositório.
 
 Os mapas ficam em `data/mapas/` (fornecidos) e `data/mapas_grupo/` (do grupo).
 
-### O que já funciona
+### Arestas e figuras
 
 ```
 # arestas_<mapa>.csv de todos os mapas
@@ -113,7 +114,7 @@ contra menor custo), BFS × Bellman-Ford no m05 (o desvio pelos bônus), Dijkstr
 m05 (recusa por peso negativo), fonte infinita × consumível no m06 (o ciclo negativo some) e
 m02 × m07 (com e sem solução).
 
-### Comandos do enunciado (dependem do `src/solve.py`)
+### Comandos do enunciado
 
 ```
 python -m src.cli --mapa ./data/mapas/m03_tres_chaves.txt --alg BFS --out ./out/parte1/
@@ -124,8 +125,19 @@ python -m src.cli --mapa ./data/mapas/m04_esteiras.txt --armadilhas --out ./out/
 python -m src.cli --mapa ./data/mapas/m03_tres_chaves.txt --interactive --out ./out/parte1/
 ```
 
-O `src/cli.py` repassa os argumentos para `solve.executar(args)`. Enquanto o `solve.py` não existe,
-esses comandos param com a mensagem "a Parte 1 ainda não está ligada ao cli".
+O `src/cli.py` repassa os argumentos para `solve.executar(args)`, que grava as saídas em `--out`.
+
+### Análises da Parte 1
+
+```
+python -m src.analise
+```
+
+Regenera em `out/parte1/` as métricas globais, as camadas, os graus, a comparação de modelagens,
+as soluções, a classificação da DFS, o percurso do m03, o ciclo negativo do m06 e os
+estados-armadilha dos mapas fornecidos e dos mapas do grupo. A discussão está em
+`docs/parte1_p3_guilherme.md`, `docs/p3_guilherme_entrega_final.md` e
+`docs/relatorio_execucao_p3_guilherme.md`.
 
 ## Parte 2 — rede de transferências
 
@@ -178,9 +190,11 @@ python -m src.cli --dataset ./data/dataset_parte2/ --alg BELLMAN_FORD --source "
 python -m src.cli --dataset ./data/dataset_parte2/ --benchmark --out ./out/parte2/
 ```
 
-O `--benchmark` leva cerca de 4 minutos: o Bellman-Ford no grafo completo faz as |V| − 1 passadas
+O `--benchmark` leva de 4 a 5 minutos: o Bellman-Ford no grafo completo faz as |V| − 1 passadas
 (o ciclo negativo impede a parada antecipada), uns 20 s por execução. `--repeticoes` e `--tamanhos`
-mudam os parâmetros.
+mudam os parâmetros. Os resultados dos algoritmos são determinísticos; os tempos mudam de máquina
+para máquina. O `parte2_report.json` commitado é a referência das tabelas do relatório: se for
+regenerado, regenere também os gráficos e atualize a seção 4 de `docs/parte2/relatorio_parte2.md`.
 
 ### 3. Análise exploratória e gráficos
 
@@ -204,7 +218,8 @@ O `viz_parte2` lê o `parte2_report.json`, então rode o `--benchmark` antes.
 | `a1_tempos.png`, `a2_escalabilidade.png`, `a3_camadas_bfs.png`, `a4_caminhos.png` | comparação dos algoritmos: tempo, comportamento e caminhos |
 
 A interpretação dos resultados e as notas analíticas de cada gráfico estão em
-`docs/parte2/relatorio_parte2.md`.
+`docs/parte2/relatorio_parte2.md`. Os prompts usados com IA na revisão dos gráficos, com o que foi
+conferido em cada commit, estão em `docs/parte2/prompts_declaracao_uso_ia.txt`.
 
 ## Testes
 
@@ -212,8 +227,10 @@ A interpretação dos resultados e as notas analíticas de cada gráfico estão 
 pytest
 ```
 
-Os testes da Parte 2 (`test_dataset.py`, `test_parte2.py`) usam dados sintéticos e não precisam do
-snapshot baixado.
+Nenhum teste precisa do snapshot do Transfermarkt: os da Parte 1 usam os mapas de `data/` e grafos
+pequenos montados no próprio teste, `test_oraculo_networkx.py` confere BFS, DFS, Dijkstra e
+Bellman-Ford contra o `networkx`, e `test_viz_parte2.py` cobre os formatadores e resumos dos
+gráficos da Parte 2.
 
 ## Estrutura do repositório
 
@@ -223,6 +240,8 @@ projeto-grafos-g2/
 ├─ requirements.txt
 ├─ docs/
 │  ├─ checkpoint_12-10/   # proposta do dataset e apresentação do checkpoint
+│  ├─ parte1_p3_guilherme.md, p3_guilherme_entrega_final.md,
+│  │  relatorio_execucao_p3_guilherme.md   # análises e discussão da Parte 1 (P3)
 │  └─ parte2/             # relatório, notas analíticas e prompts de IA da Parte 2
 ├─ data/
 │  ├─ mapas/              # m01 a m08
@@ -236,6 +255,8 @@ projeto-grafos-g2/
 │  └─ rodar_fichas.bat
 ├─ src/
 │  ├─ cli.py              # linha de comando das duas partes
+│  ├─ solve.py            # Parte 1 pelo cli (--mapa): algoritmos, armadilhas, interativo
+│  ├─ analise.py          # análises e artefatos da Parte 1 (P3)
 │  ├─ interativo.py       # labirinto interativo (Streamlit)
 │  ├─ viz.py              # figuras da Parte 1
 │  ├─ parte2.py           # experimentos da Parte 2
