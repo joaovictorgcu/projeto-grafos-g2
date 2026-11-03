@@ -273,33 +273,27 @@ def outliers(t, saida):
     fora = (pagas["log_razao"] < lim["limite_inferior"]) | (pagas["log_razao"] > lim["limite_superior"])
     fig, ax = plt.subplots(figsize=(7.5, 6.5))
     ax.scatter(pagas.loc[~fora, "market_value_in_eur"], pagas.loc[~fora, "transfer_fee"], s=6, alpha=0.25,
-               color=NEUTRO, linewidths=0, label=f"dentro do IQR ({(~fora).sum():,})".replace(",", "."))
+               color=NEUTRO, linewidths=0, label=f"dentro do IQR ({br((~fora).sum())})")
     ax.scatter(pagas.loc[fora, "market_value_in_eur"], pagas.loc[fora, "transfer_fee"], s=10, alpha=0.7,
-               color=DESTAQUE, linewidths=0, label=f"outlier pela regra do IQR ({fora.sum():,})".replace(",", "."))
+               color=DESTAQUE, linewidths=0, label=f"outlier pela regra do IQR ({br(fora.sum())})")
     x = np.array([1e4, 3e8])
     ax.plot(x, x, color=TEXTO, lw=1, ls="--", label="valor pago = valor de mercado (peso 0)")
-    for r in pagas.reindex(pagas["peso"].abs().sort_values(ascending=False).index).head(5).itertuples():
-        ax.annotate(r.player_name, (r.market_value_in_eur, r.transfer_fee), xytext=(-6, 6),
-                    textcoords="offset points", ha="right", fontsize=8, color=TEXTO)
     ax.set_xscale("log")
     ax.set_yscale("log")
-    ax.xaxis.set_major_formatter(FuncFormatter(milhoes_ou_mil))
-    ax.yaxis.set_major_formatter(FuncFormatter(milhoes_ou_mil))
+    ax.xaxis.set_major_formatter(FuncFormatter(eur))
+    ax.yaxis.set_major_formatter(FuncFormatter(eur))
     ax.set_xlabel("valor de mercado (EUR, escala log)")
     ax.set_ylabel("valor pago (EUR, escala log)")
     ax.set_title("Outliers nas vendas pagas: valor pago contra valor de mercado\n"
                  "acima da diagonal, pagou-se mais que o mercado; abaixo, menos")
-    ax.legend(loc="upper left", markerscale=2)
-    rodape(fig, f"IQR sobre log10(valor pago / valor de mercado): fora de [{lim['limite_inferior']:.2f}; "
-                f"{lim['limite_superior']:.2f}]. Nomes: as 5 maiores diferenças em módulo. "
+    legenda = ax.legend(loc="upper left", markerscale=2)
+    maiores = pagas.reindex(pagas["peso"].abs().sort_values(ascending=False).index).head(5)
+    rotular_sem_sobrepor(ax, [(r.market_value_in_eur, r.transfer_fee, r.player_name) for r in maiores.itertuples()],
+                         evitar=[legenda])
+    rodape(fig, f"IQR sobre log10(valor pago / valor de mercado): fora de [{br(lim['limite_inferior'], 2)}; "
+                f"{br(lim['limite_superior'], 2)}]. Nomes: as 5 maiores diferenças em módulo. "
                 f"{br(len(pagas))} vendas pagas.")
     return salvar(fig, Path(saida) / "e5_outliers.png")
-
-
-def milhoes_ou_mil(x, _=None):
-    if x >= 1e6:
-        return f"{x / 1e6:g} mi"
-    return f"{x / 1e3:g} mil"
 
 
 # --- explanatórias ---
