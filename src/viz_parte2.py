@@ -199,22 +199,25 @@ def pesos(t, saida):
 def faltantes(d, saida):
     b = d.brutas.assign(temporada=d.brutas["transfer_season"].map(temporada))
     b = b[b["temporada"].between(2000, 2025)]
-    pct = b.groupby("temporada")[["transfer_fee", "market_value_in_eur"]].apply(lambda x: x.isna().mean())
-    fig, ax = plt.subplots(figsize=(8.5, 4.6))
+    faltas = b.groupby("temporada")[["transfer_fee", "market_value_in_eur"]].apply(lambda x: x.isna().mean())
+    mv, fee = faltas["market_value_in_eur"], faltas["transfer_fee"]
+    fig, ax = plt.subplots(figsize=(8.5, 4.8))
     for col, rotulo, cor in (("market_value_in_eur", "valor de mercado", CORES[0]),
                              ("transfer_fee", "valor pago", CORES[1])):
-        ax.plot(pct.index, pct[col], color=cor, lw=2, marker="o", ms=4, label=rotulo)
-        ax.annotate(rotulo, (pct.index[-1], pct[col].iloc[-1]), xytext=(6, 0), textcoords="offset points",
-                    va="center", color=TEXTO_2)
+        ax.plot(faltas.index, faltas[col], color=cor, lw=2, marker="o", ms=4, label=rotulo)
+        ax.annotate(f"{rotulo}: {pct(faltas[col].iloc[-1])}", (faltas.index[-1], faltas[col].iloc[-1]),
+                    xytext=(6, 0), textcoords="offset points", va="center", color=TEXTO_2)
     ax.set_ylim(0, 1.02)
-    ax.yaxis.set_major_formatter(PercentFormatter(1))
+    ax.yaxis.set_major_formatter(FuncFormatter(pct_eixo))
     ax.set_xlabel("temporada (ano de início)")
     ax.set_ylabel("% das transferências sem o valor")
-    ax.set_title("Faltantes por temporada: o valor de mercado some quanto mais antiga a transferência;\n"
-                 "o valor pago falta em cerca de 1/3 das transferências em todas as épocas")
+    ax.set_title("Faltantes por temporada: os dois valores faltam menos quanto mais recente a transferência\n"
+                 f"valor de mercado: {pct(mv.iloc[0])} em {mv.index[0]} → {pct(mv.iloc[-1])} em {mv.index[-1]}; "
+                 f"valor pago: {pct(fee.iloc[0])} → {pct(fee.iloc[-1])}")
     ax.legend(loc="upper right")
-    rodape(fig, "Sobre as 175.165 transferências brutas, temporadas 2000/01 a 2025/26. Sem os dois valores não "
-                "existe peso, então essas transferências ficam fora do grafo. Fonte: Transfermarkt Datasets.")
+    rodape(fig, f"Sobre as {br(len(b))} transferências brutas das temporadas 2000/01 a 2025/26 "
+                f"({br(len(d.brutas))} no arquivo). Sem os dois valores não existe peso, então essas "
+                "transferências ficam fora do grafo. Fonte: Transfermarkt Datasets.")
     return salvar(fig, Path(saida) / "e3_faltantes.png")
 
 

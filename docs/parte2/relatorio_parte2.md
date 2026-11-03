@@ -72,10 +72,12 @@ data. Os 8 self-loops saem do grafo. A posição desconhecida vem gravada como o
 - **Valor de mercado — MAR em relação à temporada.** A ausência depende de uma variável observada:
   é 100% até 2003, cai de 97% (2004) para 16% (2025) (`e3_faltantes.png`). O Transfermarkt só
   passou a registrar valor de mercado de forma sistemática a partir de meados dos anos 2000.
-- **Valor pago — parte MAR, parte MNAR.** Fica em torno de 1/3 em todas as épocas, e o valor de
-  mercado mediano das transferências sem valor pago (250 mil) é metade do das com valor pago
-  (500 mil): falta mais em transferências de jogadores baratos, o que é observável (MAR). Mas uma
-  parte é "valor não divulgado", que depende do próprio valor ausente (MNAR).
+- **Valor pago — parte MAR, parte MNAR.** Também falta menos nas temporadas recentes, mas cai bem
+  menos que o valor de mercado: 55% das transferências de 2000–2009, 39% em 2010–2019 e 30% a
+  partir de 2020 (35% no total). O valor de mercado mediano das transferências sem valor pago
+  (250 mil) é metade do das com valor pago (500 mil): falta mais em transferências antigas e de
+  jogadores baratos, o que é observável (MAR). Mas uma parte é "valor não divulgado", que depende
+  do próprio valor ausente (MNAR).
 - **Liga do destino — ausência estrutural.** 26,85% das transferências usadas vão para clubes fora
   das ligas que o dataset acompanha. Não é erro: virou a categoria "fora das ligas cobertas".
 - Empresário (32,79%) é tratado como categoria ("sem empresário"); idade, posição, pé e altura
@@ -280,9 +282,10 @@ têm sinal; o bin central mostra as 978 vendas pagas exatamente pelo valor de me
 dois painéis com o mesmo eixo x em vez de barras sobrepostas.
 
 **E3 — `e3_faltantes.png` (exploratória).** % de transferências sem valor de mercado e sem valor
-pago por temporada. Insight: o valor de mercado falta por causa da época (MAR); o valor pago falta
-num patamar constante. Por que esse gráfico: linha para evolução no tempo; as duas séries têm a
-mesma unidade (%), então dividem o mesmo eixo sem distorção.
+pago por temporada. Insight: os dois faltam menos quanto mais recente a transferência, mas o valor
+de mercado depende muito mais da época (100% até 2003, 16% em 2025) que o valor pago (56% em 2000,
+25% em 2025). Por que esse gráfico: linha para evolução no tempo; as duas séries têm a mesma
+unidade (%), então dividem o mesmo eixo sem distorção.
 
 **E4 — `e4_relacoes.png` (exploratória, multivariada).** % de transferências com peso negativo por
 faixa etária, posição, pé e empresário, com a média geral tracejada. Insight: a idade separa muito
