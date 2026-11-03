@@ -9,7 +9,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patheffects import withStroke
-from matplotlib.ticker import FixedLocator, FuncFormatter, NullFormatter, PercentFormatter
+from matplotlib.ticker import FixedLocator, FuncFormatter, NullFormatter
 
 from .avd_parte2 import SEM_LIGA, enriquecer, iqr
 from .graphs.dataset import carregar_dataset, temporada
@@ -148,11 +148,12 @@ def graus(d, saida):
         ax.step(valores, ccdf, where="post", color=cor, lw=2, label=rotulo)
     ax.set_xscale("log")
     ax.set_yscale("log")
-    ax.yaxis.set_major_formatter(PercentFormatter(1, decimals=1))
+    ax.set_xticks([1, 10, 100], ["1", "10", "100"])
+    ax.yaxis.set_major_formatter(FuncFormatter(pct_eixo))
     ax.set_xlabel("grau k (escala log)")
     ax.set_ylabel("% dos clubes com grau ≥ k (escala log)")
     ax.set_title(f"Graus da rede de transferências: poucos clubes concentram as conexões\n"
-                 f"{len(nos):,} clubes · {len(a):,} arcos".replace(",", "."))
+                 f"{br(len(nos))} clubes · {br(len(a))} arcos")
     ax.legend(loc="lower left")
     rodape(fig, "Grau = número de clubes distintos (arcos), não de transferências. Clubes com grau 0 contam no "
                 "denominador. Fonte: Transfermarkt Datasets, recorte do grupo.")
@@ -324,7 +325,7 @@ def explanatoria_caminho(relatorio, saida):
     i = [p[0] for p in passos].index(maior[0]) + 1
     ax.plot(i, custos[i], "o", color=DESTAQUE, ms=10)
     ax.vlines(i, custos[i], custos[i - 1], color=DESTAQUE, lw=3.2)
-    ax.annotate(f"{maior[2]}: {milhoes(maior[1])}\n{maior[1] / menor['custo']:.0%} do custo do caminho inteiro",
+    ax.annotate(f"{maior[2]}: {milhoes(maior[1])}\n{pct(maior[1] / menor['custo'])} do custo do caminho inteiro",
                 (i, (custos[i] + custos[i - 1]) / 2), xytext=(14, 0), textcoords="offset points",
                 va="center", fontsize=10.5, color=TEXTO, fontweight="bold")
     for xi, (clube, valor, jogador) in enumerate(passos, start=1):
@@ -332,7 +333,7 @@ def explanatoria_caminho(relatorio, saida):
             ax.annotate(f"{jogador}\n{milhoes(valor)}", (xi, custos[xi]), xytext=(0, -24),
                         textcoords="offset points", ha="center", va="top", fontsize=7.5, color=TEXTO_2)
     ax.set_xticks(x, [r.replace(" (", "\n(") for r in rotulos], fontsize=8)
-    ax.yaxis.set_major_formatter(FuncFormatter(milhoes))
+    ax.yaxis.set_major_formatter(FuncFormatter(eur))
     ax.set_ylabel("custo acumulado do caminho (EUR)")
     ax.set_xlabel("clube e temporada ao longo do caminho (as temporadas de espera foram omitidas)")
     ax.set_title(f"Uma só saída abaixo do valor de mercado define o caminho mais barato\n"
@@ -353,19 +354,19 @@ def explanatoria_ligas(t, saida):
     cores = [DESTAQUE if i == destaque else NEUTRO for i in g.index]
     ax.barh(y, g["neg"], color=cores, height=0.7)
     for yi, (liga, r) in enumerate(g.iterrows()):
-        ax.text(r["neg"] + 0.01, yi, f"{r['neg']:.0%}", va="center", fontsize=8.5,
+        ax.text(r["neg"] + 0.01, yi, pct(r["neg"]), va="center", fontsize=8.5,
                 color=TEXTO if liga == destaque else TEXTO_2, fontweight="bold" if liga == destaque else "normal")
     ax.set_yticks(y, [LIGAS.get(i, i) for i in g.index])
     ax.axvline(0.5, color=TEXTO_2, lw=1, ls="--")
     ax.text(0.5, len(g) - 0.4, " metade", color=TEXTO_2, fontsize=8, va="bottom")
     ax.set_xlim(0, 1.05)
-    ax.xaxis.set_major_formatter(PercentFormatter(1))
+    ax.xaxis.set_major_formatter(FuncFormatter(pct_eixo))
     ax.set_xlabel("% das transferências com peso negativo (saída abaixo do valor de mercado)")
     ax.grid(axis="y", visible=False)
     r = g.loc[destaque]
     sinal = "+" if r["mediana"] > 0 else ""
     ax.set_title(f"Só a {LIGAS.get(destaque, destaque)} compra, em geral, acima do valor de mercado\n"
-                 f"{r['neg']:.0%} das transferências para lá têm peso negativo; mediana do peso "
+                 f"{pct(r['neg'])} das transferências para lá têm peso negativo; mediana do peso "
                  f"{sinal}{br(r['mediana'] / 1e3)} mil EUR", fontsize=12)
     rodape(fig, "Liga do clube de destino (clubs.csv); ligas com pelo menos 300 transferências no recorte. "
                 "'Fora das ligas cobertas' = destino fora das ligas que o dataset acompanha. Fonte: Transfermarkt Datasets.")
@@ -417,17 +418,17 @@ def tempos(relatorio, saida):
 def escalabilidade(relatorio, saida):
     esc = relatorio["escalabilidade"]
     fig, eixos = plt.subplots(2, 2, figsize=(10, 7), sharex=True)
-    for ax, (alg, cor) in zip(eixos.flat, zip(NOMES_ALG, CORES)):
+    for ax, alg in zip(eixos.flat, NOMES_ALG):
         s = [l for l in esc if l["algoritmo"] == alg]
         x = [l["tamanho_pct"] for l in s]
-        ax.plot(x, [l["tempo_relativo"] for l in s], "o-", color=cor, lw=2, ms=7, label="tempo medido")
+        ax.plot(x, [l["tempo_relativo"] for l in s], "o-", color=cor_do_algoritmo(alg), lw=2, ms=7,
+                label="tempo medido")
         ax.plot(x, [l["teoria_relativa"] for l in s], "--", color=TEXTO_2, lw=1.4, label=s[0]["complexidade"])
         ax.set_yscale("log")
         ax.set_title(f"{NOMES_ALG[alg]} · {s[0]['complexidade']}", fontsize=10.5)
-        ax.yaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:g}"))
+        ax.yaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:g}".replace(".", ",")))
         ax.legend(loc="lower right", fontsize=8.5)
-        ax.set_xticks(x, [f"{p}%\n|V|={l['V']:,}\n|E|={l['E']:,}".replace(",", ".") for p, l in zip(x, s)],
-                      fontsize=7.5)
+        ax.set_xticks(x, [f"{p}%\n|V|={br(l['V'])}\n|E|={br(l['E'])}" for p, l in zip(x, s)], fontsize=7.5)
     for ax in eixos[:, 0]:
         ax.set_ylabel("relativo ao grafo completo (= 1), escala log")
     for ax in eixos[1]:
@@ -472,7 +473,7 @@ def caminhos(relatorio, saida):
     fig, ax = plt.subplots(figsize=(10, 0.62 * len(pares) + 1.6))
     y = np.arange(len(pares))
     custos = [p["custo_original"] for p in pares]
-    ax.barh(y, custos, color=CORES[2], height=0.55)
+    ax.barh(y, custos, color=cor_do_algoritmo("DIJKSTRA"), height=0.55)
     ax.axvline(0, color=TEXTO_2, lw=1)
     for yi, p in enumerate(pares):
         ax.text(p["custo_original"] * 1.02, yi, f"{milhoes(p['custo_original'])}", ha="right", va="center",
@@ -482,7 +483,7 @@ def caminhos(relatorio, saida):
                 ha="left", va="center", fontsize=8.5, color=TEXTO_2)
     ax.set_yticks(y, [f"{p['origem']} → {p['destino']}" for p in pares], fontsize=9)
     ax.set_xlim(min(custos) * 1.35, abs(min(custos)) * 1.6)
-    ax.xaxis.set_major_formatter(FuncFormatter(lambda v, _: milhoes(v) if v else "0"))
+    ax.xaxis.set_major_formatter(FuncFormatter(eur))
     ax.set_xlabel("custo original do caminho do Dijkstra (soma de valor pago − valor de mercado, EUR)")
     ax.grid(axis="y", visible=False)
     ax.set_title(f"Caminhos do Dijkstra contra a BFS: em {iguais} de {len(pares)} pares, "
