@@ -1,4 +1,5 @@
 """Gráficos da Parte 2. Precisa do out/parte2/parte2_report.json (rode o --benchmark antes)."""
+# [IA] Claude Code (Claude Opus 5.5 / Claude Fable 5.1) – revisão dos gráficos em 03/11/2026: formatadores pt-BR, e2–e5, a1, a3 e paleta; revisado por João
 import argparse
 import json
 from pathlib import Path

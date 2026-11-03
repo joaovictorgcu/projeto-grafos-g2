@@ -1,4 +1,5 @@
 """Formatação e resumos usados nos gráficos da Parte 2 (não precisa do snapshot)."""
+# [IA] Claude Code (Claude Opus 5.5) – testes dos formatadores e do resumo das camadas; revisado por João
 import pytest
 
 from src.viz_parte2 import br, eur, milhoes, pct, pct_eixo, resumo_camadas, tempo_ms
