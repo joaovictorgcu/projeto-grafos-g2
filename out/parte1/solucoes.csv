@@ -1,0 +1,31 @@
+mapa,algoritmo,status,passos,custo_ou_motivo
+m01,BFS,OK,10,30
+m01,DIJKSTRA,OK,14,20
+m01,BELLMAN_FORD,OK,14,20
+m02,BFS,OK,34,46
+m02,DIJKSTRA,OK,34,46
+m02,BELLMAN_FORD,OK,34,46
+m03,BFS,OK,87,119
+m03,DIJKSTRA,OK,91,99
+m03,BELLMAN_FORD,OK,91,99
+m04,BFS,OK,20,36
+m04,DIJKSTRA,OK,20,36
+m04,BELLMAN_FORD,OK,20,36
+m05,BFS,OK,12,18
+m05,DIJKSTRA,ERRO,,"Dijkstra não aceita pesos negativos: arco (3,1)|-|{} -> (3,2)|-|{0} tem peso -4. Use Bellman-Ford."
+m05,BELLMAN_FORD,OK,20,5
+m06,BFS,OK,10,10
+m06,DIJKSTRA,ERRO,,"Dijkstra não aceita pesos negativos: arco (3,4)|-|{} -> (3,5)|-|{} tem peso -2. Use Bellman-Ford."
+m06,BELLMAN_FORD,CICLO_NEGATIVO,,-1
+m07,BFS,SEM_SOLUCAO,,
+m07,DIJKSTRA,SEM_SOLUCAO,,
+m07,BELLMAN_FORD,SEM_SOLUCAO,,
+m08,BFS,OK,392,524
+m08,DIJKSTRA,OK,396,482
+m08,BELLMAN_FORD,OK,396,482
+guilherme_03_chaves,BFS,OK,12,12
+guilherme_03_chaves,DIJKSTRA,ERRO,,"Dijkstra não aceita pesos negativos: arco (4,8)|a|{} -> (5,8)|a|{0} tem peso -4. Use Bellman-Ford."
+guilherme_03_chaves,BELLMAN_FORD,OK,12,12
+guilherme_armadilhas,BFS,OK,5,5
+guilherme_armadilhas,DIJKSTRA,OK,5,5
+guilherme_armadilhas,BELLMAN_FORD,OK,5,5

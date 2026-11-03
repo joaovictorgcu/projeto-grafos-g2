@@ -1,0 +1,208 @@
+{
+  "m01": {
+    "camadas": {
+      "-": {
+        "estados": 24,
+        "arcos_internos": 46,
+        "grau_saida_medio": 1.9583333333333333
+      }
+    },
+    "arcos_entre_camadas": {}
+  },
+  "m02": {
+    "camadas": {
+      "-": {
+        "estados": 16,
+        "arcos_internos": 30,
+        "grau_saida_medio": 1.9375
+      },
+      "a": {
+        "estados": 23,
+        "arcos_internos": 43,
+        "grau_saida_medio": 1.9130434782608696
+      }
+    },
+    "arcos_entre_camadas": {
+      "-->a": 1
+    }
+  },
+  "m03": {
+    "camadas": {
+      "-": {
+        "estados": 12,
+        "arcos_internos": 22,
+        "grau_saida_medio": 1.9166666666666667
+      },
+      "a": {
+        "estados": 53,
+        "arcos_internos": 114,
+        "grau_saida_medio": 2.169811320754717
+      },
+      "ab": {
+        "estados": 72,
+        "arcos_internos": 160,
+        "grau_saida_medio": 2.236111111111111
+      },
+      "abc": {
+        "estados": 76,
+        "arcos_internos": 167,
+        "grau_saida_medio": 2.210526315789474
+      }
+    },
+    "arcos_entre_camadas": {
+      "-->a": 1,
+      "a->ab": 1,
+      "ab->abc": 1
+    }
+  },
+  "m04": {
+    "camadas": {
+      "-": {
+        "estados": 17,
+        "arcos_internos": 30,
+        "grau_saida_medio": 1.8235294117647058
+      },
+      "a": {
+        "estados": 20,
+        "arcos_internos": 35,
+        "grau_saida_medio": 1.8
+      }
+    },
+    "arcos_entre_camadas": {
+      "-->a": 1
+    }
+  },
+  "m05": {
+    "camadas": {
+      "-": {
+        "estados": 215,
+        "arcos_internos": 438,
+        "grau_saida_medio": 2.0651162790697675
+      }
+    },
+    "arcos_entre_camadas": {}
+  },
+  "m06": {
+    "camadas": {
+      "-": {
+        "estados": 24,
+        "arcos_internos": 46,
+        "grau_saida_medio": 1.9583333333333333
+      }
+    },
+    "arcos_entre_camadas": {}
+  },
+  "m07": {
+    "camadas": {
+      "-": {
+        "estados": 16,
+        "arcos_internos": 38,
+        "grau_saida_medio": 2.375
+      }
+    },
+    "arcos_entre_camadas": {}
+  },
+  "m08": {
+    "camadas": {
+      "-": {
+        "estados": 165,
+        "arcos_internos": 356,
+        "grau_saida_medio": 2.16969696969697
+      },
+      "a": {
+        "estados": 314,
+        "arcos_internos": 670,
+        "grau_saida_medio": 2.1369426751592355
+      },
+      "ab": {
+        "estados": 442,
+        "arcos_internos": 940,
+        "grau_saida_medio": 2.1312217194570136
+      },
+      "abc": {
+        "estados": 829,
+        "arcos_internos": 1818,
+        "grau_saida_medio": 2.1942098914354644
+      },
+      "abcd": {
+        "estados": 1169,
+        "arcos_internos": 2574,
+        "grau_saida_medio": 2.202737382378101
+      }
+    },
+    "arcos_entre_camadas": {
+      "-->a": 2,
+      "a->ab": 1,
+      "ab->abc": 2,
+      "abc->abcd": 1
+    }
+  },
+  "guilherme_03_chaves": {
+    "camadas": {
+      "-": {
+        "estados": 121,
+        "arcos_internos": 371,
+        "grau_saida_medio": 3.2479338842975207
+      },
+      "a": {
+        "estados": 125,
+        "arcos_internos": 395,
+        "grau_saida_medio": 3.288
+      },
+      "ab": {
+        "estados": 127,
+        "arcos_internos": 411,
+        "grau_saida_medio": 3.2992125984251968
+      },
+      "abc": {
+        "estados": 129,
+        "arcos_internos": 423,
+        "grau_saida_medio": 3.294573643410853
+      },
+      "ac": {
+        "estados": 127,
+        "arcos_internos": 407,
+        "grau_saida_medio": 3.283464566929134
+      },
+      "b": {
+        "estados": 123,
+        "arcos_internos": 387,
+        "grau_saida_medio": 3.2601626016260163
+      },
+      "bc": {
+        "estados": 125,
+        "arcos_internos": 399,
+        "grau_saida_medio": 3.256
+      },
+      "c": {
+        "estados": 123,
+        "arcos_internos": 383,
+        "grau_saida_medio": 3.2439024390243905
+      }
+    },
+    "arcos_entre_camadas": {
+      "-->a": 6,
+      "-->b": 8,
+      "-->c": 6,
+      "a->ab": 8,
+      "a->ac": 6,
+      "ab->abc": 6,
+      "ac->abc": 8,
+      "b->ab": 6,
+      "b->bc": 6,
+      "bc->abc": 6,
+      "c->ac": 6,
+      "c->bc": 8
+    }
+  },
+  "guilherme_armadilhas": {
+    "camadas": {
+      "-": {
+        "estados": 18,
+        "arcos_internos": 32,
+        "grau_saida_medio": 1.8333333333333333
+      }
+    },
+    "arcos_entre_camadas": {}
+  }
+}

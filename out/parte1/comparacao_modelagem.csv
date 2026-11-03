@@ -1,0 +1,10 @@
+mapa,modelo,ordem,tamanho,status_bfs,passos_bfs
+m02,portas_chao,23,43,OK,11
+m02,portas_parede,22,39,SEM_SOLUCAO,
+m02,estados,39,74,OK,35
+m03,portas_chao,76,167,OK,22
+m03,portas_parede,73,156,SEM_SOLUCAO,
+m03,estados,213,466,OK,88
+m04,portas_chao,24,39,OK,15
+m04,portas_parede,23,36,SEM_SOLUCAO,
+m04,estados,37,66,OK,21

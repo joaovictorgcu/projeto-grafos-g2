@@ -1,0 +1,10 @@
+{
+  "mapa": "m06",
+  "status": "CICLO_NEGATIVO",
+  "caminho_do_ciclo": [
+    "(3,5)|-|{}",
+    "(3,6)|-|{}",
+    "(3,5)|-|{}"
+  ],
+  "custo_do_ciclo": -1
+}

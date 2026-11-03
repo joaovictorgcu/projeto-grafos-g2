@@ -1,0 +1,251 @@
+{
+  "m01": {
+    "arquivo": "data/mapas/m01_terreno.txt",
+    "chaves": [],
+    "bonus": 0,
+    "livres": 24,
+    "teto_teorico": 24,
+    "G_pos_portas_chao": {
+      "ordem": 24,
+      "tamanho": 46,
+      "densidade": 0.08333333333333333
+    },
+    "G_pos_portas_parede": {
+      "ordem": 24,
+      "tamanho": 46,
+      "densidade": 0.08333333333333333
+    },
+    "G_est": {
+      "ordem": 24,
+      "tamanho": 46,
+      "densidade": 0.08333333333333333
+    },
+    "ocupacao_G_est": 1.0
+  },
+  "m02": {
+    "arquivo": "data/mapas/m02_uma_chave.txt",
+    "chaves": [
+      "a"
+    ],
+    "bonus": 0,
+    "livres": 23,
+    "teto_teorico": 46,
+    "G_pos_portas_chao": {
+      "ordem": 23,
+      "tamanho": 43,
+      "densidade": 0.08498023715415019
+    },
+    "G_pos_portas_parede": {
+      "ordem": 22,
+      "tamanho": 39,
+      "densidade": 0.08441558441558442
+    },
+    "G_est": {
+      "ordem": 39,
+      "tamanho": 74,
+      "densidade": 0.04993252361673414
+    },
+    "ocupacao_G_est": 0.8478260869565217
+  },
+  "m03": {
+    "arquivo": "data/mapas/m03_tres_chaves.txt",
+    "chaves": [
+      "a",
+      "b",
+      "c"
+    ],
+    "bonus": 0,
+    "livres": 76,
+    "teto_teorico": 608,
+    "G_pos_portas_chao": {
+      "ordem": 76,
+      "tamanho": 167,
+      "densidade": 0.029298245614035087
+    },
+    "G_pos_portas_parede": {
+      "ordem": 73,
+      "tamanho": 156,
+      "densidade": 0.02968036529680365
+    },
+    "G_est": {
+      "ordem": 213,
+      "tamanho": 466,
+      "densidade": 0.010319780317122863
+    },
+    "ocupacao_G_est": 0.3503289473684211
+  },
+  "m04": {
+    "arquivo": "data/mapas/m04_esteiras.txt",
+    "chaves": [
+      "a"
+    ],
+    "bonus": 0,
+    "livres": 24,
+    "teto_teorico": 48,
+    "G_pos_portas_chao": {
+      "ordem": 24,
+      "tamanho": 39,
+      "densidade": 0.07065217391304347
+    },
+    "G_pos_portas_parede": {
+      "ordem": 23,
+      "tamanho": 36,
+      "densidade": 0.07114624505928854
+    },
+    "G_est": {
+      "ordem": 37,
+      "tamanho": 66,
+      "densidade": 0.04954954954954955
+    },
+    "ocupacao_G_est": 0.7708333333333334
+  },
+  "m05": {
+    "arquivo": "data/mapas/m05_bonus.txt",
+    "chaves": [],
+    "bonus": 3,
+    "livres": 44,
+    "teto_teorico": 352,
+    "G_pos_portas_chao": {
+      "ordem": 44,
+      "tamanho": 90,
+      "densidade": 0.04756871035940803
+    },
+    "G_pos_portas_parede": {
+      "ordem": 44,
+      "tamanho": 90,
+      "densidade": 0.04756871035940803
+    },
+    "G_est": {
+      "ordem": 215,
+      "tamanho": 438,
+      "densidade": 0.009519669637035428
+    },
+    "ocupacao_G_est": 0.6107954545454546
+  },
+  "m06": {
+    "arquivo": "data/mapas/m06_fonte.txt",
+    "chaves": [],
+    "bonus": 0,
+    "livres": 24,
+    "teto_teorico": 24,
+    "G_pos_portas_chao": {
+      "ordem": 24,
+      "tamanho": 46,
+      "densidade": 0.08333333333333333
+    },
+    "G_pos_portas_parede": {
+      "ordem": 24,
+      "tamanho": 46,
+      "densidade": 0.08333333333333333
+    },
+    "G_est": {
+      "ordem": 24,
+      "tamanho": 46,
+      "densidade": 0.08333333333333333
+    },
+    "ocupacao_G_est": 1.0
+  },
+  "m07": {
+    "arquivo": "data/mapas/m07_impossivel.txt",
+    "chaves": [
+      "a"
+    ],
+    "bonus": 0,
+    "livres": 31,
+    "teto_teorico": 62,
+    "G_pos_portas_chao": {
+      "ordem": 31,
+      "tamanho": 69,
+      "densidade": 0.07419354838709677
+    },
+    "G_pos_portas_parede": {
+      "ordem": 29,
+      "tamanho": 61,
+      "densidade": 0.07512315270935961
+    },
+    "G_est": {
+      "ordem": 16,
+      "tamanho": 38,
+      "densidade": 0.15833333333333333
+    },
+    "ocupacao_G_est": 0.25806451612903225
+  },
+  "m08": {
+    "arquivo": "data/mapas/m08_grande.txt",
+    "chaves": [
+      "a",
+      "b",
+      "c",
+      "d"
+    ],
+    "bonus": 0,
+    "livres": 1169,
+    "teto_teorico": 18704,
+    "G_pos_portas_chao": {
+      "ordem": 1169,
+      "tamanho": 2574,
+      "densidade": 0.001885172902726836
+    },
+    "G_pos_portas_parede": {
+      "ordem": 1165,
+      "tamanho": 2558,
+      "densidade": 0.0018863472117752903
+    },
+    "G_est": {
+      "ordem": 2919,
+      "tamanho": 6364,
+      "densidade": 0.0007471551398849588
+    },
+    "ocupacao_G_est": 0.156062874251497
+  },
+  "guilherme_03_chaves": {
+    "arquivo": "data/mapas_grupo/guilherme_03_chaves.txt",
+    "chaves": [
+      "a",
+      "b",
+      "c"
+    ],
+    "bonus": 1,
+    "livres": 65,
+    "teto_teorico": 1040,
+    "G_pos_portas_chao": {
+      "ordem": 65,
+      "tamanho": 213,
+      "densidade": 0.051201923076923075
+    },
+    "G_pos_portas_parede": {
+      "ordem": 64,
+      "tamanho": 207,
+      "densidade": 0.05133928571428571
+    },
+    "G_est": {
+      "ordem": 1000,
+      "tamanho": 3256,
+      "densidade": 0.003259259259259259
+    },
+    "ocupacao_G_est": 0.9615384615384616
+  },
+  "guilherme_armadilhas": {
+    "arquivo": "data/mapas_grupo/guilherme_armadilhas.txt",
+    "chaves": [],
+    "bonus": 0,
+    "livres": 23,
+    "teto_teorico": 23,
+    "G_pos_portas_chao": {
+      "ordem": 23,
+      "tamanho": 41,
+      "densidade": 0.08102766798418973
+    },
+    "G_pos_portas_parede": {
+      "ordem": 23,
+      "tamanho": 41,
+      "densidade": 0.08102766798418973
+    },
+    "G_est": {
+      "ordem": 18,
+      "tamanho": 32,
+      "densidade": 0.10457516339869281
+    },
+    "ocupacao_G_est": 0.782608695652174
+  }
+}
