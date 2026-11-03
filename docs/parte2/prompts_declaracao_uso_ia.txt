@@ -1,19 +1,19 @@
-PROMPTS PARA A DECLARAÇÃO DE USO DE INTELIGÊNCIA ARTIFICIAL
+DECLARAÇÃO DE USO DE INTELIGÊNCIA ARTIFICIAL — PROMPTS
 Projeto de Grafos + AVD — Grupo 2 — Parte 2 (P4): dados e experimentos
 Repositório: https://github.com/joaovictorgcu/projeto-grafos-g2
 Responsável: João Victor Uchôa
 Ferramenta: Claude Code (Anthropic), modelos Claude Opus 5.5 e Claude Fable 5.1
-Sessão: 03/11/2026, no repositório clonado localmente. Commits resultantes: 0af7735 a 84b8b90
-(nove commits de revisão dos gráficos), mais os commits deste arquivo e dos marcadores [IA].
 
-Cada item traz o prompt enviado (texto integral), o que a IA fez e o que foi conferido antes de
-aceitar. Os resultados dos experimentos (out/parte2/parte2_report.json, desempenho.csv,
-eda_resumo.json e ficha_dataset.json) não foram alterados pela IA: os gráficos foram regenerados a
-partir desses arquivos. Os trechos de código gerados estão marcados com "[IA]" em
-src/viz_parte2.py e tests/test_viz_parte2.py, seguindo a convenção do repositório.
+A IA foi usada para revisar os gráficos da Parte 2 a partir do pedido reproduzido abaixo. O
+resultado foi dividido em nove commits, um por correção. Cada item a seguir traz o trecho do pedido
+que motivou o commit, o que a IA fez e o que foi conferido antes de aceitar. Os arquivos de
+resultados dos experimentos (out/parte2/parte2_report.json, desempenho.csv, eda_resumo.json e
+ficha_dataset.json) não foram alterados pela IA: os gráficos foram regenerados a partir deles. O
+código gerado está marcado com "[IA]" em src/viz_parte2.py e tests/test_viz_parte2.py, seguindo a
+convenção do repositório.
 
 
-01
+PROMPT ENVIADO
 
 Clone o repositório projeto-grafos-g2 (https://github.com/joaovictorgcu/projeto-grafos-g2) e faça
 uma análise completa do projeto, com foco especial na Parte 2, que é de minha responsabilidade.
@@ -54,69 +54,160 @@ Objetivo final: deixar os gráficos da Parte 2 corretos, claros, visualmente con
 academicamente bem apresentados, sem comprometer a integridade dos experimentos ou o trabalho dos
 demais integrantes.
 
-O que a IA fez:
-- Leu README, relatório da Parte 2, src/parte2.py, src/avd_parte2.py, src/viz_parte2.py,
-  src/graphs/dataset.py e os 11 gráficos de out/parte2; baixou o snapshot do Transfermarkt com
-  scripts/ficha_transfermarkt.py --baixar (SHA-256 conferido) e confirmou o funil do recorte
-  (175.165 → 36.442 transferências; 4.739 nós e 31.626 arcos).
-- Antes de mudar qualquer coisa, regenerou eda_resumo.json e os 11 PNGs em pasta temporária e
-  conferiu que eram idênticos aos commitados; rodou o --benchmark em pasta temporária e conferiu
-  que BFS, DFS, Dijkstra, Bellman-Ford, ciclos e camadas eram idênticos ao relatório (só os tempos
-  mudam de máquina para máquina, por isso o parte2_report.json commitado foi mantido).
-- Conferiu as afirmações dos títulos contra os dados e achou três erros de fidelidade:
-  e3 (o valor pago não "fica em torno de 1/3 em todas as épocas": cai de 56% em 2000 para 25% em
-  2025), a3 ("quase todos" os clubes a 2–4 transferências: são 77%–83%) e o arredondamento de
-  milhões em x1/a4 (−3,5 mi aparecia como −4 mi; −33,8 e −34,0 mi apareciam iguais).
-- Corrigiu problemas de apresentação: e2 (bins com largura distorcida dentro da faixa linear do
-  symlog e 978 vendas pagas com peso 0 invisíveis), e4 (painéis 2×2 com 2–3 categorias
-  esparramadas → painéis empilhados), e5 (nomes de jogadores sobrepostos), a1 (barras em escala
-  log → pontos com desvio padrão e razão para a BFS), decimais pt-BR e sinal de menos tipográfico
-  em todos os eixos, e a quarta cor da paleta (Bellman-Ford) trocada de rosa para roxo depois de
-  validar os pares adjacentes para daltonismo.
-- Atualizou as notas analíticas E2, E3, E4, A1 e A3 e o parágrafo sobre faltantes do valor pago em
-  docs/parte2/relatorio_parte2.md; criou tests/test_viz_parte2.py (formatadores e resumo das
-  camadas).
-- Entregou o resumo com as pendências para a equipe: tempos do benchmark dependem da máquina;
-  tests/test_dataset.py e tests/test_parte2.py citados no README não estão no repositório; a
-  conclusão do e3 mudou e precisa de validação; o a4 (P5) só recebeu formatação.
 
-O que foi conferido e aceito:
-- Os 11 gráficos foram abertos e revisados um a um; pytest com 1085 testes passando; os arquivos
-  de resultados não foram tocados. As correções de interpretação (e3, a3) foram aceitas porque os
-  números saem direto de eda_resumo.json/parte2_report.json; nenhum critério do recorte ou dos
-  experimentos mudou.
+01
+
+Trecho do pedido: "Verifique títulos, legendas, escalas, eixos, unidades, cores, disposição e
+interpretação dos dados" e "valide se os gráficos representam fielmente os dados utilizados nos
+experimentos".
+
+Commit: 0af7735 — viz parte2: formatacao pt-br e milhoes com uma casa decimal
+
+O que a IA fez: criou em src/viz_parte2.py os formatadores br(), pct(), pct_eixo(), milhoes(),
+eur() e tempo_ms(), com ponto de milhar, vírgula decimal, sinal de menos tipográfico (−) e uma casa
+decimal em milhões apenas quando ela existe. Motivo: no x1 a transferência de −3,5 mi (Álex
+Jiménez) aparecia como "−4 mi", igual à de Modrić (−4 mi); no a4, os custos −33,8 mi e −34,0 mi
+apareciam ambos como "−34 mi". Criou também tests/test_viz_parte2.py com os testes desses
+formatadores.
+
+O que foi conferido: os rótulos novos foram comparados com os valores de parte2_report.json
+(−3.500.000, −4.000.000, −33.800.000, −34.000.000); nenhum valor mudou, só a exibição. Testes
+passando.
 
 
 02
 
-Faça o push em vários commits didáticos
+Trecho do pedido: "avalie se estão corretos, legíveis, bem apresentados e coerentes com os
+resultados dos experimentos" (escalas).
 
-O que a IA fez:
-- Reconstruiu a revisão em nove estados intermediários (um por correção), regenerando os gráficos
-  e rodando os testes em cada um, e commitou na ordem: formatação e helpers; e2; e3; e4; e5; a1;
-  a3; eixos dos demais gráficos; paleta. Cada mensagem explica o problema e a correção. Conferiu
-  que o estado final era idêntico à versão revisada e fez o push para origin/main.
+Commit: db2c921 — e2: escala symlog so a partir de 1 mil e bin do peso zero
+
+O que a IA fez: o histograma dos pesos usava escala symlog linear até ±100 mil, mas os bins eram
+log-espaçados até 1 mil; dentro da faixa linear eles saíam com larguras diferentes na tela. As 978
+vendas pagas exatamente pelo valor de mercado (peso 0) não apareciam. A faixa linear passou para
+±1 mil (o menor |peso| diferente de zero no recorte), o bin central contém só o peso zero (com
+anotação) e os rótulos do eixo ficaram a cada duas décadas, sem colisão. Nota E2 do relatório
+atualizada.
+
+O que foi conferido: contagens tiradas do próprio dataset (menor |peso| = 1.000; 978 com peso 0;
+20.007 saídas gratuitas e 16.435 vendas pagas, iguais ao eda_resumo.json).
 
 
 03
 
-Tire o coauthor do claude.
+Trecho do pedido: "valide se os gráficos representam fielmente os dados utilizados nos
+experimentos".
 
-O que a IA fez:
-- Reescreveu as mensagens dos nove commits removendo o trailer "Co-Authored-By", sem alterar
-  árvores nem autoria, e refez o push com --force-with-lease (nenhum outro commit havia sido
-  enviado no intervalo).
+Commit: edd0d2d — e3: titulo e rodape batem com os dados
+
+O que a IA fez: o título afirmava que o valor pago "falta em cerca de 1/3 das transferências em
+todas as épocas", mas a própria curva mostra 56% em 2000 e 25% em 2025 (55% em 2000–2009, 39% em
+2010–2019, 30% de 2020 em diante; 35% no total). O rodapé citava 175.165 transferências, mas o
+gráfico usa as 173.365 das temporadas 2000/01 a 2025/26. Título e rodapé passaram a ser calculados
+dos dados; o parágrafo sobre faltantes do valor pago (MAR/MNAR) e a nota E3 do relatório foram
+corrigidos.
+
+O que foi conferido: percentuais recalculados por temporada a partir de transfers.csv.gz. A
+interpretação MAR/MNAR foi mantida; só a afirmação numérica foi corrigida. Como altera uma
+conclusão do relatório, o ponto foi sinalizado para validação do grupo.
 
 
 04
 
-Atualize o meu prompt de declaração de IA. Veja se tudo bate. Além disso, tire o titulo de cada
-prompt, coloque só a numeração. E faça o push no repositório.
+Trecho do pedido: "legíveis, bem apresentados" e "disposição".
 
-O que a IA fez:
-- Substituiu a lista genérica de 30 prompts sugeridos por este registro, com os prompts
-  realmente enviados nesta sessão, numerados sem título, e adicionou os marcadores "[IA]" nos
-  arquivos gerados, como nos demais módulos do repositório. Prompts da lista original que não
-  correspondem a interações desta sessão (modelagem dos grafos, revisão dos algoritmos, empréstimos)
-  foram retirados; se houve uso de IA em outras sessões, os prompts correspondentes devem ser
-  acrescentados por quem os enviou.
+Commit: 25a7dc1 — e4: paineis empilhados com altura proporcional as categorias
+
+O que a IA fez: na grade 2×2, os painéis de pé preferido (3 categorias) e empresário (2) ocupavam
+a mesma altura que o de idade (6), com os pontos esparramados. Os quatro painéis passaram a ser
+empilhados sobre o mesmo eixo x, cada um com altura proporcional ao número de categorias, e a linha
+da média geral (78%) ganhou rótulo. Nota E4 atualizada.
+
+O que foi conferido: os valores por grupo (62% a 96% por faixa etária, 73% a 87% por posição etc.)
+conferem com eda_resumo.json; nenhum dado mudou.
+
+
+05
+
+Trecho do pedido: "Verifique títulos, legendas..." (legibilidade).
+
+Commit: 57663c2 — e5: nomes dos jogadores sem sobreposicao
+
+O que a IA fez: os nomes de Dembélé e Enzo Fernández se sobrepunham e o de Haaland cobria pontos.
+Escreveu rotular_sem_sobrepor(), que testa posições candidatas e escolhe a primeira em que o rótulo
+não cobre outro rótulo nem a legenda e não sai do eixo, com contorno branco para leitura sobre a
+nuvem de pontos. milhoes_ou_mil() foi substituída por eur().
+
+O que foi conferido: os cinco nomes continuam sendo as cinco maiores diferenças em módulo entre as
+vendas pagas; 713 outliers e 15.722 pontos dentro do IQR, iguais ao eda_resumo.json.
+
+
+06
+
+Trecho do pedido: "confira se os gráficos atendem ao objetivo da Parte 2 e se estão alinhados à
+metodologia" e "Priorize correções tecnicamente justificáveis".
+
+Commit: e4bef20 — a1: pontos com desvio padrao em vez de barras na escala log
+
+O que a IA fez: o gráfico comparava os tempos com barras em escala logarítmica; nessa escala o
+comprimento da barra depende de onde o eixo começa e não representa a grandeza. Passou a pontos
+com barra de erro (desvio padrão), eixo rotulado em ms/s e a razão para a BFS ao lado de cada
+algoritmo (Bellman-Ford = 9.109×). Nota A1 do relatório atualizada.
+
+O que foi conferido: médias e desvios lidos de parte2_report.json (BFS 2,4 ms, Dijkstra 5,6 ms,
+DFS 8,1 ms, Bellman-Ford 22.010 ms), os mesmos da tabela da seção 4 do relatório.
+
+
+07
+
+Trecho do pedido: "alinhados ... às conclusões apresentadas no trabalho".
+
+Commit: 5074f00 — a3: titulo com as fracoes reais por nivel da bfs
+
+O que a IA fez: o título dizia que "quase todos" os clubes alcançáveis estão a 2–4 transferências
+da fonte; pelas camadas do relatório são 77% a 83% (e 93% a 95% até o nível 5). A função
+resumo_camadas() calcula as frações a partir de parte2_report.json e o título passa a usá-las.
+Nota A3 atualizada.
+
+O que foi conferido: teste com as camadas do Benfica (3.203 alcançados); confirmado, rodando a BFS,
+que as três fontes alcançam o mesmo conjunto de 3.203 clubes, como diz o relatório.
+
+
+08
+
+Trecho do pedido: "padronize a identidade visual e melhore a apresentação dos gráficos, mantendo
+a consistência com o restante do projeto".
+
+Commit: 684da9b — viz parte2: eixos em pt-br nos demais graficos
+
+O que a IA fez: e1, x1, x2, a2 e a4 ainda misturavam ponto e vírgula decimal ("100.0%", "0.01") e
+o hífen como sinal de menos. Todos os eixos e rótulos passaram pelos mesmos formatadores do item
+01; o PercentFormatter deixou de ser usado.
+
+O que foi conferido: inspeção visual dos cinco gráficos; nenhum valor alterado.
+
+
+09
+
+Trecho do pedido: "padronize a identidade visual".
+
+Commit: 84b8b90 — viz parte2: roxo no bellman-ford, paleta conferida para daltonismo
+
+O que a IA fez: validou a paleta dos algoritmos para daltonismo; o rosa do Bellman-Ford ficava a
+ΔE 6,1 (deutan) do verde do Dijkstra, abaixo do mínimo de 8 para cores adjacentes. Trocou-o por
+roxo (#9a5fd8), mantendo as outras três cores; afeta a1 e a2.
+
+O que foi conferido: validador de paleta rodado antes e depois; alternativas mais escuras de verde
+e rosa foram testadas e rejeitadas por piorarem a separação.
+
+
+VALIDAÇÃO GERAL (item 7 do pedido)
+
+Antes de qualquer alteração, a IA regenerou eda_resumo.json e os 11 gráficos em pasta temporária e
+conferiu que eram idênticos aos commitados, e rodou o --benchmark completo em pasta temporária:
+BFS, DFS, Dijkstra, Bellman-Ford, ciclos e camadas saíram idênticos ao relatório; só os tempos
+variam de máquina para máquina, por isso o parte2_report.json commitado foi mantido. Em cada
+commit os gráficos foram regenerados com src.viz_parte2 e os testes executados; ao final, pytest
+com 1085 testes passando. Pendências sinalizadas para o grupo: os tempos do benchmark dependem da
+máquina; tests/test_dataset.py e tests/test_parte2.py citados no README não estão no repositório;
+a conclusão do e3 mudou; o a4 (P5) recebeu apenas formatação.
