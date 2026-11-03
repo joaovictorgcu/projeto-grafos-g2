@@ -442,13 +442,20 @@ def escalabilidade(relatorio, saida):
 
 def camadas_bfs(relatorio, saida):
     fig, ax = plt.subplots(figsize=(8.5, 4.6))
+    resumos = []
     for b, cor in zip(relatorio["bfs"], CORES):
         ax.plot(range(len(b["camadas"])), b["camadas"], "o-", color=cor, lw=2, ms=6,
-                label=f"{b['nome']} · {b['alcancados']:,} alcançados".replace(",", "."))
+                label=f"{b['nome']} · {br(b['alcancados'])} alcançados")
+        resumos.append(resumo_camadas(b["camadas"]))
+    meio = [r[0] for r in resumos]
+    ate5 = [r[1] for r in resumos]
+    ax.set_xticks(range(max(len(b["camadas"]) for b in relatorio["bfs"])))
+    ax.yaxis.set_major_formatter(FuncFormatter(lambda v, _: br(v)))
     ax.set_xlabel("nível da BFS (número de transferências desde a fonte)")
     ax.set_ylabel("clubes descobertos no nível")
     ax.set_title("BFS a partir de três clubes: a rede é um 'mundo pequeno'\n"
-                 "quase todos os clubes alcançáveis estão a 2-4 transferências de distância")
+                 f"{pct(min(meio))}–{pct(max(meio))} dos clubes alcançáveis estão a 2–4 transferências da fonte; "
+                 f"{pct(min(ate5))}–{pct(max(ate5))} a até 5")
     ax.legend()
     rodape(fig, "Os três chegam aos mesmos clubes: a fonte muda a forma das camadas, não o conjunto alcançável.")
     return salvar(fig, Path(saida) / "a3_camadas_bfs.png")

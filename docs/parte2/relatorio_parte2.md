@@ -328,9 +328,9 @@ medido segue a complexidade. Por que esse gráfico: linhas para crescimento em f
 normalizar pelo maior grafo deixa medida e teoria na mesma escala sem eixo duplo.
 
 **A3 — `a3_camadas_bfs.png` (algoritmos).** Clubes descobertos por nível da BFS a partir das três
-fontes. Insight: o pico fica no nível 3 e quase tudo está a até 4 transferências — mundo pequeno.
-Por que esse gráfico: linha porque o nível é ordenado; três séries no mesmo eixo para comparar as
-fontes.
+fontes. Insight: o pico fica no nível 3; 77%–83% dos clubes alcançáveis estão a 2–4 transferências
+da fonte e 93%–95% a até 5 — mundo pequeno. Por que esse gráfico: linha porque o nível é ordenado;
+três séries no mesmo eixo para comparar as fontes.
 
 **A4 — `a4_caminhos.png` (algoritmos).** Para os 6 pares do Dijkstra, uma barra com o custo
 original do caminho encontrado, a rota escrita ao lado e o número de arcos do Dijkstra contra o de
