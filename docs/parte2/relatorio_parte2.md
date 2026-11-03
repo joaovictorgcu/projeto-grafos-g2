@@ -290,8 +290,9 @@ unidade (%), então dividem o mesmo eixo sem distorção.
 **E4 — `e4_relacoes.png` (exploratória, multivariada).** % de transferências com peso negativo por
 faixa etária, posição, pé e empresário, com a média geral tracejada. Insight: a idade separa muito
 mais que os outros atributos e a relação é monotônica. Por que esse gráfico: gráfico de pontos
-(dot plot) com o mesmo eixo nos quatro painéis permite comparar os efeitos entre atributos; o n de
-cada grupo fica escrito para não supervalorizar grupos pequenos.
+(dot plot) com os quatro painéis empilhados sobre o mesmo eixo x, cada um com altura proporcional
+ao número de categorias, permite comparar os efeitos entre atributos; o n de cada grupo fica
+escrito para não supervalorizar grupos pequenos.
 
 **E5 — `e5_outliers.png` (exploratória).** Valor pago contra valor de mercado nas vendas pagas, em
 log-log, com a diagonal de peso 0 e os outliers do IQR (sobre o log da razão) em laranja. Insight:

@@ -230,30 +230,38 @@ def relacoes(t, saida):
         ("tem_empresario", "empresário", None),
     ]
     media = t["negativo"].mean()
-    fig, eixos = plt.subplots(2, 2, figsize=(10, 6.4))
-    for ax, (col, titulo, nomes) in zip(eixos.flat, paineis):
+    grupos = []
+    for col, titulo, nomes in paineis:
         g = t.groupby(col, observed=True).agg(neg=("negativo", "mean"), n=("negativo", "size"))
         if col != "faixa_idade":
             g = g.sort_values("neg")
+        grupos.append((titulo, nomes, g))
+    # painéis empilhados com o mesmo eixo x; a altura de cada um segue o número de categorias
+    alturas = [len(g) + 0.9 for _, _, g in grupos]
+    fig, eixos = plt.subplots(len(grupos), 1, figsize=(8.5, 0.38 * sum(alturas) + 1.2), sharex=True,
+                              gridspec_kw={"height_ratios": alturas})
+    for ax, (titulo, nomes, g) in zip(eixos, grupos):
         rotulos = [(nomes or {}).get(str(i), str(i)) for i in g.index]
         y = np.arange(len(g))
         ax.hlines(y, 0, g["neg"], color=GRADE, lw=2)
         ax.plot(g["neg"], y, "o", color=CORES[0], ms=8)
         for yi, (v, n) in enumerate(zip(g["neg"], g["n"])):
-            ax.text(v + 0.012, yi, f"{v:.0%}  (n={n:,})".replace(",", "."), va="center", fontsize=8.5,
-                    color=TEXTO_2, clip_on=False)
+            ax.text(v + 0.012, yi, f"{pct(v)}  (n={br(n)})", va="center", fontsize=8.5, color=TEXTO_2,
+                    clip_on=False)
         ax.axvline(media, color=TEXTO_2, ls="--", lw=1)
         ax.set_yticks(y, rotulos)
-        ax.set_xlim(0.5, 1.0)
-        ax.xaxis.set_major_formatter(PercentFormatter(1))
+        ax.set_ylim(-0.7, len(g) - 0.3)
         ax.set_title(titulo, fontsize=10.5)
         ax.grid(axis="y", visible=False)
-    for ax in eixos[1]:
-        ax.set_xlabel("% das transferências com peso negativo")
+    eixos[0].annotate(f"média geral: {pct(media)}", (media, 1), xycoords=("data", "axes fraction"),
+                      xytext=(4, -1), textcoords="offset points", va="top", fontsize=8, color=TEXTO_2)
+    eixos[-1].set_xlim(0.5, 1.0)
+    eixos[-1].xaxis.set_major_formatter(FuncFormatter(pct_eixo))
+    eixos[-1].set_xlabel("% das transferências com peso negativo (saída abaixo do valor de mercado)")
     fig.suptitle("Relação do peso com os atributos do jogador: a idade é o que mais separa",
                  x=0.01, ha="left", fontsize=12, color=TEXTO)
     fig.tight_layout()
-    rodape(fig, f"Linha tracejada: média geral ({media:.0%}). Posição, pé e empresário vêm de players.csv; "
+    rodape(fig, f"Linha tracejada: média geral ({pct(media)}). Posição, pé e empresário vêm de players.csv; "
                 "faltantes desses atributos (≤ 2,3%, empresário 32,8%) aparecem como categoria ou ficam fora do painel.")
     return salvar(fig, Path(saida) / "e4_relacoes.png")
 
