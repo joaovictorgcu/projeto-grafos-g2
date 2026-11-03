@@ -160,21 +160,35 @@ def graus(d, saida):
 
 
 def pesos(t, saida):
-    fig, eixos = plt.subplots(2, 1, figsize=(8.5, 5.6), sharex=True)
-    limite = 2e8
-    bordas = np.concatenate([-np.logspace(8.4, 3, 28), [0], np.logspace(3, 8.4, 28)])
-    grupos = [("saída gratuita (valor pago = 0): peso = − valor de mercado", t[t["gratuita"]], CORES[1]),
+    fig, eixos = plt.subplots(2, 1, figsize=(10, 6), sharex=True)
+    # o menor |peso| diferente de zero no recorte é 1 mil; a partir daí a escala é log e os bins
+    # têm a mesma largura na tela. A faixa linear fica só entre −1 mil e +1 mil, e o bin central
+    # [−500, 500) contém apenas as transferências de peso exatamente zero.
+    linthresh = 1e3
+    bordas = np.concatenate([-np.logspace(8.4, 3, 28), [-500, 500], np.logspace(3, 8.4, 28)])
+    ticks = [-1e8, -1e6, -1e4, 0, 1e4, 1e6, 1e8]
+    grupos = [("saída gratuita (valor pago = 0): peso = − valor de mercado", t[t["gratuita"]], DESTAQUE),
               ("venda paga: peso = valor pago − valor de mercado", t[~t["gratuita"]], CORES[0])]
     for ax, (rotulo, g, cor) in zip(eixos, grupos):
-        ax.hist(g["peso"].clip(-limite, limite), bins=bordas, color=cor, edgecolor="white", linewidth=0.5)
-        ax.set_xscale("symlog", linthresh=1e5)
+        ax.hist(g["peso"], bins=bordas, color=cor, edgecolor="white", linewidth=0.5)
+        ax.set_xscale("symlog", linthresh=linthresh, linscale=0.5)
         ax.axvline(0, color=TEXTO, lw=1)
         neg = (g["peso"] < 0).mean()
-        ax.set_title(f"{rotulo} · {len(g):,} transferências · {neg:.0%} negativas".replace(",", "."),
+        ax.set_title(f"{rotulo} · {br(len(g))} transferências · {pct(neg)} negativas",
                      fontsize=10, color=TEXTO_2)
         ax.set_ylabel("transferências")
-    eixos[1].xaxis.set_major_formatter(FuncFormatter(lambda x, _: milhoes(x) if abs(x) >= 1e6 else f"{x:,.0f}".replace(",", ".")))
-    eixos[1].set_xlabel("peso da transferência em EUR (escala symlog: linear entre −100 mil e +100 mil)")
+        ax.yaxis.set_major_formatter(FuncFormatter(lambda v, _: br(v)))
+    pagas = grupos[1][1]
+    zero = int((pagas["peso"] == 0).sum())
+    eixos[1].annotate(f"{br(zero)} vendas pagas exatamente\npelo valor de mercado (peso 0)", (0, zero),
+                      xytext=(28, 22), textcoords="offset points", fontsize=8, color=TEXTO_2, ha="left",
+                      arrowprops={"arrowstyle": "-", "color": TEXTO_2, "lw": 0.7})
+    eixos[1].xaxis.set_major_locator(FixedLocator(ticks))
+    eixos[1].xaxis.set_major_formatter(FuncFormatter(eur))
+    eixos[1].xaxis.set_minor_locator(FixedLocator([s * 10 ** k for s in (-1, 1) for k in range(3, 9)]))
+    eixos[1].xaxis.set_minor_formatter(NullFormatter())
+    eixos[1].set_xlim(-2.5e8, 2.5e8)
+    eixos[1].set_xlabel("peso da transferência em EUR (escala symlog: logarítmica a partir de ±1 mil)")
     fig.suptitle("Distribuição dos pesos: a maior parte da rede é negativa", x=0.01, ha="left",
                  fontsize=12, color=TEXTO)
     fig.tight_layout()

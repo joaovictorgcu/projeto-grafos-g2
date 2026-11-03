@@ -274,8 +274,10 @@ cauda inteira sem depender da escolha de bins, o que um histograma linear escond
 **E2 — `e2_pesos.png` (exploratória).** Histograma do peso por transferência, separado em saídas
 gratuitas e vendas pagas. Insight: as gratuitas são 100% negativas e concentradas entre −100 mil e
 −5 mi; as pagas se dividem quase ao meio, com a massa negativa um pouco maior. Por que esse
-gráfico: histograma para distribuição; escala symlog porque os pesos vão de −180 mi a +122 mi e têm
-sinal; dois painéis com o mesmo eixo x em vez de barras sobrepostas.
+gráfico: histograma para distribuição; escala symlog (logarítmica a partir de ±1 mil, o menor
+|peso| do recorte, com bins de largura igual na tela) porque os pesos vão de −180 mi a +122 mi e
+têm sinal; o bin central mostra as 978 vendas pagas exatamente pelo valor de mercado (peso 0);
+dois painéis com o mesmo eixo x em vez de barras sobrepostas.
 
 **E3 — `e3_faltantes.png` (exploratória).** % de transferências sem valor de mercado e sem valor
 pago por temporada. Insight: o valor de mercado falta por causa da época (MAR); o valor pago falta
