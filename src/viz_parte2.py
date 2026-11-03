@@ -8,17 +8,21 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.ticker import FuncFormatter, PercentFormatter
+from matplotlib.patheffects import withStroke
+from matplotlib.ticker import FixedLocator, FuncFormatter, NullFormatter, PercentFormatter
 
 from .avd_parte2 import SEM_LIGA, enriquecer, iqr
 from .graphs.dataset import carregar_dataset, temporada
 
+# Identidade visual. CORES é a ordem fixa dos algoritmos (BFS, DFS, Dijkstra, Bellman-Ford) nos
+# gráficos A1 e A2; DESTAQUE é a cor da mensagem nos gráficos explanatórios; o resto é cinza.
 CORES = ["#2a78d6", "#eb6834", "#1baf7a", "#e87ba4"]
 DESTAQUE = "#eb6834"
 NEUTRO = "#b9b8b3"
 TEXTO = "#0b0b0b"
 TEXTO_2 = "#52514e"
 GRADE = "#e4e3df"
+MENOS = "−"  # sinal de menos tipográfico, o mesmo que o matplotlib usa nos eixos
 
 LIGAS = {
     "GB1": "Premier League (ING)", "ES1": "LaLiga (ESP)", "IT1": "Serie A (ITA)", "L1": "Bundesliga (ALE)",
@@ -40,12 +44,50 @@ plt.rcParams.update({
 })
 
 
-def br(n):
-    return f"{n:,.0f}".replace(",", ".")
+# --- formatação em pt-BR (ponto de milhar, vírgula decimal, menos tipográfico) ---
+
+def br(n, decimais=0):
+    s = f"{n:,.{decimais}f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    return s.replace("-", MENOS)
+
+
+def pct(v, decimais=0):
+    return br(100 * v, decimais) + "%"
+
+
+def pct_eixo(v, _=None):
+    """Para eixos: 100%, 10%, 1%, 0,1% (sem casas decimais fixas)."""
+    return f"{100 * v:g}".replace(".", ",") + "%"
 
 
 def milhoes(x, _=None):
-    return f"{br(x / 1e6)} mi"
+    """EUR em milhões; uma casa decimal só quando ela existe (−3,5 mi, mas −180 mi)."""
+    v = x / 1e6
+    return f"{br(v, 0 if abs(v - round(v)) < 0.05 else 1)} mi"
+
+
+def eur(x, _=None):
+    """Rótulo de eixo em EUR: 0, 1 mil, 100 mil, 1 mi, 100 mi."""
+    if x == 0:
+        return "0"
+    if abs(x) >= 1e6:
+        return milhoes(x)
+    if abs(x) >= 1e3:
+        return f"{br(x / 1e3)} mil"
+    return br(x)
+
+
+def tempo_ms(ms):
+    if ms >= 1000:
+        return f"{br(ms)} ms (≈ {br(ms / 1000)} s)"
+    return f"{br(ms, 1)} ms"
+
+
+def resumo_camadas(camadas):
+    """Fração dos alcançados nos níveis 2 a 4 e fração até o nível 5."""
+    c = np.asarray(camadas, dtype=float)
+    n = c.sum()
+    return c[2:5].sum() / n, c[:6].sum() / n
 
 
 def salvar(fig, caminho):
@@ -59,6 +101,38 @@ def salvar(fig, caminho):
 def rodape(fig, texto):
     fig.text(0.01, -0.02, texto, fontsize=8, color=TEXTO_2, ha="left", va="top")
 
+
+def rotular_sem_sobrepor(ax, pontos, evitar=()):
+    """Anota cada ponto na primeira posição candidata em que o texto não cobre outro rótulo,
+    a legenda, nem sai do eixo."""
+    fig = ax.figure
+    fig.canvas.draw()
+    r = fig.canvas.get_renderer()
+    caixa_eixo = ax.get_window_extent(r)
+    ocupados = [e.get_window_extent(r) for e in evitar]
+    candidatos = [(-7, 7, "right"), (7, 7, "left"), (-7, -9, "right"), (7, -9, "left"),
+                  (-7, 18, "right"), (7, 18, "left"), (0, 20, "center"), (0, -20, "center")]
+
+    def anotar(x, y, texto, dx, dy, ha):
+        return ax.annotate(texto, (x, y), xytext=(dx, dy), textcoords="offset points", ha=ha, va="center",
+                           fontsize=8, color=TEXTO, path_effects=[withStroke(linewidth=2.5, foreground="white")])
+
+    for x, y, texto in pontos:
+        for dx, dy, ha in candidatos:
+            a = anotar(x, y, texto, dx, dy, ha)
+            caixa = a.get_window_extent(r)
+            dentro = (caixa.x0 >= caixa_eixo.x0 and caixa.x1 <= caixa_eixo.x1
+                      and caixa.y0 >= caixa_eixo.y0 and caixa.y1 <= caixa_eixo.y1)
+            if dentro and not any(caixa.overlaps(o) for o in ocupados):
+                break
+            a.remove()
+        else:
+            a = anotar(x, y, texto, *candidatos[0])
+            caixa = a.get_window_extent(r)
+        ocupados.append(caixa)
+
+
+# --- exploratórias ---
 
 def graus(d, saida):
     a = d.arcos
@@ -203,6 +277,8 @@ def milhoes_ou_mil(x, _=None):
     return f"{x / 1e3:g} mil"
 
 
+# --- explanatórias ---
+
 def explanatoria_caminho(relatorio, saida):
     bf = relatorio["bellman_ford"]["sem_ciclo_negativo"]
     menor = bf["menor_custo"]
@@ -277,7 +353,13 @@ def explanatoria_ligas(t, saida):
     return salvar(fig, Path(saida) / "x2_explanatoria_ligas.png")
 
 
+# --- algoritmos ---
+
 NOMES_ALG = {"BFS": "BFS", "DFS": "DFS", "DIJKSTRA": "Dijkstra", "BELLMAN_FORD": "Bellman-Ford"}
+
+
+def cor_do_algoritmo(alg):
+    return CORES[list(NOMES_ALG).index(alg)]
 
 
 def tempos(relatorio, saida):
