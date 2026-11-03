@@ -317,9 +317,10 @@ para comparar muitas categorias com nomes longos; uma só cor de destaque e as d
 linha de 50% dá a referência.
 
 **A1 — `a1_tempos.png` (algoritmos).** Tempo médio de cada algoritmo no grafo completo, em escala
-log, com o desvio padrão. Insight: BFS, Dijkstra e DFS ficam em milissegundos; o Bellman-Ford leva
-segundos. Por que esse gráfico: barras para comparar magnitudes; escala log porque os tempos
-diferem em quatro ordens de grandeza.
+log, com o desvio padrão e a razão para a BFS. Insight: BFS, Dijkstra e DFS ficam em milissegundos;
+o Bellman-Ford leva segundos (9 mil vezes a BFS). Por que esse gráfico: pontos com barra de erro,
+e não barras, porque numa escala log o comprimento de uma barra não representa nada; escala log
+porque os tempos diferem em quatro ordens de grandeza.
 
 **A2 — `a2_escalabilidade.png` (algoritmos).** Tempo medido e curva teórica, ambos relativos ao
 grafo completo, um painel por algoritmo. Insight: as duas curvas andam juntas, então o crescimento

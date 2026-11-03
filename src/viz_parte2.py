@@ -386,17 +386,25 @@ def tempos(relatorio, saida):
     linhas.sort(key=lambda l: l["media_s"])
     fig, ax = plt.subplots(figsize=(8.5, 4.2))
     y = np.arange(len(linhas))
-    ms = [l["media_s"] * 1000 for l in linhas]
-    ax.barh(y, ms, xerr=[l["desvio_s"] * 1000 for l in linhas], color=[CORES[list(NOMES_ALG).index(l["algoritmo"])]
-                                                                      for l in linhas],
-            height=0.6, error_kw={"ecolor": TEXTO_2, "capsize": 3, "lw": 1})
-    for yi, (v, l) in enumerate(zip(ms, linhas)):
-        ax.text((v + l["desvio_s"] * 1000) * 1.15, yi, f"{v:,.1f} ms".replace(",", "X").replace(".", ",").replace("X", "."),
-                va="center", fontsize=9, color=TEXTO)
+    ms = np.array([l["media_s"] * 1000 for l in linhas])
+    desvio = np.array([l["desvio_s"] * 1000 for l in linhas])
+    # pontos, não barras: numa escala log o comprimento de uma barra não representa nada
     ax.set_xscale("log")
+    ax.set_xlim(1, 2e5)
+    ax.hlines(y, 1, 2e5, color=GRADE, lw=1)
+    for yi, l in zip(y, linhas):
+        ax.errorbar(ms[yi], yi, xerr=desvio[yi], fmt="o", ms=10, color=cor_do_algoritmo(l["algoritmo"]),
+                    ecolor=TEXTO_2, capsize=4, elinewidth=1, zorder=3)
+    base = ms[0]
+    for yi, l in enumerate(linhas):
+        razao = ms[yi] / base
+        texto = tempo_ms(ms[yi]) if yi == 0 else f"{tempo_ms(ms[yi])} · {br(razao, 1 if razao < 100 else 0)}× a {NOMES_ALG[linhas[0]['algoritmo']]}"
+        ax.text(ms[yi] * 1.7 + desvio[yi], yi, texto, va="center", fontsize=9, color=TEXTO)
+    ax.set_xticks([1, 10, 100, 1e3, 1e4, 1e5], ["1 ms", "10 ms", "100 ms", "1 s", "10 s", "100 s"])
+    ax.xaxis.set_minor_formatter(NullFormatter())
     ax.set_yticks(y, [f"{NOMES_ALG[l['algoritmo']]}\n{l['tarefa']}" for l in linhas], fontsize=8.5)
-    ax.set_xlim(right=max(ms) * 12)
-    ax.set_xlabel("tempo médio por execução (ms, escala log); barra de erro = desvio padrão")
+    ax.set_ylim(-0.6, len(linhas) - 0.4)
+    ax.set_xlabel("tempo médio por execução (escala log); ponto = média, barra = desvio padrão")
     ax.grid(axis="y", visible=False)
     l0 = linhas[0]
     ax.set_title(f"Tempo dos quatro algoritmos no grafo completo ({br(l0['V'])} clubes, {br(l0['E'])} arcos)\n"
