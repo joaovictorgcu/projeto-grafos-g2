@@ -16,7 +16,8 @@ from .graphs.dataset import carregar_dataset, temporada
 
 # Identidade visual. CORES é a ordem fixa dos algoritmos (BFS, DFS, Dijkstra, Bellman-Ford) nos
 # gráficos A1 e A2; DESTAQUE é a cor da mensagem nos gráficos explanatórios; o resto é cinza.
-CORES = ["#2a78d6", "#eb6834", "#1baf7a", "#e87ba4"]
+# Paleta conferida para daltonismo (pares adjacentes com ΔE ≥ 8 em deutan/protan/tritan).
+CORES = ["#2a78d6", "#eb6834", "#1baf7a", "#9a5fd8"]
 DESTAQUE = "#eb6834"
 NEUTRO = "#b9b8b3"
 TEXTO = "#0b0b0b"
