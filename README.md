@@ -223,7 +223,7 @@ projeto-grafos-g2/
 ├─ requirements.txt
 ├─ docs/
 │  ├─ checkpoint_12-10/   # proposta do dataset e apresentação do checkpoint
-│  └─ parte2/             # relatório e notas analíticas da Parte 2
+│  └─ parte2/             # relatório, notas analíticas e prompts de IA da Parte 2
 ├─ data/
 │  ├─ mapas/              # m01 a m08
 │  ├─ mapas_grupo/        # os 2 mapas do grupo

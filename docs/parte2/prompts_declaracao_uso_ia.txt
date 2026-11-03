@@ -1,0 +1,122 @@
+PROMPTS PARA A DECLARAÇÃO DE USO DE INTELIGÊNCIA ARTIFICIAL
+Projeto de Grafos + AVD — Grupo 2 — Parte 2 (P4): dados e experimentos
+Repositório: https://github.com/joaovictorgcu/projeto-grafos-g2
+Responsável: João Victor Uchôa
+Ferramenta: Claude Code (Anthropic), modelos Claude Opus 5.5 e Claude Fable 5.1
+Sessão: 03/11/2026, no repositório clonado localmente. Commits resultantes: 0af7735 a 84b8b90
+(nove commits de revisão dos gráficos), mais os commits deste arquivo e dos marcadores [IA].
+
+Cada item traz o prompt enviado (texto integral), o que a IA fez e o que foi conferido antes de
+aceitar. Os resultados dos experimentos (out/parte2/parte2_report.json, desempenho.csv,
+eda_resumo.json e ficha_dataset.json) não foram alterados pela IA: os gráficos foram regenerados a
+partir desses arquivos. Os trechos de código gerados estão marcados com "[IA]" em
+src/viz_parte2.py e tests/test_viz_parte2.py, seguindo a convenção do repositório.
+
+
+01
+
+Clone o repositório projeto-grafos-g2 (https://github.com/joaovictorgcu/projeto-grafos-g2) e faça
+uma análise completa do projeto, com foco especial na Parte 2, que é de minha responsabilidade.
+
+Recebi o feedback de que preciso ajustar os gráficos dessa etapa. Portanto, quero que você:
+
+1. Entenda o projeto: leia o README, a documentação, a estrutura de pastas, o código existente e
+   os commits recentes. Identifique as tecnologias utilizadas e como o projeto está organizado.
+2. Analise a Parte 2: localize todos os gráficos, visualizações e experimentos desenvolvidos nessa
+   etapa. Entenda de onde vêm os dados, como são processados e o que cada gráfico pretende
+   demonstrar.
+3. Revise os gráficos: avalie se estão corretos, legíveis, bem apresentados e coerentes com os
+   resultados dos experimentos. Verifique títulos, legendas, escalas, eixos, unidades, cores,
+   disposição e interpretação dos dados.
+4. Confira a consistência dos dados: valide se os gráficos representam fielmente os dados
+   utilizados nos experimentos. Não altere valores, resultados ou critérios apenas para melhorar a
+   aparência das visualizações.
+5. Considere os requisitos acadêmicos: confira se os gráficos atendem ao objetivo da Parte 2 e se
+   estão alinhados à metodologia, ao problema proposto e às conclusões apresentadas no trabalho.
+6. Implemente os ajustes: corrija os problemas identificados, padronize a identidade visual e
+   melhore a apresentação dos gráficos, mantendo a consistência com o restante do projeto.
+7. Valide tudo: execute novamente os experimentos e os scripts necessários. Confira se os gráficos
+   são gerados corretamente, se não houve regressões e se os resultados continuam reproduzíveis.
+
+Cuidados importantes:
+- Não saia alterando o projeto antes de entender sua estrutura e seus objetivos.
+- Preserve as implementações das outras partes do trabalho, especialmente as que não são de minha
+  responsabilidade.
+- Não invente dados nem manipule resultados para produzir gráficos visualmente melhores.
+- Evite mudanças desnecessárias no escopo.
+- Priorize correções tecnicamente justificáveis e uma apresentação acadêmica de qualidade.
+
+Ao finalizar, apresente um resumo dos problemas encontrados, das alterações realizadas, dos
+gráficos corrigidos e dos testes executados. Aponte também qualquer problema que dependa de uma
+decisão ou validação da equipe.
+
+Objetivo final: deixar os gráficos da Parte 2 corretos, claros, visualmente consistentes e
+academicamente bem apresentados, sem comprometer a integridade dos experimentos ou o trabalho dos
+demais integrantes.
+
+O que a IA fez:
+- Leu README, relatório da Parte 2, src/parte2.py, src/avd_parte2.py, src/viz_parte2.py,
+  src/graphs/dataset.py e os 11 gráficos de out/parte2; baixou o snapshot do Transfermarkt com
+  scripts/ficha_transfermarkt.py --baixar (SHA-256 conferido) e confirmou o funil do recorte
+  (175.165 → 36.442 transferências; 4.739 nós e 31.626 arcos).
+- Antes de mudar qualquer coisa, regenerou eda_resumo.json e os 11 PNGs em pasta temporária e
+  conferiu que eram idênticos aos commitados; rodou o --benchmark em pasta temporária e conferiu
+  que BFS, DFS, Dijkstra, Bellman-Ford, ciclos e camadas eram idênticos ao relatório (só os tempos
+  mudam de máquina para máquina, por isso o parte2_report.json commitado foi mantido).
+- Conferiu as afirmações dos títulos contra os dados e achou três erros de fidelidade:
+  e3 (o valor pago não "fica em torno de 1/3 em todas as épocas": cai de 56% em 2000 para 25% em
+  2025), a3 ("quase todos" os clubes a 2–4 transferências: são 77%–83%) e o arredondamento de
+  milhões em x1/a4 (−3,5 mi aparecia como −4 mi; −33,8 e −34,0 mi apareciam iguais).
+- Corrigiu problemas de apresentação: e2 (bins com largura distorcida dentro da faixa linear do
+  symlog e 978 vendas pagas com peso 0 invisíveis), e4 (painéis 2×2 com 2–3 categorias
+  esparramadas → painéis empilhados), e5 (nomes de jogadores sobrepostos), a1 (barras em escala
+  log → pontos com desvio padrão e razão para a BFS), decimais pt-BR e sinal de menos tipográfico
+  em todos os eixos, e a quarta cor da paleta (Bellman-Ford) trocada de rosa para roxo depois de
+  validar os pares adjacentes para daltonismo.
+- Atualizou as notas analíticas E2, E3, E4, A1 e A3 e o parágrafo sobre faltantes do valor pago em
+  docs/parte2/relatorio_parte2.md; criou tests/test_viz_parte2.py (formatadores e resumo das
+  camadas).
+- Entregou o resumo com as pendências para a equipe: tempos do benchmark dependem da máquina;
+  tests/test_dataset.py e tests/test_parte2.py citados no README não estão no repositório; a
+  conclusão do e3 mudou e precisa de validação; o a4 (P5) só recebeu formatação.
+
+O que foi conferido e aceito:
+- Os 11 gráficos foram abertos e revisados um a um; pytest com 1085 testes passando; os arquivos
+  de resultados não foram tocados. As correções de interpretação (e3, a3) foram aceitas porque os
+  números saem direto de eda_resumo.json/parte2_report.json; nenhum critério do recorte ou dos
+  experimentos mudou.
+
+
+02
+
+Faça o push em vários commits didáticos
+
+O que a IA fez:
+- Reconstruiu a revisão em nove estados intermediários (um por correção), regenerando os gráficos
+  e rodando os testes em cada um, e commitou na ordem: formatação e helpers; e2; e3; e4; e5; a1;
+  a3; eixos dos demais gráficos; paleta. Cada mensagem explica o problema e a correção. Conferiu
+  que o estado final era idêntico à versão revisada e fez o push para origin/main.
+
+
+03
+
+Tire o coauthor do claude.
+
+O que a IA fez:
+- Reescreveu as mensagens dos nove commits removendo o trailer "Co-Authored-By", sem alterar
+  árvores nem autoria, e refez o push com --force-with-lease (nenhum outro commit havia sido
+  enviado no intervalo).
+
+
+04
+
+Atualize o meu prompt de declaração de IA. Veja se tudo bate. Além disso, tire o titulo de cada
+prompt, coloque só a numeração. E faça o push no repositório.
+
+O que a IA fez:
+- Substituiu a lista genérica de 30 prompts sugeridos por este registro, com os prompts
+  realmente enviados nesta sessão, numerados sem título, e adicionou os marcadores "[IA]" nos
+  arquivos gerados, como nos demais módulos do repositório. Prompts da lista original que não
+  correspondem a interações desta sessão (modelagem dos grafos, revisão dos algoritmos, empréstimos)
+  foram retirados; se houve uso de IA em outras sessões, os prompts correspondentes devem ser
+  acrescentados por quem os enviou.
