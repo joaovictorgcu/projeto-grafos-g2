@@ -2,74 +2,111 @@ import heapq
 from collections import deque
 from itertools import count
 
-# — [IA] Claude – Ajuda na implementação do BFS e da reconstrução de caminho.
+INFINITO = float("inf")
+BRANCO, CINZA, PRETO = 0, 1, 2 
+
 def bfs(grafo, origem):
-    """Retorna (dist, pai). dist[v] = nível de v (passos desde a origem)."""
+    """Busca em largura. Retorna (dist, pai).
+
+    dist[v] = número de passos (nível) da origem até v.
+    pai[v]  = nó de onde v foi descoberto (serve para reconstruir o caminho).
+    Nós que não aparecem em dist não são alcançáveis a partir da origem.
+    """
     dist = {origem: 0}
     pai = {origem: None}
     fila = deque([origem])
+
     while fila:
         u = fila.popleft()
         for v in grafo.vizinhos(u):
-            if v not in dist:
+            if v not in dist:  
                 dist[v] = dist[u] + 1
                 pai[v] = u
                 fila.append(v)
+
     return dist, pai
 
 
 def caminho(pai, destino):
-    """Caminho da origem até destino, ou None se inalcançável."""
+    """Reconstrói o caminho da origem até o destino, ou None se não for alcançável."""
     if destino not in pai:
         return None
-    c = []
-    while destino is not None:
-        c.append(destino)
-        destino = pai[destino]
-    return c[::-1]
 
-# — [IA] Claude – Contribuição no DFS iterativo com classificação de arcos gerado pela IA.
+    resultado = []
+    atual = destino
+    while atual is not None:
+        resultado.append(atual)
+        atual = pai[atual]
+
+    resultado.reverse()  
+    return resultado
+
+
 def dfs(grafo, origens=None):
-    """Retorna (tipo, d, f, tem_ciclo).
-    tipo[(u, v)] in {'arvore', 'retorno', 'avanco', 'cruzamento'}.
-    d/f = tempos de descoberta e término.
+    """Busca em profundidade (iterativa). Retorna (tipo, d, f, tem_ciclo).
+
+    tipo[(u, v)] é 'arvore', 'retorno', 'avanco' ou 'cruzamento'.
+    d[u] e f[u] são os tempos de descoberta e de término de u.
+    tem_ciclo é True se existe algum arco de retorno.
+
+    É iterativa (pilha explícita) porque o grafo de estados pode ser grande
+    e a recursão do Python tem limite.
     """
-    cor = {}  # ausente = branco, 1 = cinza, 2 = preto
-    d, f, tipo = {}, {}, {}
+    cor = {}
+    d = {}
+    f = {}
+    tipo = {}
     tempo = 0
-    for raiz in (origens if origens is not None else grafo.nos()):
-        if raiz in cor:
+
+    if origens is None:
+        origens = grafo.nos()
+
+    for raiz in origens:
+        if cor.get(raiz, BRANCO) != BRANCO:
             continue
+
         tempo += 1
         d[raiz] = tempo
-        cor[raiz] = 1
-        pilha = [(raiz, iter(grafo.vizinhos(raiz)))]
+        cor[raiz] = CINZA
+        pilha = [[raiz, grafo.vizinhos(raiz), 0]]
+
         while pilha:
-            u, it = pilha[-1]
-            for v in it:
-                if v not in cor:
+            item = pilha[-1]
+            u, vizinhos, i = item
+
+            if i < len(vizinhos):
+                item[2] += 1  
+                v = vizinhos[i]
+                cor_v = cor.get(v, BRANCO)
+
+                if cor_v == BRANCO:  
                     tipo[(u, v)] = "arvore"
                     tempo += 1
                     d[v] = tempo
-                    cor[v] = 1
-                    pilha.append((v, iter(grafo.vizinhos(v))))
-                    break
-                elif cor[v] == 1:
+                    cor[v] = CINZA
+                    pilha.append([v, grafo.vizinhos(v), 0])
+                elif cor_v == CINZA:  
                     tipo[(u, v)] = "retorno"
-                elif d[u] < d[v]:
+                elif d[u] < d[v]: 
                     tipo[(u, v)] = "avanco"
-                else:
+                else: 
                     tipo[(u, v)] = "cruzamento"
-            else:
+            else:  
                 pilha.pop()
                 tempo += 1
                 f[u] = tempo
-                cor[u] = 2
-    return tipo, d, f, "retorno" in tipo.values()
+                cor[u] = PRETO
 
-# — [IA] Claude – Dijkstra com recusa de pesos negativos gerado pela IA; testado por mim.
+    tem_ciclo = "retorno" in tipo.values()
+    return tipo, d, f, tem_ciclo
+
+
 def dijkstra(grafo, origem):
-    """Retorna (dist, pai). Lança ValueError se algum arco tiver peso negativo."""
+    """Menor custo da origem até cada nó. Retorna (dist, pai).
+
+    Lança ValueError se existir algum arco com peso negativo: depois que um nó
+    sai do heap, sua distância é considerada definitiva, e isso só vale sem pesos negativos.
+    """
     for u in grafo.nos():
         for v, peso in grafo.arcos(u):
             if peso < 0:
@@ -77,70 +114,98 @@ def dijkstra(grafo, origem):
                     f"Dijkstra não aceita pesos negativos: arco {u} -> {v} "
                     f"tem peso {peso}. Use Bellman-Ford."
                 )
+
     dist = {origem: 0}
     pai = {origem: None}
-    cont = count()  # desempate no heap, para nunca comparar nós entre si
-    heap = [(0, next(cont), origem)]
-    feito = set()
+    fechados = set()
+    desempate = count() 
+    heap = [(0, next(desempate), origem)]
+
     while heap:
         d, _, u = heapq.heappop(heap)
-        if u in feito:
+        if u in fechados:  
             continue
-        feito.add(u)
+        fechados.add(u)
+
         for v, peso in grafo.arcos(u):
-            nd = d + peso
-            if v not in dist or nd < dist[v]:
-                dist[v] = nd
+            nova = d + peso
+            if v not in dist or nova < dist[v]:
+                dist[v] = nova
                 pai[v] = u
-                heapq.heappush(heap, (nd, next(cont), v))
+                heapq.heappush(heap, (nova, next(desempate), v))
+
     return dist, pai
 
-# — [IA] Claude – Bellman-Ford com detecção e exibição de ciclo negativo gerado pela IA; foi testado por mim.
+
+def peso_do_arco(grafo, a, b):
+    """Peso do arco a -> b."""
+    for v, peso in grafo.arcos(a):
+        if v == b:
+            return peso
+
+
 def bellman_ford(grafo, origem):
-    """Retorna (dist, pai, ciclo).
-    ciclo = None se não há ciclo negativo alcançável a partir da origem;
-    caso contrário, (lista_de_nos, custo), com o primeiro nó repetido no fim.
+    """Menor custo com pesos negativos permitidos. Retorna (dist, pai, ciclo).
+
+    ciclo é None se não há ciclo negativo alcançável a partir da origem.
+    Se há, ciclo = (lista_de_nos, custo), com o primeiro nó repetido no fim.
     """
-    nos = list(grafo.nos())
-    arcos = [(u, v, p) for u in nos for v, p in grafo.arcos(u)]
+    nos = grafo.nos()
+    n = len(nos)
     dist = {origem: 0}
     pai = {origem: None}
 
-    for _ in range(len(nos) - 1):
+    arcos = []
+    for u in nos:
+        for v, peso in grafo.arcos(u):
+            arcos.append((u, v, peso))
+
+
+    for _ in range(n - 1):
         mudou = False
-        for u, v, p in arcos:
-            if u in dist and (v not in dist or dist[u] + p < dist[v]):
-                dist[v] = dist[u] + p
+        for u, v, peso in arcos:
+            if u not in dist:  
+                continue
+            if dist[u] + peso < dist.get(v, INFINITO):
+                dist[v] = dist[u] + peso
                 pai[v] = u
                 mudou = True
-        if not mudou:
+        if not mudou:  
             break
 
-    # rodada extra: se ainda relaxa, há ciclo negativo alcançável
-    for u, v, p in arcos:
-        if u in dist and dist[u] + p < dist[v]:
+    for u, v, peso in arcos:
+        if u in dist and dist[u] + peso < dist.get(v, INFINITO):
             pai[v] = u
-            x = v
-            for _ in range(len(nos)):  # recua até cair dentro do ciclo
-                x = pai[x]
-            ciclo = [x]
-            y = pai[x]
-            while y != x:
-                ciclo.append(y)
-                y = pai[y]
-            ciclo.append(x)
-            ciclo.reverse()
-            custo = sum(
-                next(p for w, p in grafo.arcos(a) if w == b)
-                for a, b in zip(ciclo, ciclo[1:])
-            )
-            return dist, pai, (ciclo, custo)
+            return dist, pai, extrair_ciclo(grafo, pai, v, n)
 
     return dist, pai, None
 
 
-# — [IA] Claude – estados-armadilha (transposto + BFS a partir do ALVO) gerado pela IA; testado e integrado por mim
+def extrair_ciclo(grafo, pai, v, n):
+    """Acha o ciclo negativo seguindo os pais a partir de v."""
+    x = v
+    for _ in range(n):
+        x = pai[x]
+
+    ciclo = [x]
+    atual = pai[x]
+    while atual != x:
+        ciclo.append(atual)
+        atual = pai[atual]
+    ciclo.append(x)
+    ciclo.reverse()  
+
+    custo = 0
+    for a, b in zip(ciclo, ciclo[1:]):
+        custo += peso_do_arco(grafo, a, b)
+    return ciclo, custo
+
+
 def estados_armadilha(grafo, alvo="ALVO"):
-    """Nós alcançáveis a partir do início que não chegam ao alvo (o BFS roda no transposto)."""
+    """Estados que nunca chegam ao alvo.
+
+    Faz uma BFS a partir do alvo no grafo transposto (arcos invertidos): o que ela
+    alcança são os estados que conseguem chegar ao alvo. O resto são armadilhas.
+    """
     chegam_ao_alvo, _ = bfs(grafo.transposto(), alvo)
-    return [n for n in grafo.nos() if n != alvo and n not in chegam_ao_alvo]
+    return [no for no in grafo.nos() if no != alvo and no not in chegam_ao_alvo]
