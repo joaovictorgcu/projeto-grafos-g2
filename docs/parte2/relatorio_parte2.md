@@ -72,10 +72,12 @@ data. Os 8 self-loops saem do grafo. A posição desconhecida vem gravada como o
 - **Valor de mercado — MAR em relação à temporada.** A ausência depende de uma variável observada:
   é 100% até 2003, cai de 97% (2004) para 16% (2025) (`e3_faltantes.png`). O Transfermarkt só
   passou a registrar valor de mercado de forma sistemática a partir de meados dos anos 2000.
-- **Valor pago — parte MAR, parte MNAR.** Fica em torno de 1/3 em todas as épocas, e o valor de
-  mercado mediano das transferências sem valor pago (250 mil) é metade do das com valor pago
-  (500 mil): falta mais em transferências de jogadores baratos, o que é observável (MAR). Mas uma
-  parte é "valor não divulgado", que depende do próprio valor ausente (MNAR).
+- **Valor pago — parte MAR, parte MNAR.** Também falta menos nas temporadas recentes, mas cai bem
+  menos que o valor de mercado: 55% das transferências de 2000–2009, 39% em 2010–2019 e 30% a
+  partir de 2020 (35% no total). O valor de mercado mediano das transferências sem valor pago
+  (250 mil) é metade do das com valor pago (500 mil): falta mais em transferências antigas e de
+  jogadores baratos, o que é observável (MAR). Mas uma parte é "valor não divulgado", que depende
+  do próprio valor ausente (MNAR).
 - **Liga do destino — ausência estrutural.** 26,85% das transferências usadas vão para clubes fora
   das ligas que o dataset acompanha. Não é erro: virou a categoria "fora das ligas cobertas".
 - Empresário (32,79%) é tratado como categoria ("sem empresário"); idade, posição, pé e altura
@@ -274,19 +276,23 @@ cauda inteira sem depender da escolha de bins, o que um histograma linear escond
 **E2 — `e2_pesos.png` (exploratória).** Histograma do peso por transferência, separado em saídas
 gratuitas e vendas pagas. Insight: as gratuitas são 100% negativas e concentradas entre −100 mil e
 −5 mi; as pagas se dividem quase ao meio, com a massa negativa um pouco maior. Por que esse
-gráfico: histograma para distribuição; escala symlog porque os pesos vão de −180 mi a +122 mi e têm
-sinal; dois painéis com o mesmo eixo x em vez de barras sobrepostas.
+gráfico: histograma para distribuição; escala symlog (logarítmica a partir de ±1 mil, o menor
+|peso| do recorte, com bins de largura igual na tela) porque os pesos vão de −180 mi a +122 mi e
+têm sinal; o bin central mostra as 978 vendas pagas exatamente pelo valor de mercado (peso 0);
+dois painéis com o mesmo eixo x em vez de barras sobrepostas.
 
 **E3 — `e3_faltantes.png` (exploratória).** % de transferências sem valor de mercado e sem valor
-pago por temporada. Insight: o valor de mercado falta por causa da época (MAR); o valor pago falta
-num patamar constante. Por que esse gráfico: linha para evolução no tempo; as duas séries têm a
-mesma unidade (%), então dividem o mesmo eixo sem distorção.
+pago por temporada. Insight: os dois faltam menos quanto mais recente a transferência, mas o valor
+de mercado depende muito mais da época (100% até 2003, 16% em 2025) que o valor pago (56% em 2000,
+25% em 2025). Por que esse gráfico: linha para evolução no tempo; as duas séries têm a mesma
+unidade (%), então dividem o mesmo eixo sem distorção.
 
 **E4 — `e4_relacoes.png` (exploratória, multivariada).** % de transferências com peso negativo por
 faixa etária, posição, pé e empresário, com a média geral tracejada. Insight: a idade separa muito
 mais que os outros atributos e a relação é monotônica. Por que esse gráfico: gráfico de pontos
-(dot plot) com o mesmo eixo nos quatro painéis permite comparar os efeitos entre atributos; o n de
-cada grupo fica escrito para não supervalorizar grupos pequenos.
+(dot plot) com os quatro painéis empilhados sobre o mesmo eixo x, cada um com altura proporcional
+ao número de categorias, permite comparar os efeitos entre atributos; o n de cada grupo fica
+escrito para não supervalorizar grupos pequenos.
 
 **E5 — `e5_outliers.png` (exploratória).** Valor pago contra valor de mercado nas vendas pagas, em
 log-log, com a diagonal de peso 0 e os outliers do IQR (sobre o log da razão) em laranja. Insight:
@@ -311,9 +317,10 @@ para comparar muitas categorias com nomes longos; uma só cor de destaque e as d
 linha de 50% dá a referência.
 
 **A1 — `a1_tempos.png` (algoritmos).** Tempo médio de cada algoritmo no grafo completo, em escala
-log, com o desvio padrão. Insight: BFS, Dijkstra e DFS ficam em milissegundos; o Bellman-Ford leva
-segundos. Por que esse gráfico: barras para comparar magnitudes; escala log porque os tempos
-diferem em quatro ordens de grandeza.
+log, com o desvio padrão e a razão para a BFS. Insight: BFS, Dijkstra e DFS ficam em milissegundos;
+o Bellman-Ford leva segundos (9 mil vezes a BFS). Por que esse gráfico: pontos com barra de erro,
+e não barras, porque numa escala log o comprimento de uma barra não representa nada; escala log
+porque os tempos diferem em quatro ordens de grandeza.
 
 **A2 — `a2_escalabilidade.png` (algoritmos).** Tempo medido e curva teórica, ambos relativos ao
 grafo completo, um painel por algoritmo. Insight: as duas curvas andam juntas, então o crescimento
@@ -321,9 +328,9 @@ medido segue a complexidade. Por que esse gráfico: linhas para crescimento em f
 normalizar pelo maior grafo deixa medida e teoria na mesma escala sem eixo duplo.
 
 **A3 — `a3_camadas_bfs.png` (algoritmos).** Clubes descobertos por nível da BFS a partir das três
-fontes. Insight: o pico fica no nível 3 e quase tudo está a até 4 transferências — mundo pequeno.
-Por que esse gráfico: linha porque o nível é ordenado; três séries no mesmo eixo para comparar as
-fontes.
+fontes. Insight: o pico fica no nível 3; 77%–83% dos clubes alcançáveis estão a 2–4 transferências
+da fonte e 93%–95% a até 5 — mundo pequeno. Por que esse gráfico: linha porque o nível é ordenado;
+três séries no mesmo eixo para comparar as fontes.
 
 **A4 — `a4_caminhos.png` (algoritmos).** Para os 6 pares do Dijkstra, uma barra com o custo
 original do caminho encontrado, a rota escrita ao lado e o número de arcos do Dijkstra contra o de
