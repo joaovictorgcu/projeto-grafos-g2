@@ -22,6 +22,11 @@ __pycache__/
 venv/
 *.egg-info/
 
+# Frontend: as dependências são instaladas pelo npm; o frontend/dist/ entra no git
+# para o labirinto interativo abrir só com o Python
+frontend/node_modules/
+frontend/*.tsbuildinfo
+
 # Editor e sistema
 .vscode/
 .idea/
