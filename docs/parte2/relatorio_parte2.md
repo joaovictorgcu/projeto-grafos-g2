@@ -307,7 +307,7 @@ destaque. De onde nasceu: na E2 vimos que as saídas gratuitas são mais da meta
 e no Bellman-Ford o melhor caminho passava por elas. Mensagem: um único jogador saindo de graça
 responde por 54% do custo do caminho inteiro. Por que esse gráfico: o degrau acumulado mostra a
 contribuição de cada transferência na ordem do caminho; o destaque é por cor (laranja contra cinza)
-e tamanho, e o texto em negrito diz a mensagem sem precisar de legenda.
+e tamanho, e a legenda separa o destaque (laranja) das demais transferências (cinza).
 
 **X2 — `x2_explanatoria_ligas.png` (explanatória).** % de transferências com peso negativo por liga
 do clube de destino. De onde nasceu: na E4 a idade e a posição mudavam a proporção de negativos;

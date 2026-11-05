@@ -9,6 +9,8 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.lines import Line2D
+from matplotlib.patches import Patch
 from matplotlib.patheffects import withStroke
 from matplotlib.ticker import FixedLocator, FuncFormatter, NullFormatter
 
@@ -192,6 +194,9 @@ def pesos(t, saida):
     eixos[1].xaxis.set_minor_formatter(NullFormatter())
     eixos[1].set_xlim(-2.5e8, 2.5e8)
     eixos[1].set_xlabel("peso da transferência em EUR (escala symlog: logarítmica a partir de ±1 mil)")
+    # [IA] Claude Code (Claude Opus 5.5) – legenda das cores e da linha do peso 0, no lado positivo vazio do painel de cima
+    eixos[0].legend(handles=[Patch(color=DESTAQUE, label="saída gratuita"), Patch(color=CORES[0], label="venda paga"),
+                             Line2D([], [], color=TEXTO, lw=1, label="peso 0")], loc="upper right", fontsize=8.5)
     fig.suptitle("Distribuição dos pesos: a maior parte da rede é negativa", x=0.01, ha="left",
                  fontsize=12, color=TEXTO)
     fig.tight_layout()
@@ -261,6 +266,11 @@ def relacoes(t, saida):
     eixos[-1].set_xlim(0.5, 1.0)
     eixos[-1].xaxis.set_major_formatter(FuncFormatter(pct_eixo))
     eixos[-1].set_xlabel("% das transferências com peso negativo (saída abaixo do valor de mercado)")
+    # [IA] Claude Code (Claude Opus 5.5) – legenda na linha do título do 1º painel, fora dos dados, e rótulo y comum aos painéis
+    eixos[0].legend(handles=[Line2D([], [], color=CORES[0], marker="o", ms=7, ls="", label="% negativo no grupo"),
+                             Line2D([], [], color=TEXTO_2, ls="--", lw=1, label="média geral")],
+                    loc="lower right", bbox_to_anchor=(1, 1), ncol=2, fontsize=8.5, borderaxespad=0.2)
+    fig.supylabel("atributo / categoria", fontsize=9.5, color=TEXTO_2)
     fig.suptitle("Relação do peso com os atributos do jogador: a idade é o que mais separa",
                  x=0.01, ha="left", fontsize=12, color=TEXTO)
     fig.tight_layout()
@@ -342,6 +352,11 @@ def explanatoria_caminho(relatorio, saida):
                  f"Bellman-Ford no grafo temporal a partir de {rota[0]}: custo total {milhoes(menor['custo'])} "
                  f"até {rota[-1]}", fontsize=12)
     ax.set_ylim(min(custos) * 1.25, max(custos) + 3e7)
+    # [IA] Claude Code (Claude Opus 5.5) – legenda do destaque contra o cinza, no canto vazio acima da curva
+    ax.legend(handles=[Line2D([], [], color=DESTAQUE, marker="o", ms=8, lw=3.2,
+                              label="destaque: a transferência que mais reduz o custo"),
+                       Line2D([], [], color=NEUTRO, marker="o", ms=7, lw=2, label="demais transferências do caminho")],
+              loc="upper right", fontsize=8.5)
     rodape(fig, "Cada degrau é uma transferência (peso = valor pago − valor de mercado, somado no par e na temporada). "
                 "Grafo temporal: nó = (clube, temporada), sem ciclos. Fonte: Transfermarkt Datasets.")
     return salvar(fig, Path(saida) / "x1_explanatoria_caminho.png")
@@ -365,6 +380,11 @@ def explanatoria_ligas(t, saida):
     ax.xaxis.set_major_formatter(FuncFormatter(pct_eixo))
     ax.set_xlabel("% das transferências com peso negativo (saída abaixo do valor de mercado)")
     ax.grid(axis="y", visible=False)
+    # [IA] Claude Code (Claude Opus 5.5) – rótulo y e legenda no canto vazio à direita das barras mais curtas
+    ax.set_ylabel("liga do clube de destino")
+    ax.legend(handles=[Patch(color=DESTAQUE, label="destaque: menor % negativa"), Patch(color=NEUTRO, label="demais ligas"),
+                       Line2D([], [], color=TEXTO_2, ls="--", lw=1, label="metade (50%)")],
+              loc="lower right", fontsize=8.5)
     r = g.loc[destaque]
     sinal = "+" if r["mediana"] > 0 else ""
     ax.set_title(f"Só a {LIGAS.get(destaque, destaque)} compra, em geral, acima do valor de mercado\n"
@@ -409,6 +429,11 @@ def tempos(relatorio, saida):
     ax.set_ylim(-0.6, len(linhas) - 0.4)
     ax.set_xlabel("tempo médio por execução (escala log); ponto = média, barra = desvio padrão")
     ax.grid(axis="y", visible=False)
+    # [IA] Claude Code (Claude Opus 5.5) – rótulo y e legenda das marcas, abaixo da linha da BFS
+    ax.set_ylabel("algoritmo")
+    ax.legend(handles=[Line2D([], [], color=TEXTO_2, marker="o", ms=8, ls="", label="média (a cor identifica o algoritmo)"),
+                       Line2D([], [], color=TEXTO_2, marker="|", ms=8, lw=1, label="desvio padrão")],
+              loc="lower right", fontsize=8.5)
     l0 = linhas[0]
     ax.set_title(f"Tempo dos quatro algoritmos no grafo completo ({br(l0['V'])} clubes, {br(l0['E'])} arcos)\n"
                  f"média de {l0['execucoes']} execuções")
@@ -484,10 +509,15 @@ def caminhos(relatorio, saida):
                 f"{' → '.join(p['caminho'])}   ·   Dijkstra: {p['arcos']} arcos · BFS: {p['passos_bfs']} passos",
                 ha="left", va="center", fontsize=8.5, color=TEXTO_2)
     ax.set_yticks(y, [f"{p['origem']} → {p['destino']}" for p in pares], fontsize=9)
-    ax.set_xlim(min(custos) * 1.35, abs(min(custos)) * 1.6)
+    # [IA] Claude Code (Claude Opus 5.5) – eixo termina logo após o zero: a rota fica na margem direita, que o rodapé já ocupa
+    ax.set_xlim(min(custos) * 1.35, 0.03 * max(abs(c) for c in custos))
     ax.xaxis.set_major_formatter(FuncFormatter(eur))
     ax.set_xlabel("custo original do caminho do Dijkstra (soma de valor pago − valor de mercado, EUR)")
     ax.grid(axis="y", visible=False)
+    # [IA] Claude Code (Claude Opus 5.5) – rótulo y e legenda no canto vazio à esquerda das barras menores
+    ax.set_ylabel("par origem → destino")
+    ax.legend(handles=[Patch(color=cor_do_algoritmo("DIJKSTRA"), label="custo do caminho do Dijkstra")],
+              loc="upper left", fontsize=8.5)
     ax.set_title(f"Caminhos do Dijkstra contra a BFS: em {iguais} de {len(pares)} pares, "
                  f"o caminho mais barato tem o mesmo número de arcos que o mais curto\n"
                  f"o deslocamento de {milhoes(desloc)} por arco pesa mais que a diferença entre as transferências")
