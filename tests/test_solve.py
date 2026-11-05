@@ -100,7 +100,7 @@ def test_sem_acao_pede_alg(tmp_path, capsys):
     assert "--alg" in capsys.readouterr().err
 
 
-def test_interactive_chama_o_streamlit_com_o_mapa(tmp_path, monkeypatch):
+def test_interactive_abre_o_servidor_com_o_mapa(tmp_path, monkeypatch):
     chamadas = []
 
     class Retorno:
@@ -108,5 +108,5 @@ def test_interactive_chama_o_streamlit_com_o_mapa(tmp_path, monkeypatch):
 
     monkeypatch.setattr(solve.subprocess, "run", lambda cmd: chamadas.append(cmd) or Retorno())
     assert rodar(MAPAS / "m03_tres_chaves.txt", tmp_path, "--interactive") == 0
-    assert "streamlit" in chamadas[0] and chamadas[0][-2] == "--mapa"
+    assert "src.servidor" in chamadas[0] and chamadas[0][-2] == "--mapa"
     assert chamadas[0][-1].endswith("m03_tres_chaves.txt")
