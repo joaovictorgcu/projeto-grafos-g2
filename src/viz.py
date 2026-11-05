@@ -557,42 +557,6 @@ def percurso_de_menor_custo(construido):
     return rotulos[:-1], algoritmo
 
 
-# [IA] Claude Code (Claude Opus 5.5) – liga o labirinto interativo aos mapas reais: caminhos dos algoritmos e estados-armadilha
-def estados_armadilha(construido):
-    from .graphs.algorithms import bfs
-
-    chegam_ao_alvo, _ = bfs(construido.grafo.transposto(), "ALVO")
-    return [n for n in construido.grafo.nos() if n != "ALVO" and n not in chegam_ao_alvo]
-
-
-def caminhos_dos_algoritmos(construido):
-    from .graphs.algorithms import bellman_ford, bfs, caminho, dijkstra
-
-    g, inicio = construido.grafo, construido.inicial
-    _, pai = bfs(g, inicio)
-    resultado = {"BFS": {"caminho": caminho(pai, "ALVO") or []}}
-    try:
-        _, pai = dijkstra(g, inicio)
-        resultado["DIJKSTRA"] = {"caminho": caminho(pai, "ALVO") or []}
-    except ValueError as erro:
-        resultado["DIJKSTRA"] = {"caminho": [], "status": "RECUSA", "motivo": str(erro)}
-    _, pai, ciclo = bellman_ford(g, inicio)
-    if ciclo:
-        nos, custo = ciclo
-        resultado["BELLMAN_FORD"] = {
-            "caminho": [], "status": "CICLO_NEGATIVO",
-            "motivo": f"Ciclo negativo de custo {custo}: {' → '.join(nos)}",
-        }
-    else:
-        resultado["BELLMAN_FORD"] = {"caminho": caminho(pai, "ALVO") or []}
-    return resultado
-
-
-def titulo_do_mapa(arquivo):
-    codigo, _, resto = Path(arquivo).stem.partition("_")
-    return f"{codigo} · {resto.replace('_', ' ')}" if resto else codigo
-
-
 def main(argv=None):
     p = argparse.ArgumentParser(description="Figuras da Parte 1 sobre um mapa.")
     p.add_argument("--mapa", required=True, help="arquivo .txt do mapa")
