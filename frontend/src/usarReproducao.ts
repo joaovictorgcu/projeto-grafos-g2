@@ -1,10 +1,10 @@
 // [IA] Claude Code (Claude Opus 5.5) – controle da animação passo a passo: tocar, pausar, avançar, voltar e velocidade
 import { useCallback, useEffect, useRef, useState } from "react";
 
-export function usarReproducao(ultimo: number, chaveDeReinicio: string, teclado = true) {
+export function usarReproducao(ultimo: number, chaveDeReinicio: string, teclado = true, velocidadeInicial = 6) {
   const [passo, setPasso] = useState(0);
   const [tocando, setTocando] = useState(false);
-  const [velocidade, setVelocidade] = useState(6);
+  const [velocidade, setVelocidade] = useState(velocidadeInicial);
   const ultimoRef = useRef(ultimo);
   ultimoRef.current = ultimo;
 
@@ -15,15 +15,17 @@ export function usarReproducao(ultimo: number, chaveDeReinicio: string, teclado 
 
   useEffect(() => {
     if (!tocando) return;
+    const intervalo = Math.max(1000 / velocidade, 33);
+    const salto = Math.max(1, Math.round((velocidade * intervalo) / 1000));
     const id = window.setInterval(() => {
       setPasso((p) => {
         if (p >= ultimoRef.current) {
           setTocando(false);
           return p;
         }
-        return p + 1;
+        return Math.min(ultimoRef.current, p + salto);
       });
-    }, 1000 / velocidade);
+    }, intervalo);
     return () => window.clearInterval(id);
   }, [tocando, velocidade]);
 

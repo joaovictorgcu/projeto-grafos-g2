@@ -2,8 +2,7 @@
 export type Algoritmo = "BFS" | "DIJKSTRA" | "BELLMAN_FORD";
 export type Status = "OK" | "RECUSA" | "CICLO_NEGATIVO" | "SEM_SOLUCAO";
 export type Origem = "enunciado" | "grupo" | "enviado";
-export type Vista = "labirinto" | "grafo" | "comparar";
-export type Modo = "percurso" | "exploracao";
+export type Vista = "labirinto" | "exploracao" | "grafo" | "comparar";
 
 export interface Estado {
   rotulo: string;
@@ -39,6 +38,21 @@ export interface DadosDoMapa {
   arcos: [number, number, number][];
   metricas: { ordem: number; tamanho: number; densidade: number };
   algoritmos: Record<Algoritmo, Resultado>;
+  buscas: Buscas;
+}
+
+export interface Expansao {
+  ordem: number[];
+  descoberta: number[];
+  alvo: number | null;
+  caminho: number[];
+}
+
+export interface Buscas {
+  DFS: { eventos: [number, 0 | 1][]; alvo: number | null; caminho: number[] };
+  BFS: Expansao;
+  DIJKSTRA: Expansao | { recusa: string };
+  BELLMAN_FORD: Expansao | { ciclo: number };
 }
 
 export interface ResumoDoMapa {

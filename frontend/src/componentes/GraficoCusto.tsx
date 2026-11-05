@@ -47,7 +47,7 @@ export function GraficoCusto({ series, passo, altura = 150, compacto }: {
           <g key={s.nome}>
             <motion.path d={d} fill="none" stroke={s.cor} strokeWidth={compacto ? 2 : 2.5} strokeLinejoin="round"
               initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1, ease: "easeOut" }} />
-            <motion.circle r={compacto ? 3.5 : 5} fill={s.cor} stroke="#0b1020" strokeWidth={2}
+            <motion.circle r={compacto ? 3.5 : 5} fill={s.cor} stroke="#fff" strokeWidth={2}
               initial={false} animate={{ cx: x(agora), cy: y(s.custos[agora]) }} transition={{ duration: 0.18 }} />
           </g>
         );

@@ -22,9 +22,9 @@ export const NOME_DO_STATUS: Record<Status, string> = {
   SEM_SOLUCAO: "Sem solução",
 };
 
-export const CORES_CAMADA = ["#5aa2ff", "#ff8a4c", "#34d399", "#f78fb8", "#a78bfa", "#facc15", "#22d3ee", "#fb7185"];
+export const CORES_CAMADA = ["#2563eb", "#ea580c", "#059669", "#db2777", "#7c3aed", "#b45309", "#0891b2", "#e11d48"];
 
-export const CORES_CHAVE: Record<string, string> = { a: "#fbbf24", b: "#22d3ee", c: "#e879f9", d: "#a3e635" };
+export const CORES_CHAVE: Record<string, string> = { a: "#d97706", b: "#0891b2", c: "#c026d3", d: "#65a30d" };
 
 export function chave(l: number, c: number) {
   return `${l},${c}`;
@@ -66,22 +66,6 @@ export function celulasPorCamada(estados: Estado[]) {
     if (e.armadilha) grupo.armadilhas.add(chave(e.l, e.c));
   }
   return mapa;
-}
-
-export function ondaDeExploracao(dados: DadosDoMapa, resultado: Resultado) {
-  const primeira = new Map<string, { ordem: number; distancia: number }>();
-  resultado.exploracao.forEach(([i, distancia], ordem) => {
-    const e = dados.estados[i];
-    const k = chave(e.l, e.c);
-    if (!primeira.has(k)) primeira.set(k, { ordem, distancia });
-  });
-  const distancias = [...primeira.values()].map((v) => v.distancia);
-  return {
-    celulas: primeira,
-    total: resultado.exploracao.length,
-    menor: Math.min(...distancias, 0),
-    maior: Math.max(...distancias, 1),
-  };
 }
 
 export function formatar(numero: number, casas = 0) {

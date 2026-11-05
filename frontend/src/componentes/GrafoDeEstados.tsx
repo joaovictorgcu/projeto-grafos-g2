@@ -17,7 +17,7 @@ export function GrafoDeEstados({ dados, passos, passo, duracao }: {
   const altura = dados.grade.length;
   const largura = dados.grade[0]?.length ?? 1;
   const camadas = useMemo(() => camadasDoMapa(dados), [dados]);
-  const tamanho = Math.max(5, Math.min(48, Math.floor(Math.min(640 / largura, 360 / altura))));
+  const tamanho = Math.max(5, Math.min(40, Math.floor(Math.min(540 / largura, 300 / altura))));
   const [rotacao, setRotacao] = useState({ x: 58, z: -32 });
   const [espaco, setEspaco] = useState(Math.max(60, Math.min(150, altura * tamanho * 0.6)));
   const [arrastando, setArrastando] = useState(false);

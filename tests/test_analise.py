@@ -11,14 +11,14 @@ OUT = ROOT / "out" / "parte1"
 
 
 def test_mapa_guilherme_tem_tres_chaves_esteiras_e_bonus():
-    mapa = ler_mapa(MAPAS_GRUPO / "guilherme_03_chaves.txt")
+    mapa = ler_mapa(MAPAS_GRUPO / "mapa_chaves.txt")
     assert len(mapa.tipos_de_chave) >= 3
     assert mapa.esteiras
     assert mapa.bonus
 
 
 def test_mapa_guilherme_tem_pelo_menos_vinte_porcento_de_armadilhas():
-    mapa = ler_mapa(MAPAS_GRUPO / "guilherme_armadilhas.txt")
+    mapa = ler_mapa(MAPAS_GRUPO / "mapa_armadilhas.txt")
     grafo = construir_estados(mapa).grafo
     estados = [no for no in grafo.nos() if no != ALVO]
     armadilhas = estados_armadilha(grafo, ALVO)

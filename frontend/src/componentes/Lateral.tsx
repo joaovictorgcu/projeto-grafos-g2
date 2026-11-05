@@ -1,9 +1,9 @@
 // [IA] Claude Code (Claude Opus 5.5) – barra lateral: escolha do mapa, envio do mapa surpresa, algoritmo e opções de visualização
-import { FileWarning, Layers, Radar, Route, Skull, Sparkles, Upload, X } from "lucide-react";
+import { FileWarning, Layers, Skull, Sparkles, Upload, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useRef, useState, type CSSProperties } from "react";
 import { ALGORITMOS, NOME_DO_ALGORITMO, NOME_DO_STATUS, O_QUE_O_ALGORITMO_BUSCA, nomeDaCamada } from "../modelo";
-import type { Algoritmo, DadosDoMapa, Modo, ResumoDoMapa } from "../tipos";
+import type { Algoritmo, DadosDoMapa, ResumoDoMapa } from "../tipos";
 import { Miniatura } from "./Miniatura";
 
 const NOME_DA_ORIGEM = { enunciado: "enunciado", grupo: "do grupo", enviado: "enviado" };
@@ -122,25 +122,14 @@ export function InterruptorDaFonte({ dados, fonte, setFonte }: {
   );
 }
 
-export function Opcoes({ dados, modo, setModo, fonte, setFonte, camada, setCamada, armadilhas, setArmadilhas, coresDasCamadas }: {
-  dados: DadosDoMapa | null; modo: Modo; setModo: (m: Modo) => void; fonte: boolean; setFonte: (v: boolean) => void;
+export function Opcoes({ dados, fonte, setFonte, camada, setCamada, armadilhas, setArmadilhas, coresDasCamadas }: {
+  dados: DadosDoMapa | null; fonte: boolean; setFonte: (v: boolean) => void;
   camada: string | null; setCamada: (c: string | null) => void; armadilhas: boolean; setArmadilhas: (v: boolean) => void;
   coresDasCamadas: { chaves: string; estados: number; cor: string }[];
 }) {
   return (
     <section className="secao-lateral">
       <h2>Visualização</h2>
-      <div className="segmentado" role="radiogroup" aria-label="O que mostrar">
-        {([["percurso", "Percurso", Route], ["exploracao", "Exploração", Radar]] as const).map(([valor, nome, Icone]) => (
-          <button key={valor} type="button" role="radio" aria-checked={modo === valor}
-            className={modo === valor ? "ativo" : ""} onClick={() => setModo(valor)}>
-            {modo === valor && <motion.span layoutId="modo-ativo" className="segmentado-fundo" />}
-            <Icone size={16} aria-hidden />
-            <span>{nome}</span>
-          </button>
-        ))}
-      </div>
-
       <label className="interruptor">
         <input type="checkbox" checked={armadilhas} onChange={(ev) => setArmadilhas(ev.target.checked)} />
         <span className="interruptor-trilho" aria-hidden />

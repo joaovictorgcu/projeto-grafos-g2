@@ -15,7 +15,7 @@ interface Lado {
   fonte: boolean;
 }
 
-const COR = { A: "#5aa2ff", B: "#ff8a4c" };
+const COR = { A: "#2563eb", B: "#ea580c" };
 
 const EXEMPLOS: { titulo: string; a: [string, Algoritmo, boolean]; b: [string, Algoritmo, boolean] }[] = [
   { titulo: "m01 · menos passos × menor custo", a: ["m01", "BFS", false], b: ["m01", "DIJKSTRA", false] },
@@ -136,7 +136,7 @@ export function Comparacao({ mapas, mapaInicial, obterDados }: {
           {sobrepor ? (
             <div className="quadro">
               <Tabuleiro dados={dadosA} resultado={resA} passos={passosA} passo={Math.min(reproducao.passo, passosA.length - 1)}
-                duracao={duracao} modo="percurso" camadaFixa={null} mostrarArmadilhas={false} corDoJogador={COR.A}
+                duracao={duracao} camadaFixa={null} mostrarArmadilhas={false} corDoJogador={COR.A}
                 fantasma={resB.status === "OK" ? { passos: passosB, passo: reproducao.passo, cor: COR.B } : undefined} />
             </div>
           ) : (
@@ -145,7 +145,7 @@ export function Comparacao({ mapas, mapaInicial, obterDados }: {
                 <div key={nome} className="quadro" style={{ "--cor": COR[nome] } as CSSProperties}>
                   <span className="quadro-rotulo">lado {nome}</span>
                   <Tabuleiro dados={d} resultado={r} passos={p} passo={Math.min(reproducao.passo, p.length - 1)} duracao={duracao}
-                    modo="percurso" camadaFixa={null} mostrarArmadilhas={r.status === "SEM_SOLUCAO"} corDoJogador={COR[nome]} compacto />
+                    camadaFixa={null} mostrarArmadilhas={r.status === "SEM_SOLUCAO"} corDoJogador={COR[nome]} compacto />
                 </div>
               ))}
             </div>

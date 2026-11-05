@@ -6,14 +6,14 @@ import { CORES_CHAVE } from "../modelo";
 import type { Passo } from "../tipos";
 import type { Reproducao } from "../usarReproducao";
 
-export function Controles({ reproducao, ultimo, passos, cor }: {
-  reproducao: Reproducao; ultimo: number; passos?: Passo[]; cor: string;
+export function Controles({ reproducao, ultimo, passos, cor, velocidadeMaxima = 30, rotulo = "passos/s" }: {
+  reproducao: Reproducao; ultimo: number; passos?: Passo[]; cor: string; velocidadeMaxima?: number; rotulo?: string;
 }) {
   const { passo, tocando, velocidade, setVelocidade, irPara, alternar } = reproducao;
   const desativado = ultimo === 0;
   const marcos = (passos ?? []).flatMap((p, i) =>
     p.novaChave ? [{ i, tipo: "chave", cor: CORES_CHAVE[p.novaChave], texto: `pega a chave ${p.novaChave}` }]
-      : p.novoBonus !== null ? [{ i, tipo: "bonus", cor: "#34d399", texto: `usa o bônus ${p.novoBonus}` }] : [],
+      : p.novoBonus !== null ? [{ i, tipo: "bonus", cor: "#10b981", texto: `usa o bônus ${p.novoBonus}` }] : [],
   );
 
   return (
@@ -57,9 +57,9 @@ export function Controles({ reproducao, ultimo, passos, cor }: {
 
       <label className="velocidade">
         <Gauge size={16} aria-hidden />
-        <input type="range" min={1} max={30} value={velocidade} onChange={(ev) => setVelocidade(Number(ev.target.value))}
-          aria-label="Velocidade em passos por segundo" />
-        <span>{velocidade} passos/s</span>
+        <input type="range" min={1} max={velocidadeMaxima} value={velocidade} onChange={(ev) => setVelocidade(Number(ev.target.value))}
+          aria-label={`Velocidade em ${rotulo}`} />
+        <span>{velocidade} {rotulo}</span>
       </label>
     </div>
   );

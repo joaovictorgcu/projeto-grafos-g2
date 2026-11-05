@@ -93,12 +93,15 @@ python -m src.servidor --mapa ./data/mapas/m03_tres_chaves.txt
 python -m src.cli --mapa ./data/mapas/m03_tres_chaves.txt --interactive
 ```
 
-Abre em `http://127.0.0.1:8000`. Três abas:
+Abre em `http://127.0.0.1:8000`. Quatro abas:
 
 - **Labirinto:** escolha do mapa (ou envio de um `.txt`, como o mapa surpresa) e do algoritmo;
-  animação passo a passo com posição, chaves, bônus consumidos e custo acumulado; modo *Exploração*,
-  que acende as casas na ordem em que o algoritmo descobre os estados; camada em destaque,
-  estados-armadilha, ciclo negativo e a recusa do Dijkstra marcados no tabuleiro.
+  animação passo a passo com posição, chaves, bônus consumidos e custo acumulado; camada em
+  destaque, estados-armadilha, ciclo negativo e a recusa do Dijkstra marcados no tabuleiro.
+- **Exploração:** DFS (pilha), BFS (fila), Dijkstra (fila de prioridade) e Bellman-Ford partindo
+  do S ao mesmo tempo, com o contador de expandidas, a fronteira e o caminho achado quando cada um
+  chega ao G. O Bellman-Ford não expande um estado por vez; no painel dele os estados aparecem na
+  ordem do custo final.
 - **Grafo de estados:** as camadas (uma por conjunto de chaves) empilhadas em 3D; pegar uma chave
   sobe de andar. Arraste para girar.
 - **Comparar (bônus):** dois percursos na mesma linha do tempo, sobrepostos ou lado a lado, com a
