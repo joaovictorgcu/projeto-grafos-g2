@@ -38,7 +38,7 @@ e revisar significa commitar alguma coisa lá — um teste, uma correção, uma 
 - [x] Mapas fornecidos (m01 a m08) em `data/mapas/`
 - [x] Parte 1: labirintos com chaves e portas (grafo de estados)
   - [x] leitura e validação dos mapas, `G_pos` e `G_est`, `arestas_<mapa>.csv`
-  - [x] figuras da Seção 8 e labirinto interativo (Streamlit)
+  - [x] figuras da Seção 8 e labirinto interativo (React + TypeScript, servido pelo `src/servidor.py`)
   - [x] `src/solve.py`: os comandos `--mapa` do enunciado pelo `src/cli.py`
   - [x] `metricas_global.json`, `camadas.json`, `graus_<mapa>.csv`, `comparacao_modelagem.csv`,
         `solucoes.csv`, `dfs_classificacao.csv`, `percurso_m03.json`, `ciclo_negativo_m06.json`,
@@ -83,21 +83,37 @@ python -m src.viz --mapa ./data/mapas/m08_grande.txt --multiplicidade ./out/part
 
 ### Labirinto interativo
 
-Feito em Streamlit; abre no navegador:
+Frontend em React + TypeScript (`frontend/`). Quem calcula tudo é o Python: o `src/servidor.py`
+monta o grafo de estados e roda os algoritmos do `src/graphs/`, e o navegador só desenha e anima.
+A versão compilada fica em `frontend/dist/`, então para abrir basta o Python:
 
 ```
-streamlit run src/interativo.py
-streamlit run src/interativo.py -- --mapa ./data/mapas/m03_tres_chaves.txt
+python -m src.servidor
+python -m src.servidor --mapa ./data/mapas/m03_tres_chaves.txt
+python -m src.cli --mapa ./data/mapas/m03_tres_chaves.txt --interactive
 ```
 
-Na barra lateral escolhe-se o mapa (ou envia-se um `.txt`, como o mapa surpresa), o algoritmo
-(BFS, Dijkstra ou Bellman-Ford), a camada em destaque e a velocidade. A animação mostra posição,
-chaves, bônus consumidos e custo acumulado a cada passo; os estados-armadilha ficam marcados e,
-embaixo, há a comparação dos três algoritmos no mesmo mapa.
+Abre em `http://127.0.0.1:8000`. Três abas:
 
-**Comparação lado a lado (bônus).** Em *Modo*, na barra lateral, escolha *Comparação lado a lado*.
-Cada lado tem o seu algoritmo e a sua opção de fonte consumível, e o lado B pode usar outro mapa.
-Os dois percursos andam juntos, com o mesmo controle de passo; quem chega primeiro espera em G.
+- **Labirinto:** escolha do mapa (ou envio de um `.txt`, como o mapa surpresa) e do algoritmo;
+  animação passo a passo com posição, chaves, bônus consumidos e custo acumulado; modo *Exploração*,
+  que acende as casas na ordem em que o algoritmo descobre os estados; camada em destaque,
+  estados-armadilha, ciclo negativo e a recusa do Dijkstra marcados no tabuleiro.
+- **Grafo de estados:** as camadas (uma por conjunto de chaves) empilhadas em 3D; pegar uma chave
+  sobe de andar. Arraste para girar.
+- **Comparar (bônus):** dois percursos na mesma linha do tempo, sobrepostos ou lado a lado, com a
+  curva de custo acumulado e exemplos prontos.
+
+Teclado: espaço toca/pausa, ← → andam um passo, Home/End vão ao início/fim.
+
+Para mexer no frontend é preciso o Node.js 18+:
+
+```
+cd frontend
+npm install
+npm run dev      # em outro terminal: python -m src.servidor --sem-navegador
+npm run build    # gera de novo o frontend/dist/
+```
 A tela mostra:
 
 - uma frase-resumo da diferença (quem chega com menos passos, quem sai mais barato e em que passo
@@ -256,8 +272,8 @@ projeto-grafos-g2/
 ├─ src/
 │  ├─ cli.py              # linha de comando das duas partes
 │  ├─ solve.py            # Parte 1 pelo cli (--mapa): algoritmos, armadilhas, interativo
+│  ├─ servidor.py         # servidor local do labirinto interativo (dados em JSON + frontend)
 │  ├─ analise.py          # análises e artefatos da Parte 1 (P3)
-│  ├─ interativo.py       # labirinto interativo (Streamlit)
 │  ├─ viz.py              # figuras da Parte 1
 │  ├─ parte2.py           # experimentos da Parte 2
 │  ├─ avd_parte2.py       # análise exploratória da Parte 2
@@ -268,6 +284,7 @@ projeto-grafos-g2/
 │     ├─ estados.py       # grafo de posições e grafo de estados
 │     ├─ graph.py         # lista de adjacência dirigida
 │     └─ algorithms.py    # BFS, DFS, Dijkstra, Bellman-Ford
+├─ frontend/             # labirinto interativo em React + TypeScript (dist/ = versão compilada)
 └─ tests/
 ```
 

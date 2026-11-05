@@ -1,0 +1,25 @@
+{
+  "origem": "Santos",
+  "destino": "PSG",
+  "status": "OK",
+  "arcos": 2,
+  "custo_transformado": 317500000,
+  "custo_original": -42500000,
+  "caminho": [
+    "Santos",
+    "Inter",
+    "PSG"
+  ],
+  "passos_bfs": 2,
+  "transferencias": {
+    "Santos -> Inter": [
+      "Gabriel Barbosa (16/17): 9.500.000"
+    ],
+    "Inter -> PSG": [
+      "Milan Škriniar (23/24): -50.000.000",
+      "Mauro Icardi (20/21): -10.000.000",
+      "Achraf Hakimi (21/22): 8.000.000"
+    ]
+  },
+  "transformacao": "w' = w - min(w) = w + 180.000.000 EUR"
+}
