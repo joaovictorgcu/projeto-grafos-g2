@@ -81,6 +81,9 @@ python -m src.viz --mapa ./data/mapas/m02_uma_chave.txt --arvore-bfs ./out/parte
 python -m src.viz --mapa ./data/mapas/m08_grande.txt --multiplicidade ./out/parte1/multiplicidade_m08.png
 ```
 
+As notas analíticas dessas figuras estão em
+[docs/parte1/notas_visualizacoes.md](docs/parte1/notas_visualizacoes.md).
+
 ### Labirinto interativo
 
 Frontend em React + TypeScript (`frontend/`). Quem calcula tudo é o Python: o `src/servidor.py`

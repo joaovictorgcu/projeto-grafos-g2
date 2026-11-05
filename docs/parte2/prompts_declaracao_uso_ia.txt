@@ -211,3 +211,66 @@ commit os gráficos foram regenerados com src.viz_parte2 e os testes executados;
 com 1085 testes passando. Pendências sinalizadas para o grupo: os tempos do benchmark dependem da
 máquina; tests/test_dataset.py e tests/test_parte2.py citados no README não estão no repositório;
 a conclusão do e3 mudou; o a4 (P5) recebeu apenas formatação.
+
+
+10
+
+Responsável: Caio Leimig (P5). Ferramenta: Claude Code (Anthropic), modelo Claude Opus 5.5.
+
+Trecho do pedido: "Título, legenda e rótulos de eixos em TODAS as figuras", "sem mudar o conteúdo
+nem o estilo visual dos gráficos" e "Rascunho das notas analíticas da Parte 1". Resumo dos dois
+pedidos: adicionar legenda em e2, e4, x1, x2, a1 e a4; adicionar rótulo do eixo y em e4, x2, a1 e
+a4; tirar o espaço vazio à direita do eixo x da a4; regenerar e conferir os PNGs; ajustar a nota X1;
+criar o rascunho das notas da Parte 1, só com fatos verificáveis, deixando "Insight" e "Por que
+esse gráfico" em TODO para o responsável escrever.
+
+Commit: bd6a007 — viz parte2: legenda e rótulo do eixo y em todas as figuras, eixo x da a4 sem
+espaço vazio. As notas da Parte 1 e o link no README ficaram fora desse commit e entram no da
+entrada 11.
+
+O que a IA fez: em src/viz_parte2.py, acrescentou as legendas com handles manuais, os rótulos do
+eixo y e o novo limite do eixo x da a4, marcando os trechos com "[IA]"; a paleta e os valores não
+mudaram. Regenerou os gráficos com src.viz_parte2 a partir do snapshot baixado pelo script do
+repositório. Na nota X1 de docs/parte2/relatorio_parte2.md, trocou a frase sobre a legenda. Criou
+docs/parte1/notas_visualizacoes.md, com "O que mostra" preenchido e 10 TODOs, e o link no README.
+
+O que foi conferido pela IA: abriu os 6 PNGs regenerados e viu, em cada um, título, legenda, os
+dois eixos rotulados, legenda sem cobrir dados, anotações ou título, e nenhum texto cortado. Os
+outros 5 PNGs e o ficha_dataset.json ficaram idênticos aos commitados. O parte2_report.json não foi
+regenerado. Os números das notas da Parte 1 vieram de out/parte1/ e foram recalculados a partir do
+grafo de estados. Releu as notas E2, E4, X2, A1 e A4; só a X1 contradizia as figuras novas. Pytest
+com 1095 testes passando.
+
+O que foi conferido manualmente: Caio abriu os 6 PNGs regenerados da Parte 2 e leu
+docs/parte1/notas_visualizacoes.md (ver a entrada 11).
+
+
+11
+
+Responsável: Caio Leimig (P5). Ferramentas: Claude Code (Anthropic), modelo Claude Opus 5.5;
+Claude (claude.ai), modelo Claude Opus 5.5.
+
+Trecho do pedido: "Preciso preencher os dois campos em TODO de cada figura", "Use só os fatos e
+números que aparecem em "O que mostra" ou nas imagens" e "Não mude as seções "O que mostra" nem os
+títulos". Resumo: preencher "Insight" e "Por que esse gráfico" das 5 figuras da Parte 1, no estilo
+da seção 6 de docs/parte2/relatorio_parte2.md, e apagar o aviso do topo. Depois, um segundo pedido
+com os ajustes apontados na revisão, descritos abaixo.
+
+Commit: o mesmo que adiciona esta entrada (posterior a bd6a007).
+
+O que a IA fez: o Claude Code escreveu os 10 campos de docs/parte1/notas_visualizacoes.md e apagou
+o aviso do topo. O Claude (claude.ai) revisou as notas, conferiu os números contra solucoes.csv,
+metricas_global.json e as figuras e apontou três correções. No Insight do m03, tirar a comparação
+com a BFS, porque o percurso da BFS não aparece na figura, e citar a travessia da água em (8,9). No
+m08, trocar "O custo é uma linha mais fina" por "A desvantagem", para não confundir com o custo do
+percurso. Na árvore BFS, trocar "na linha 34" por "no nível 34", para não confundir com a linha da
+grade. O Claude Code aplicou as correções, tirou "(rascunho)" do título, atualizou a linha "[IA]" e
+preencheu esta declaração.
+
+O que foi conferido pela IA: comparou o arquivo com a versão anterior e viu que só o aviso e os
+TODOs mudaram. Abriu os 5 PNGs de out/parte1/ e conferiu no grafo de estados que, no m03, a BFS
+cruza a água da linha 4 e o Dijkstra desvia pela linha 3, que o Dijkstra atravessa (8,9) nas
+camadas {a,b} e {a,b,c}, e que no m03 e no m08 as casas de cada camada contêm as da anterior.
+Nenhum código ou arquivo de resultados foi alterado, e os testes não foram rodados.
+
+O que foi conferido manualmente: Caio leu as notas finais e conferiu as correções.
