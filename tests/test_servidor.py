@@ -56,6 +56,23 @@ def test_arcos_nao_incluem_o_alvo_e_batem_com_as_metricas():
     assert len(d["arcos"]) == d["metricas"]["tamanho"] == 74
 
 
+def test_buscas_param_no_primeiro_estado_em_g_e_batem_com_os_caminhos():
+    d = dados("m03")
+    for nome in ("BFS", "DIJKSTRA"):
+        busca = d["buscas"][nome]
+        assert d["estados"][busca["ordem"][busca["alvo"]]]["saida"]
+        assert busca["caminho"] == d["algoritmos"][nome]["caminho"]
+    dfs = d["buscas"]["DFS"]
+    assert d["estados"][dfs["eventos"][dfs["alvo"]][0]]["saida"]
+    assert dfs["caminho"][0] == d["inicial"] and d["estados"][dfs["caminho"][-1]]["saida"]
+
+
+def test_buscas_respeitam_recusa_e_ciclo():
+    assert "recusa" in dados("m05")["buscas"]["DIJKSTRA"]
+    assert dados("m06")["buscas"]["BELLMAN_FORD"] == {"ciclo": -1}
+    assert all(b.get("alvo") is None for b in dados("m07")["buscas"].values())
+
+
 def test_mapa_invalido_levanta_erro_claro():
     with pytest.raises(MapaInvalido, match="2 inícios S"):
         analisar("#####\n#S.S#\n#..G#\n#####", "ruim")
