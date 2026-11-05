@@ -85,8 +85,7 @@ def gravar_classificacao(tipo, destino):
 
 
 def abrir_interativo(mapa):
-    raiz = Path(__file__).resolve().parent
-    comando = [sys.executable, "-m", "streamlit", "run", str(raiz / "interativo.py"), "--", "--mapa", str(mapa)]
+    comando = [sys.executable, "-m", "src.servidor", "--mapa", str(Path(mapa).resolve())]
     return subprocess.run(comando).returncode
 
 
