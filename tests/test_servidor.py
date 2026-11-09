@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 from src.graphs.io import MapaInvalido
-from src.servidor import Servidor, analisar, mapas_do_projeto
+from src.servidor import Servidor, analisar, dados_da_parte2, mapas_do_projeto, titulo_do_mapa
 
 MAPAS = Path(__file__).resolve().parent.parent / "data" / "mapas"
 
@@ -71,6 +71,20 @@ def test_buscas_respeitam_recusa_e_ciclo():
     assert "recusa" in dados("m05")["buscas"]["DIJKSTRA"]
     assert dados("m06")["buscas"]["BELLMAN_FORD"] == {"ciclo": -1}
     assert all(b.get("alvo") is None for b in dados("m07")["buscas"].values())
+
+
+def test_titulos_dos_mapas_sem_codigo():
+    assert titulo_do_mapa("m01_terreno") == "Terreno"
+    assert titulo_do_mapa("m03_tres_chaves") == "Três chaves"
+    assert titulo_do_mapa("mapa_chaves", "grupo") == "Chaves"
+    assert titulo_do_mapa("surpresa", "enviado") == "Surpresa"
+
+
+def test_parte2_traz_o_relatorio_e_uma_nota_por_figura():
+    d = dados_da_parte2()
+    assert d["relatorio"]["dataset"]["V"] == 4739
+    assert {f["codigo"] for f in d["figuras"]} >= {"E1", "X1", "A4"}
+    assert all(f["nota"] for f in d["figuras"] if f["codigo"][0] in "EXA")
 
 
 def test_mapa_invalido_levanta_erro_claro():
