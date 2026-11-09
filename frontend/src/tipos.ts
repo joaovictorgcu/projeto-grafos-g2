@@ -69,3 +69,56 @@ export interface Passo {
   novaChave: string | null;
   novoBonus: number | null;
 }
+
+export interface ParDoDijkstra {
+  origem: string;
+  destino: string;
+  status: string;
+  arcos: number;
+  custo_original: number;
+  caminho: string[];
+  passos_bfs: number;
+  transferencias: Record<string, string[]>;
+}
+
+export interface Figura {
+  arquivo: string;
+  codigo: string;
+  tipo: string;
+  nota: string;
+}
+
+export interface DadosDaParte2 {
+  figuras: Figura[];
+  relatorio: {
+    dataset: {
+      fonte: string;
+      funil: { etapa: string; linhas: number }[];
+      V: number;
+      E: number;
+      densidade: number;
+      arcos_peso_negativo_pct: number;
+      peso_min: number;
+      peso_mediana: number;
+      peso_max: number;
+      temporal: { V: number; E: number };
+    };
+    bfs: { nome: string; alcancados: number; camadas: number[] }[];
+    dfs: { nome: string; arcos: Record<string, number>; tem_ciclo: boolean }[];
+    dijkstra: { transformacao: { formula: string; deslocamento_eur: number }; pares: ParDoDijkstra[] };
+    bellman_ford: {
+      sem_ciclo_negativo: {
+        grafo: string; ordem: number; tamanho: number; arcos_negativos: number; fonte: string;
+        menor_custo: { destino: string; custo: number; caminho: string[]; transferencias: Record<string, string[]> };
+      };
+      com_ciclo_negativo: {
+        grafo: string; ordem: number; tamanho: number; fonte: string;
+        ciclo: { clubes: string[]; custo: number; transferencias: Record<string, string[]> };
+      }[];
+    };
+    ciclos_de_comprimento_2: { total: number; mais_negativos: { clubes: string[]; ida: number; volta: number; soma: number }[] };
+    desempenho: { algoritmo: string; tarefa: string; tamanho_pct: number; V: number; E: number; media_s: number; desvio_s: number; memoria_pico_kb: number | null }[];
+    escalabilidade: { algoritmo: string; complexidade: string; tamanho_pct: number; V: number; E: number; media_s: number; tempo_relativo: number; teoria_relativa: number }[];
+    parametros: { repeticoes: number };
+  };
+}
