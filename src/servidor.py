@@ -15,6 +15,11 @@ from .graphs.io import MapaInvalido, interpretar_mapa
 RAIZ = Path(__file__).resolve().parent.parent
 PASTAS = (("enunciado", RAIZ / "data" / "mapas"), ("grupo", RAIZ / "data" / "mapas_grupo"))
 SITE = RAIZ / "frontend" / "dist"
+PARTE2 = RAIZ / "out" / "parte2"
+RELATORIO_PARTE2 = RAIZ / "docs" / "parte2" / "relatorio_parte2.md"
+NOMES_DOS_MAPAS = {"m01": "Terreno", "m02": "Uma chave", "m03": "Três chaves", "m04": "Esteiras", "m05": "Bônus",
+                   "m06": "Fonte", "m07": "Impossível", "m08": "Grande"}
+NOTA = re.compile(r"\*\*([A-Z]\d) \S+ `([^`]+)` \(([^)]*)\)\.\*\*(.*?)(?=\n\s*\n|\Z)", re.S)
 ROTULO = re.compile(r"^\((\d+),(\d+)\)\|([a-z]+|-)\|\{([\d,]*)\}$")
 LIMITE_DO_MAPA = 200_000
 TIPOS = {".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml",
@@ -22,9 +27,29 @@ TIPOS = {".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".s
          ".json": "application/json"}
 
 
-def titulo_do_mapa(nome):
+def titulo_do_mapa(nome, origem="enunciado"):
     codigo, _, resto = nome.partition("_")
-    return f"{codigo} · {resto.replace('_', ' ')}" if resto else codigo
+    if origem != "enviado" and codigo in NOMES_DOS_MAPAS:
+        return NOMES_DOS_MAPAS[codigo]
+    texto = (resto if origem == "grupo" and resto else nome).replace("_", " ")
+    return texto[:1].upper() + texto[1:]
+
+
+# [IA] Claude Code (Claude Opus 5.5) – dados da Parte 2 para o frontend: relatório dos experimentos, figuras e as notas escritas pelo grupo
+def dados_da_parte2():
+    relatorio = json.loads((PARTE2 / "parte2_report.json").read_text(encoding="utf-8"))
+    notas = {}
+    if RELATORIO_PARTE2.is_file():
+        texto = RELATORIO_PARTE2.read_text(encoding="utf-8")
+        for codigo, arquivo, tipo, nota in NOTA.findall(texto):
+            notas[arquivo] = {"codigo": codigo, "tipo": tipo, "nota": " ".join(nota.split())}
+    figuras = []
+    for arquivo in sorted(PARTE2.glob("*.png")):
+        info = notas.get(arquivo.name, {"codigo": arquivo.stem.split("_")[0].upper(), "tipo": "", "nota": ""})
+        figuras.append({"arquivo": arquivo.name, **info})
+    ordem = {"E": 0, "X": 1, "A": 2}
+    figuras.sort(key=lambda f: (ordem.get(f["codigo"][:1], 3), f["codigo"]))
+    return {"relatorio": relatorio, "figuras": figuras}
 
 
 def ler_rotulo(rotulo):
@@ -50,7 +75,7 @@ def resumo_dos_mapas(mapas):
             grade = interpretar_mapa(arquivo.read_text(encoding="utf-8"), nome).grade
         except (MapaInvalido, OSError, UnicodeDecodeError):
             grade = []
-        lista.append({"id": nome, "titulo": titulo_do_mapa(nome), "origem": origem, "grade": grade})
+        lista.append({"id": nome, "titulo": titulo_do_mapa(nome, origem), "origem": origem, "grade": grade})
     return lista
 
 
@@ -167,7 +192,7 @@ def analisar(texto, nome, fonte_consumivel=False, origem="enviado"):
 
     return {
         "id": nome,
-        "titulo": titulo_do_mapa(nome),
+        "titulo": titulo_do_mapa(nome, origem),
         "origem": origem,
         "fonte_consumivel": fonte_consumivel,
         "grade": mapa.grade,
@@ -208,6 +233,15 @@ class Atendente(BaseHTTPRequestHandler):
         fonte = parse_qs(url.query).get("fonte", ["0"])[0] == "1"
         if url.path == "/api/mapas":
             return self.responder(200, resumo_dos_mapas(self.server.mapas))
+        if url.path == "/api/parte2":
+            if not (PARTE2 / "parte2_report.json").is_file():
+                return self.responder(404, {"erro": "falta o out/parte2/parte2_report.json (rode o --benchmark)"})
+            return self.responder(200, dados_da_parte2())
+        if url.path.startswith("/parte2/"):
+            arquivo = PARTE2 / Path(unquote(url.path)).name
+            if arquivo.suffix == ".png" and arquivo.is_file():
+                return self.responder(200, arquivo.read_bytes(), "image/png")
+            return self.responder(404, {"erro": "figura não encontrada"})
         if url.path.startswith("/api/mapas/"):
             nome = unquote(url.path.removeprefix("/api/mapas/"))
             for id_, origem, arquivo in self.server.mapas:
