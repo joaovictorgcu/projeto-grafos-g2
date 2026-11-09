@@ -1,5 +1,5 @@
-// [IA] Claude Code (Claude Opus 5.5) – Parte 1: abas do labirinto, barra lateral recolhível, estado compartilhado (mapa, algoritmo, passo) e envio do mapa surpresa
-import { PanelLeftClose, PanelLeftOpen, ServerCrash } from "lucide-react";
+// [IA] Claude Code (Claude Opus 5.5) – Parte 1: página de escolha do mapa, abas do labirinto, estado compartilhado (mapa, algoritmo, passo) e envio do mapa surpresa
+import { ArrowLeft, ServerCrash } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { analisarTexto, carregarMapa, listarMapas } from "./api";
@@ -8,7 +8,8 @@ import { Comparacao } from "./componentes/Comparacao";
 import { Controles } from "./componentes/Controles";
 import { Exploracao } from "./componentes/Exploracao";
 import { GrafoDeEstados } from "./componentes/GrafoDeEstados";
-import { AvisoDeErro, EscolhaDeAlgoritmo, EscolhaDeMapa, InterruptorDaFonte, Opcoes } from "./componentes/Lateral";
+import { EscolhaDeMapa } from "./componentes/EscolhaDeMapa";
+import { AvisoDeErro, Ferramentas } from "./componentes/Ferramentas";
 import { Legenda } from "./componentes/Legenda";
 import { Metricas } from "./componentes/Metricas";
 import { Painel } from "./componentes/Painel";
@@ -27,16 +28,7 @@ const ABAS: Aba<Vista>[] = [
 
 const parametros = new URLSearchParams(window.location.search);
 
-function lerPreferencia() {
-  try {
-    return window.localStorage.getItem("lateral-recolhida") === "1";
-  } catch {
-    return false;
-  }
-}
-
 export function Parte1({ aoInicio }: { aoInicio: () => void }) {
-  const [recolhida, setRecolhida] = useState(lerPreferencia);
   const [mapas, setMapas] = useState<ResumoDoMapa[]>([]);
   const [mapaId, setMapaId] = useState(parametros.get("mapa") ?? "");
   const [algoritmo, setAlgoritmo] = useState<Algoritmo>(
@@ -65,7 +57,7 @@ export function Parte1({ aoInicio }: { aoInicio: () => void }) {
     listarMapas()
       .then((lista) => {
         setMapas(lista);
-        setMapaId((atual) => (lista.some((m) => m.id === atual) ? atual : lista[0]?.id ?? ""));
+        setMapaId((atual) => (lista.some((m) => m.id === atual) ? atual : ""));
       })
       .catch(() => setErroServidor("Não consegui falar com o servidor Python."));
   }, []);
@@ -84,20 +76,14 @@ export function Parte1({ aoInicio }: { aoInicio: () => void }) {
   }, [mapaId, fonte, obterDados]);
 
   useEffect(() => {
-    try {
-      window.localStorage.setItem("lateral-recolhida", recolhida ? "1" : "0");
-    } catch {
-      return;
-    }
-  }, [recolhida]);
-
-  useEffect(() => {
     const p = new URLSearchParams();
     p.set("parte", "1");
-    if (mapaId) p.set("mapa", mapaId);
-    p.set("alg", algoritmo);
-    p.set("vista", vista);
-    if (fonte) p.set("fonte", "1");
+    if (mapaId) {
+      p.set("mapa", mapaId);
+      p.set("alg", algoritmo);
+      p.set("vista", vista);
+      if (fonte) p.set("fonte", "1");
+    }
     window.history.replaceState(null, "", `?${p}`);
   }, [mapaId, algoritmo, vista, fonte]);
 
@@ -154,44 +140,25 @@ export function Parte1({ aoInicio }: { aoInicio: () => void }) {
     <div className="app">
       <div className="fundo-animado" aria-hidden />
       <AvisoDeErro erro={erroEnvio} limparErro={() => setErroEnvio(null)} />
+      {!mapaId ? (
+        <>
+          <Topo parte="Parte 1 · Labirinto com chaves" aoInicio={aoInicio} />
+          {mapas.length > 0 && <EscolhaDeMapa mapas={mapas} aoEscolher={setMapaId} aoEnviar={enviarArquivo} enviando={enviando} />}
+        </>
+      ) : (
+      <>
       <Topo parte="Parte 1 · Labirinto com chaves" abas={ABAS} ativa={vista} aoTrocar={setVista} aoInicio={aoInicio} />
 
-      <div className={vista === "comparar" ? "corpo sem-lateral" : recolhida ? "corpo lateral-recolhida" : "corpo"}>
-        {vista !== "comparar" && recolhida && (
-          <aside className="lateral-fechada">
-            <button type="button" className="botao-icone" onClick={() => setRecolhida(false)} aria-label="Abrir a barra dos mapas"
-              title="Abrir a barra dos mapas">
-              <PanelLeftOpen size={18} />
-            </button>
-            <span className="lateral-fechada-mapa">{pronto?.titulo ?? ""}</span>
-          </aside>
-        )}
-        {vista !== "comparar" && !recolhida && (
-          <aside className="lateral">
-            <button type="button" className="recolher" onClick={() => setRecolhida(true)} aria-label="Recolher a barra dos mapas">
-              <PanelLeftClose size={16} aria-hidden /> recolher
-            </button>
-            <EscolhaDeMapa mapas={mapas} escolhido={mapaId} aoEscolher={setMapaId} aoEnviar={enviarArquivo} enviando={enviando} />
-            {vista !== "exploracao" && <EscolhaDeAlgoritmo dados={pronto} algoritmo={algoritmo} aoEscolher={setAlgoritmo} />}
-            {vista === "labirinto" && (
-              <Opcoes dados={pronto} fonte={fonte} setFonte={setFonte} camada={camada}
-                setCamada={setCamada} armadilhas={armadilhas} setArmadilhas={setArmadilhas} coresDasCamadas={camadas} />
-            )}
-            {(vista === "grafo" || vista === "exploracao") && (
-              <section className="secao-lateral">
-                <h2>Opções</h2>
-                <InterruptorDaFonte dados={pronto} fonte={fonte} setFonte={setFonte} />
-              </section>
-            )}
-          </aside>
-        )}
-
+      <div className="corpo sem-lateral">
         <main className="conteudo">
           <AnimatePresence mode="wait">
             <motion.div key={vista} className="vista" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.28, ease: "easeOut" }}>
               {vista === "comparar" ? (
-                mapas.length > 0 && <Comparacao mapas={mapas} mapaInicial={mapaId || mapas[0].id} obterDados={obterDados} />
+                <>
+                  <button type="button" className="voltar" onClick={() => setMapaId("")}><ArrowLeft size={16} aria-hidden /> Mapas</button>
+                  <Comparacao mapas={mapas} mapaInicial={mapaId} obterDados={obterDados} />
+                </>
               ) : !pronto || !resultado || !atual ? (
                 <div className="carregando"><span className="girando" />Montando o grafo de estados…</div>
               ) : (
@@ -199,23 +166,34 @@ export function Parte1({ aoInicio }: { aoInicio: () => void }) {
                   <>
                     <div className="titulo-vista">
                       <div>
+                        <button type="button" className="voltar" onClick={() => setMapaId("")}><ArrowLeft size={16} aria-hidden /> Mapas</button>
                         <h2>{pronto.titulo}</h2>
                         <span>{pronto.grade[0].length}×{pronto.grade.length} casas · {pronto.metricas.ordem} estados · os quatro
                           algoritmos partindo do S ao mesmo tempo</span>
                       </div>
                     </div>
+                    {pronto.grade.some((linha) => linha.includes("*")) && (
+                      <Ferramentas dados={pronto} algoritmo={algoritmo} setAlgoritmo={setAlgoritmo} mostrarAlgoritmo={false} fonte={fonte} setFonte={setFonte} />
+                    )}
                     <Exploracao dados={pronto} />
                   </>
                 ) : (
                 <>
                   <div className="titulo-vista">
                     <div>
+                      <button type="button" className="voltar" onClick={() => setMapaId("")}><ArrowLeft size={16} aria-hidden /> Mapas</button>
                       <h2>{pronto.titulo}</h2>
                       <span>{pronto.grade[0].length}×{pronto.grade.length} casas · {pronto.metricas.ordem} estados · camada atual:{" "}
                         <b style={{ color: corAtual }}>{nomeDaCamada(atual.estado.chaves)}</b></span>
                     </div>
                     <Status algoritmo={algoritmo} resultado={resultado} fonte={fonte} />
                   </div>
+                  {vista === "labirinto" ? (
+                    <Ferramentas dados={pronto} algoritmo={algoritmo} setAlgoritmo={setAlgoritmo} mostrarAlgoritmo fonte={fonte} setFonte={setFonte}
+                      armadilhas={armadilhas} setArmadilhas={setArmadilhas} camada={camada} setCamada={setCamada} camadas={camadas} />
+                  ) : (
+                    <Ferramentas dados={pronto} algoritmo={algoritmo} setAlgoritmo={setAlgoritmo} mostrarAlgoritmo fonte={fonte} setFonte={setFonte} />
+                  )}
 
                   {vista === "labirinto" ? (
                     <div className="grade-labirinto">
@@ -265,6 +243,8 @@ export function Parte1({ aoInicio }: { aoInicio: () => void }) {
           </AnimatePresence>
         </main>
       </div>
+      </>
+      )}
     </div>
   );
 }
