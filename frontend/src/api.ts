@@ -1,5 +1,5 @@
 // [IA] Claude Code (Claude Opus 5.5) – chamadas ao servidor Python, com cache para não recalcular o mesmo mapa
-import type { DadosDoMapa, ResumoDoMapa } from "./tipos";
+import type { DadosDaParte2, DadosDoMapa, ResumoDoMapa } from "./tipos";
 
 const guardados = new Map<string, Promise<DadosDoMapa>>();
 
@@ -30,4 +30,8 @@ export async function analisarTexto(texto: string, nome: string, fonte: boolean)
     body: texto,
   });
   return lerResposta(resposta);
+}
+
+export async function carregarParte2(): Promise<DadosDaParte2> {
+  return lerResposta(await fetch("/api/parte2"));
 }
