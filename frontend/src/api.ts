@@ -3,7 +3,10 @@ import type { DadosDaParte2, DadosDoMapa, ResumoDoMapa } from "./tipos";
 
 const guardados = new Map<string, Promise<DadosDoMapa>>();
 
+const SERVIDOR_ANTIGO = "O servidor que está rodando é de uma versão antiga. Feche-o com Ctrl+C no terminal e rode de novo: python -m src.servidor";
+
 async function lerResposta<T>(resposta: Response): Promise<T> {
+  if (!(resposta.headers.get("Content-Type") ?? "").includes("json")) throw new Error(SERVIDOR_ANTIGO);
   const corpo = await resposta.json().catch(() => ({ erro: `o servidor respondeu ${resposta.status}` }));
   if (!resposta.ok) throw new Error(corpo.erro ?? `o servidor respondeu ${resposta.status}`);
   return corpo as T;
