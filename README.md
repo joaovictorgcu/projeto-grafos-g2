@@ -96,7 +96,13 @@ python -m src.servidor --mapa ./data/mapas/m03_tres_chaves.txt
 python -m src.cli --mapa ./data/mapas/m03_tres_chaves.txt --interactive
 ```
 
-Abre em `http://127.0.0.1:8000`. Quatro abas:
+Abre em `http://127.0.0.1:8000`, numa tela inicial para escolher a Parte 1 ou a Parte 2.
+
+**Parte 2:** números do grafo e do recorte, os caminhos do Dijkstra, os casos do Bellman-Ford (com e
+sem ciclo negativo), BFS e DFS a partir de 3 clubes, desempenho e escalabilidade e as figuras de
+`out/parte2/` com as notas analíticas do `docs/parte2/relatorio_parte2.md`.
+
+**Parte 1**, em quatro abas (a barra dos mapas, à esquerda, pode ser recolhida):
 
 - **Labirinto:** escolha do mapa (ou envio de um `.txt`, como o mapa surpresa) e do algoritmo;
   animação passo a passo com posição, chaves, bônus consumidos e custo acumulado; camada em

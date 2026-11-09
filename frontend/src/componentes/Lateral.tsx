@@ -27,7 +27,7 @@ export function EscolhaDeMapa({ mapas, escolhido, aoEscolher, aoEnviar, enviando
             <Miniatura grade={m.grade} />
             <span className="cartao-mapa-texto">
               <span className="cartao-mapa-titulo">{m.titulo}</span>
-              <span className={`selo selo-${m.origem}`}>{NOME_DA_ORIGEM[m.origem]}</span>
+              {m.origem !== "enunciado" && <span className={`selo selo-${m.origem}`}>{NOME_DA_ORIGEM[m.origem]}</span>}
             </span>
             {m.id === escolhido && <motion.span layoutId="mapa-ativo" className="mapa-ativo-borda" />}
           </motion.button>

@@ -18,17 +18,17 @@ interface Lado {
 const COR = { A: "#2563eb", B: "#ea580c" };
 
 const EXEMPLOS: { titulo: string; a: [string, Algoritmo, boolean]; b: [string, Algoritmo, boolean] }[] = [
-  { titulo: "m01 · menos passos × menor custo", a: ["m01", "BFS", false], b: ["m01", "DIJKSTRA", false] },
-  { titulo: "m03 · três chaves", a: ["m03", "BFS", false], b: ["m03", "DIJKSTRA", false] },
-  { titulo: "m05 · o desvio pelos bônus", a: ["m05", "BFS", false], b: ["m05", "BELLMAN_FORD", false] },
-  { titulo: "m05 · peso negativo", a: ["m05", "DIJKSTRA", false], b: ["m05", "BELLMAN_FORD", false] },
-  { titulo: "m06 · fonte infinita × consumível", a: ["m06", "BELLMAN_FORD", false], b: ["m06", "BELLMAN_FORD", true] },
-  { titulo: "m02 × m07 · com e sem solução", a: ["m02", "BFS", false], b: ["m07", "BFS", false] },
-  { titulo: "m08 · mapa grande", a: ["m08", "BFS", false], b: ["m08", "DIJKSTRA", false] },
+  { titulo: "Terreno: menos passos × menor custo", a: ["m01", "BFS", false], b: ["m01", "DIJKSTRA", false] },
+  { titulo: "Três chaves", a: ["m03", "BFS", false], b: ["m03", "DIJKSTRA", false] },
+  { titulo: "Bônus: o desvio pelos bônus", a: ["m05", "BFS", false], b: ["m05", "BELLMAN_FORD", false] },
+  { titulo: "Bônus: peso negativo", a: ["m05", "DIJKSTRA", false], b: ["m05", "BELLMAN_FORD", false] },
+  { titulo: "Fonte: infinita × consumível", a: ["m06", "BELLMAN_FORD", false], b: ["m06", "BELLMAN_FORD", true] },
+  { titulo: "Uma chave × Impossível", a: ["m02", "BFS", false], b: ["m07", "BFS", false] },
+  { titulo: "Grande", a: ["m08", "BFS", false], b: ["m08", "DIJKSTRA", false] },
 ];
 
 function descrever(lado: Lado, mapas: ResumoDoMapa[]) {
-  const mapa = mapas.find((m) => m.id === lado.mapa)?.titulo.split(" · ")[0] ?? lado.mapa;
+  const mapa = mapas.find((m) => m.id === lado.mapa)?.titulo ?? lado.mapa;
   return `${NOME_DO_ALGORITMO[lado.algoritmo]}${lado.fonte ? " (fonte consumível)" : ""} no ${mapa}`;
 }
 
@@ -172,8 +172,8 @@ export function Comparacao({ mapas, mapaInicial, obterDados }: {
               <table className="tabela-algoritmos">
                 <thead><tr><th scope="col">lado</th><th scope="col">passos</th><th scope="col">custo</th></tr></thead>
                 <tbody>
-                  <tr><th scope="row" style={{ color: COR.A }}>A</th><td className="numero">{resA.passos ?? "—"}</td><td className="numero">{resA.custo ?? "—"}</td></tr>
-                  <tr><th scope="row" style={{ color: COR.B }}>B</th><td className="numero">{resB.passos ?? "—"}</td><td className="numero">{resB.custo ?? "—"}</td></tr>
+                  <tr><th scope="row" style={{ color: COR.A }}>A</th><td className="numero">{resA.passos ?? "-"}</td><td className="numero">{resA.custo ?? "-"}</td></tr>
+                  <tr><th scope="row" style={{ color: COR.B }}>B</th><td className="numero">{resB.passos ?? "-"}</td><td className="numero">{resB.custo ?? "-"}</td></tr>
                 </tbody>
               </table>
             </motion.div>

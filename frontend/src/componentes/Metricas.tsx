@@ -44,8 +44,8 @@ export function Metricas({ dados, algoritmo, aoEscolher }: {
                 <tr key={a} className={a === algoritmo ? "linha-ativa" : ""} onClick={() => aoEscolher(a)}>
                   <th scope="row">{NOME_DO_ALGORITMO[a]}</th>
                   <td><span className={`etiqueta status-${r.status.toLowerCase()}`}>{NOME_DO_STATUS[r.status]}</span></td>
-                  <td className="numero">{r.passos ?? "—"}</td>
-                  <td className="numero">{r.custo ?? "—"}</td>
+                  <td className="numero">{r.passos ?? "-"}</td>
+                  <td className="numero">{r.custo ?? "-"}</td>
                 </tr>
               );
             })}
