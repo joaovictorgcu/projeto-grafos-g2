@@ -10,15 +10,19 @@ MAPAS_GRUPO = ROOT / "data" / "mapas_grupo"
 OUT = ROOT / "out" / "parte1"
 
 
-def test_mapa_guilherme_tem_tres_chaves_esteiras_e_bonus():
+def test_mapa_chaves_tem_tres_chaves_esteiras_e_bonus():
     mapa = ler_mapa(MAPAS_GRUPO / "mapa_chaves.txt")
+    assert mapa.nome == "mapa_chaves"
+    assert (mapa.altura, mapa.largura) == (7, 15)
     assert len(mapa.tipos_de_chave) >= 3
     assert mapa.esteiras
     assert mapa.bonus
 
 
-def test_mapa_guilherme_tem_pelo_menos_vinte_porcento_de_armadilhas():
+def test_mapa_armadilhas_tem_pelo_menos_vinte_porcento_de_armadilhas():
     mapa = ler_mapa(MAPAS_GRUPO / "mapa_armadilhas.txt")
+    assert mapa.nome == "mapa_armadilhas"
+    assert (mapa.altura, mapa.largura) == (5, 13)
     grafo = construir_estados(mapa).grafo
     estados = [no for no in grafo.nos() if no != ALVO]
     armadilhas = estados_armadilha(grafo, ALVO)
@@ -38,4 +42,7 @@ def test_artefatos_obrigatorios_do_p3_existem():
         "armadilhas_m07.csv",
     ]
     assert all((OUT / nome).exists() for nome in obrigatorios)
-    assert json.loads((OUT / "metricas_global.json").read_text(encoding="utf-8"))
+    metricas = json.loads((OUT / "metricas_global.json").read_text(encoding="utf-8"))
+    assert {"mapa_chaves", "mapa_armadilhas"} <= metricas.keys()
+    assert (OUT / "graus_mapa_chaves.csv").exists()
+    assert (OUT / "graus_mapa_armadilhas.csv").exists()

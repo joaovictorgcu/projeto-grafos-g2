@@ -23,9 +23,9 @@ m07,BELLMAN_FORD,SEM_SOLUCAO,,
 m08,BFS,OK,392,524
 m08,DIJKSTRA,OK,396,482
 m08,BELLMAN_FORD,OK,396,482
-guilherme_03_chaves,BFS,OK,12,12
-guilherme_03_chaves,DIJKSTRA,ERRO,,"Dijkstra não aceita pesos negativos: arco (4,8)|a|{} -> (5,8)|a|{0} tem peso -4. Use Bellman-Ford."
-guilherme_03_chaves,BELLMAN_FORD,OK,12,12
-guilherme_armadilhas,BFS,OK,5,5
-guilherme_armadilhas,DIJKSTRA,OK,5,5
-guilherme_armadilhas,BELLMAN_FORD,OK,5,5
+mapa_armadilhas,BFS,OK,5,5
+mapa_armadilhas,DIJKSTRA,OK,5,5
+mapa_armadilhas,BELLMAN_FORD,OK,5,5
+mapa_chaves,BFS,OK,12,12
+mapa_chaves,DIJKSTRA,ERRO,,"Dijkstra não aceita pesos negativos: arco (4,8)|ac|{} -> (5,8)|ac|{0} tem peso -4. Use Bellman-Ford."
+mapa_chaves,BELLMAN_FORD,OK,12,12

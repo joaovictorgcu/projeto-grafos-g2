@@ -156,7 +156,7 @@ Isso evita que o P3 altere a responsabilidade do P2 e mantém todos os resultado
 
 Foi criado o arquivo:
 
-[data/mapas_grupo/guilherme_03_chaves.txt](../data/mapas_grupo/guilherme_03_chaves.txt)
+[data/mapas_grupo/mapa_chaves.txt](../data/mapas_grupo/mapa_chaves.txt)
 
 O mapa contém:
 
@@ -176,7 +176,7 @@ O resultado da validação foi:
 - chaves: 3;
 - esteiras: 3;
 - bônus: 1;
-- estados alcançáveis: 1.000;
+- estados alcançáveis: 976;
 - caminho BFS: 12 passos;
 - caminho de Bellman-Ford: custo 12.
 
@@ -188,7 +188,7 @@ O número alto de estados acontece porque as combinações de chaves e o bônus 
 
 Foi criado o arquivo:
 
-[data/mapas_grupo/guilherme_armadilhas.txt](../data/mapas_grupo/guilherme_armadilhas.txt)
+[data/mapas_grupo/mapa_armadilhas.txt](../data/mapas_grupo/mapa_armadilhas.txt)
 
 Nesse mapa, uma esteira `v` direciona o jogador para uma região inferior que não consegue retornar à saída.
 
@@ -202,7 +202,7 @@ A validação encontrou:
 
 O requisito mínimo era 20%. Portanto, o mapa supera o requisito com margem.
 
-A primeira versão do mapa não atendia ao requisito porque a ramificação inferior ainda conseguia retornar à saída. Ela foi corrigida usando uma esteira unidirecional. Depois da correção, a proporção de armadilhas foi recalculada.
+A esteira unidirecional foi escolhida para impedir o retorno da ramificação inferior à saída. Com essa estrutura, a proporção de armadilhas atende ao requisito com margem.
 
 ---
 
@@ -312,8 +312,8 @@ Essa análise mostra em que momentos a coleta de uma chave muda o estado do joga
 A função `graus` gera um CSV por mapa:
 
 - `graus_m01.csv` até `graus_m08.csv`;
-- `graus_guilherme_03_chaves.csv`;
-- `graus_guilherme_armadilhas.csv`.
+- `graus_mapa_chaves.csv`;
+- `graus_mapa_armadilhas.csv`.
 
 Cada linha contém:
 

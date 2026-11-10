@@ -198,35 +198,8 @@
     },
     "ocupacao_G_est": 0.156062874251497
   },
-  "guilherme_03_chaves": {
-    "arquivo": "data/mapas_grupo/guilherme_03_chaves.txt",
-    "chaves": [
-      "a",
-      "b",
-      "c"
-    ],
-    "bonus": 1,
-    "livres": 65,
-    "teto_teorico": 1040,
-    "G_pos_portas_chao": {
-      "ordem": 65,
-      "tamanho": 213,
-      "densidade": 0.051201923076923075
-    },
-    "G_pos_portas_parede": {
-      "ordem": 64,
-      "tamanho": 207,
-      "densidade": 0.05133928571428571
-    },
-    "G_est": {
-      "ordem": 1000,
-      "tamanho": 3256,
-      "densidade": 0.003259259259259259
-    },
-    "ocupacao_G_est": 0.9615384615384616
-  },
-  "guilherme_armadilhas": {
-    "arquivo": "data/mapas_grupo/guilherme_armadilhas.txt",
+  "mapa_armadilhas": {
+    "arquivo": "data/mapas_grupo/mapa_armadilhas.txt",
     "chaves": [],
     "bonus": 0,
     "livres": 23,
@@ -247,5 +220,32 @@
       "densidade": 0.10457516339869281
     },
     "ocupacao_G_est": 0.782608695652174
+  },
+  "mapa_chaves": {
+    "arquivo": "data/mapas_grupo/mapa_chaves.txt",
+    "chaves": [
+      "a",
+      "b",
+      "c"
+    ],
+    "bonus": 1,
+    "livres": 64,
+    "teto_teorico": 1024,
+    "G_pos_portas_chao": {
+      "ordem": 64,
+      "tamanho": 208,
+      "densidade": 0.051587301587301584
+    },
+    "G_pos_portas_parede": {
+      "ordem": 63,
+      "tamanho": 203,
+      "densidade": 0.05197132616487455
+    },
+    "G_est": {
+      "ordem": 976,
+      "tamanho": 3176,
+      "densidade": 0.003337536780159731
+    },
+    "ocupacao_G_est": 0.953125
   }
 }

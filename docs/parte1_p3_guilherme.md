@@ -18,11 +18,11 @@ O m07 possui uma porta `A` que bloqueia o único corredor entre o início e a sa
 
 ## Mapas do grupo e gabarito
 
-### `guilherme_03_chaves.txt`
+### `mapa_chaves.txt`
 
-Mapa com as chaves `a`, `b` e `c`, uma porta `A`, três casas de esteira `>>>` e um bônus `+`. O estado inicial é `(1,1)|-|{}`. A saída é alcançada; o pipeline registra 1.000 estados alcançáveis, 12 passos no caminho BFS e custo 12 no caminho de Bellman-Ford. A presença de três chaves e de um bônus faz o espaço potencial ser maior que o conjunto explorado, evidenciando que o grafo de estados é construído por alcance.
+Mapa com as chaves `a`, `b` e `c`, uma porta `A`, três casas de esteira `>>>` e um bônus `+`. O estado inicial é `(1,1)|-|{}`. A saída é alcançada; o pipeline registra 976 estados alcançáveis, 12 passos no caminho BFS e custo 12 no caminho de Bellman-Ford. A presença de três chaves e de um bônus faz o espaço potencial ser maior que o conjunto explorado, evidenciando que o grafo de estados é construído por alcance.
 
-### `guilherme_armadilhas.txt`
+### `mapa_armadilhas.txt`
 
 A esteira `v` conduz a uma ramificação inferior que não retorna à saída. O mapa possui 18 estados alcançáveis e 12 estados-armadilha, isto é, 66,7% dos estados, acima do mínimo de 20%. O estado `(2,5)|-|{}` é a entrada da ramificação e os estados seguintes permanecem sem caminho até `ALVO`.
 

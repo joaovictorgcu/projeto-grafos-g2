@@ -22,7 +22,7 @@ O nó virtual `ALVO` representa o término da partida depois da entrada em `G`.
 
 ### 2.1 Mapa com três chaves, esteiras e bônus
 
-Arquivo: `data/mapas_grupo/guilherme_03_chaves.txt`.
+Arquivo: `data/mapas_grupo/mapa_chaves.txt`.
 
 O mapa contém as chaves `a`, `b` e `c`, a porta `A`, três casas de esteira `>>>` e um bônus `+`. O caminho até a saída é possível. Como a posição pode ser visitada com diferentes conjuntos de chaves e de bônus consumidos, uma mesma casa física pode originar vários estados distintos.
 
@@ -33,10 +33,10 @@ O resultado calculado foi:
 | Chaves | 3 (`a`, `b`, `c`) |
 | Esteiras | 3 |
 | Bônus | 1 |
-| Estados alcançáveis | 1.000 |
-| Arcos do grafo de estados | 3.256 |
-| Teto teórico | 1.040 |
-| Ocupação do teto | 96,15% |
+| Estados alcançáveis | 976 |
+| Arcos do grafo de estados | 3.176 |
+| Teto teórico | 1.024 |
+| Ocupação do teto | 95,31% |
 | Caminho BFS | 12 passos, custo 12 |
 | Bellman-Ford | 12 passos, custo 12 |
 
@@ -52,7 +52,7 @@ Dijkstra recusa esse mapa porque o bônus produz um arco de peso negativo. Isso 
 
 ### 2.2 Mapa com estados-armadilha
 
-Arquivo: `data/mapas_grupo/guilherme_armadilhas.txt`.
+Arquivo: `data/mapas_grupo/mapa_armadilhas.txt`.
 
 Nesse mapa, a esteira `v` leva o jogador a uma região inferior sem caminho de retorno até a saída. A região é alcançável a partir de `S`, mas seus estados não conseguem chegar a `ALVO`.
 
