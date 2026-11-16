@@ -1,6 +1,12 @@
 // [IA] Claude Code (Claude Opus 5.5) – ponto de entrada do frontend: fontes locais, estilos e respeito ao "reduzir movimento"
-import "@fontsource-variable/inter";
-import "@fontsource-variable/space-grotesk";
+import "@fontsource/barlow/400.css";
+import "@fontsource/barlow/500.css";
+import "@fontsource/barlow/600.css";
+import "@fontsource/barlow/700.css";
+import "@fontsource/barlow-condensed/500.css";
+import "@fontsource/barlow-condensed/600.css";
+import "@fontsource/barlow-condensed/700.css";
+import "@fontsource/barlow-condensed/800.css";
 import "@fontsource/jetbrains-mono/400.css";
 import "@fontsource/jetbrains-mono/600.css";
 import { MotionConfig } from "motion/react";
