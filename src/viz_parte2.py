@@ -157,7 +157,7 @@ def graus(d, saida):
     ax.set_xlabel("grau k (escala log)")
     ax.set_ylabel("% dos clubes com grau ≥ k (escala log)")
     ax.set_title(f"Graus da rede de transferências: poucos clubes concentram as conexões\n"
-                 f"{br(len(nos))} clubes · {br(len(a))} arcos")
+                 f"{br(len(nos))} clubes, {br(len(a))} arcos")
     ax.legend(loc="lower left")
     rodape(fig, "Grau = número de clubes distintos (arcos), não de transferências. Clubes com grau 0 contam no "
                 "denominador. Fonte: Transfermarkt Datasets, recorte do grupo.")
@@ -179,7 +179,7 @@ def pesos(t, saida):
         ax.set_xscale("symlog", linthresh=linthresh, linscale=0.5)
         ax.axvline(0, color=TEXTO, lw=1)
         neg = (g["peso"] < 0).mean()
-        ax.set_title(f"{rotulo} · {br(len(g))} transferências · {pct(neg)} negativas",
+        ax.set_title(f"{rotulo}: {br(len(g))} transferências, {pct(neg)} negativas",
                      fontsize=10, color=TEXTO_2)
         ax.set_ylabel("transferências")
         ax.yaxis.set_major_formatter(FuncFormatter(lambda v, _: br(v)))
@@ -421,7 +421,7 @@ def tempos(relatorio, saida):
     base = ms[0]
     for yi, l in enumerate(linhas):
         razao = ms[yi] / base
-        texto = tempo_ms(ms[yi]) if yi == 0 else f"{tempo_ms(ms[yi])} · {br(razao, 1 if razao < 100 else 0)}× a {NOMES_ALG[linhas[0]['algoritmo']]}"
+        texto = tempo_ms(ms[yi]) if yi == 0 else f"{tempo_ms(ms[yi])}, {br(razao, 1 if razao < 100 else 0)}× a {NOMES_ALG[linhas[0]['algoritmo']]}"
         ax.text(ms[yi] * 1.7 + desvio[yi], yi, texto, va="center", fontsize=9, color=TEXTO)
     ax.set_xticks([1, 10, 100, 1e3, 1e4, 1e5], ["1 ms", "10 ms", "100 ms", "1 s", "10 s", "100 s"])
     ax.xaxis.set_minor_formatter(NullFormatter())
@@ -452,7 +452,7 @@ def escalabilidade(relatorio, saida):
                 label="tempo medido")
         ax.plot(x, [l["teoria_relativa"] for l in s], "--", color=TEXTO_2, lw=1.4, label=s[0]["complexidade"])
         ax.set_yscale("log")
-        ax.set_title(f"{NOMES_ALG[alg]} · {s[0]['complexidade']}", fontsize=10.5)
+        ax.set_title(f"{NOMES_ALG[alg]}: {s[0]['complexidade']}", fontsize=10.5)
         ax.yaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:g}".replace(".", ",")))
         ax.legend(loc="lower right", fontsize=8.5)
         ax.set_xticks(x, [f"{p}%\n|V|={br(l['V'])}\n|E|={br(l['E'])}" for p, l in zip(x, s)], fontsize=7.5)
@@ -473,7 +473,7 @@ def camadas_bfs(relatorio, saida):
     resumos = []
     for b, cor in zip(relatorio["bfs"], CORES):
         ax.plot(range(len(b["camadas"])), b["camadas"], "o-", color=cor, lw=2, ms=6,
-                label=f"{b['nome']} · {br(b['alcancados'])} alcançados")
+                label=f"{b['nome']}: {br(b['alcancados'])} alcançados")
         resumos.append(resumo_camadas(b["camadas"]))
     meio = [r[0] for r in resumos]
     ate5 = [r[1] for r in resumos]
@@ -482,8 +482,8 @@ def camadas_bfs(relatorio, saida):
     ax.set_xlabel("nível da BFS (número de transferências desde a fonte)")
     ax.set_ylabel("clubes descobertos no nível")
     ax.set_title("BFS a partir de três clubes: a rede é um 'mundo pequeno'\n"
-                 f"{pct(min(meio))}–{pct(max(meio))} dos clubes alcançáveis estão a 2–4 transferências da fonte; "
-                 f"{pct(min(ate5))}–{pct(max(ate5))} a até 5")
+                 f"{pct(min(meio))} a {pct(max(meio))} dos clubes alcançáveis estão a 2 a 4 transferências da fonte; "
+                 f"{pct(min(ate5))} a {pct(max(ate5))} a até 5")
     ax.legend()
     rodape(fig, "Os três chegam aos mesmos clubes: a fonte muda a forma das camadas, não o conjunto alcançável.")
     return salvar(fig, Path(saida) / "a3_camadas_bfs.png")
@@ -506,7 +506,7 @@ def caminhos(relatorio, saida):
         ax.text(p["custo_original"] * 1.02, yi, f"{milhoes(p['custo_original'])}", ha="right", va="center",
                 fontsize=9, color=TEXTO)
         ax.text(0.02 * max(abs(c) for c in custos), yi,
-                f"{' → '.join(p['caminho'])}   ·   Dijkstra: {p['arcos']} arcos · BFS: {p['passos_bfs']} passos",
+                f"{' → '.join(p['caminho'])}   |   Dijkstra: {p['arcos']} arcos, BFS: {p['passos_bfs']} passos",
                 ha="left", va="center", fontsize=8.5, color=TEXTO_2)
     ax.set_yticks(y, [f"{p['origem']} → {p['destino']}" for p in pares], fontsize=9)
     # [IA] Claude Code (Claude Opus 5.5) – eixo termina logo após o zero: a rota fica na margem direita, que o rodapé já ocupa

@@ -12,7 +12,7 @@ ALGORITMOS = ("BFS", "DFS", "DIJKSTRA", "BELLMAN_FORD")
 
 
 def montar_parser():
-    p = argparse.ArgumentParser(prog="python -m src.cli", description="Projeto Final de Grafos — Grupo 2")
+    p = argparse.ArgumentParser(prog="python -m src.cli", description="Projeto Final de Grafos, Grupo 2")
     entrada = p.add_mutually_exclusive_group(required=True)
     entrada.add_argument("--mapa", help="Parte 1: arquivo .txt do labirinto")
     entrada.add_argument("--dataset", help="Parte 2: pasta com o snapshot do Transfermarkt")

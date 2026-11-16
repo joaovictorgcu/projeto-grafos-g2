@@ -3,7 +3,7 @@
 Por enquanto: o percurso sobre a grade do mapa, com a cor mudando a cada chave
 coletada (uma cor por camada = conjunto de chaves). Recebe o percurso como lista
 de rótulos no formato do enunciado, "(3,5)|ab|{0,2}", que é o que sai do grafo
-de estados — então não depende de como o caminho foi calculado.
+de estados, então não depende de como o caminho foi calculado.
 
 Também desenha, a partir do grafo de estados (src/graphs/estados.py), a árvore
 BFS por níveis e o heatmap de multiplicidade das casas.
@@ -156,7 +156,7 @@ def desenhar_percurso(linhas, rotulos, saida, nome_mapa="", algoritmo="menor cus
     passos = len(estados) - 1
     custo = custo_do_percurso(linhas, estados)
     titulo = f"{nome_mapa}: percurso de {algoritmo}" if nome_mapa else f"Percurso de {algoritmo}"
-    ax.set_title(f"{titulo}\n{passos} passos · custo {custo} · a cor muda a cada chave coletada",
+    ax.set_title(f"{titulo}\n{passos} passos, custo {custo}, a cor muda a cada chave coletada",
                  fontsize=12, color=COR_TEXTO, loc="left")
     ax.set_xlabel("coluna", color=COR_TEXTO_2)
     ax.set_ylabel("linha", color=COR_TEXTO_2)
@@ -170,8 +170,8 @@ def desenhar_percurso(linhas, rotulos, saida, nome_mapa="", algoritmo="menor cus
         lado.set_visible(False)
 
     legenda = [Line2D([0], [0], color=cor[k], lw=3,
-                      label=f"chaves {{{','.join(k)}}} · {passos_por_camada[k]} passos" if k
-                      else f"sem chaves · {passos_por_camada[k]} passos")
+                      label=f"chaves {{{','.join(k)}}}: {passos_por_camada[k]} passos" if k
+                      else f"sem chaves: {passos_por_camada[k]} passos")
                for k in camadas]
     legenda += [
         Line2D([0], [0], marker="o", ls="", color=COR_TEXTO_2, ms=8, label="início"),
@@ -236,7 +236,7 @@ def desenhar_camadas(linhas, grafo, saida, nome_mapa=""):
         _desenhar_grade(ax, linhas, dy=dy[k], fonte=9, alpha=0.45)
         n = sum(1 for _, kk, _ in estados.values() if kk == k)
         nome = f"chaves {{{','.join(k)}}}" if k else "sem chaves"
-        ax.text(-0.7, dy[k] - 0.75, f"camada {k or '-'} ({nome}) · {n} estados",
+        ax.text(-0.7, dy[k] - 0.75, f"camada {k or '-'} ({nome}): {n} estados",
                 ha="left", va="bottom", fontsize=10, color=COR_TEXTO, fontweight="bold")
 
     # Arcos. Ida e volta entre o mesmo par vira um traço só; mão única ganha seta.
@@ -282,8 +282,8 @@ def desenhar_camadas(linhas, grafo, saida, nome_mapa=""):
                 color=COR_TEXTO, fontweight="bold")
 
     titulo = f"{nome_mapa}: grafo de estados em camadas" if nome_mapa else "Grafo de estados em camadas"
-    ax.set_title(f"{titulo}\n{len(estados)} estados + ALVO · {n_dentro} arcos dentro das camadas · "
-                 f"{n_troca} mudando de camada · {n_alvo} até o ALVO",
+    ax.set_title(f"{titulo}\n{len(estados)} estados + ALVO, {n_dentro} arcos dentro das camadas, "
+                 f"{n_troca} mudando de camada, {n_alvo} até o ALVO",
                  fontsize=12, color=COR_TEXTO, loc="left")
     ax.set_xlabel("coluna da casa no mapa", color=COR_TEXTO_2)
     ax.set_ylabel("linha da casa no mapa (uma faixa por camada)", color=COR_TEXTO_2)
@@ -392,9 +392,9 @@ def desenhar_arvore_bfs(grafo, inicial, saida, nome_mapa=""):
 
     passos = dist["ALVO"] - 1 if "ALVO" in dist else None
     titulo = f"{nome_mapa}: árvore BFS de estados" if nome_mapa else "Árvore BFS de estados"
-    sub = (f"{len(dist) - ('ALVO' in dist)} estados em {niveis} níveis · "
+    sub = (f"{len(dist) - ('ALVO' in dist)} estados em {niveis} níveis, "
            + (f"menor número de passos até G: {passos}" if passos is not None else "G inalcançável")
-           + f" · {n_troca} arco(s) da árvore mudam de camada")
+           + f", {n_troca} arco(s) da árvore mudam de camada")
     ax.set_title(f"{titulo}\n{sub}", fontsize=12, color=COR_TEXTO, loc="left")
     ax.set_ylabel("nível BFS (passos desde o início S)", color=COR_TEXTO_2)
     ax.set_xlabel("ramos da árvore (filhos na ordem de descoberta N, L, S, O)", color=COR_TEXTO_2)
@@ -491,7 +491,7 @@ def desenhar_multiplicidade(linhas, grafo, saida, nome_mapa=""):
                         color=COR_CHAO if escura else COR_TEXTO, zorder=3)
 
     titulo = f"{nome_mapa}: multiplicidade das casas" if nome_mapa else "Multiplicidade das casas"
-    ax.set_title(f"{titulo}\nquantos estados alcançáveis (combinações de chaves e bônus) caem em cada casa · "
+    ax.set_title(f"{titulo}\nquantos estados alcançáveis (combinações de chaves e bônus) caem em cada casa, "
                  f"máxima {maximo}, em {len(no_maximo)} casas",
                  fontsize=12, color=COR_TEXTO, loc="left")
     ax.set_xlabel("coluna", color=COR_TEXTO_2)
@@ -508,12 +508,12 @@ def desenhar_multiplicidade(linhas, grafo, saida, nome_mapa=""):
 
     contagem = {m: sum(1 for v in mult.values() if v == m) for m in range(1, maximo + 1)}
     legenda = [Patch(facecolor=passos[m - 1], edgecolor="#bdbcb7", linewidth=0.5,
-                     label=f"{m} estado{'s' if m > 1 else ''} · {contagem[m]} casas")
+                     label=f"{m} estado{'s' if m > 1 else ''}: {contagem[m]} casas")
                for m in range(1, maximo + 1)]
     legenda.append(Patch(facecolor=COR_PAREDE_CLARA, label="parede"))
     if sem_estado:
         legenda.append(Patch(facecolor=COR_CHAO, edgecolor="#bdbcb7", hatch="////",
-                             label=f"livre, nunca alcançada · {sem_estado} casas"))
+                             label=f"livre, nunca alcançada: {sem_estado} casas"))
     ax.legend(handles=legenda, loc="upper center", bbox_to_anchor=(0.5, -0.06), ncol=min(4, len(legenda)),
               frameon=False, fontsize=9, labelcolor=COR_TEXTO, title="multiplicidade (estados na casa)",
               title_fontsize=9)

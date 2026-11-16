@@ -281,7 +281,7 @@ def escalabilidade(linhas: list) -> list:
         "BFS": ("O(V + E)", lambda v, e: v + e),
         "DFS": ("O(V + E)", lambda v, e: v + e),
         "DIJKSTRA": ("O((V + E) log V)", lambda v, e: (v + e) * math.log2(max(v, 2))),
-        "BELLMAN_FORD": ("O(V · E)", lambda v, e: v * e),
+        "BELLMAN_FORD": ("O(V × E)", lambda v, e: v * e),
     }
     saida = []
     for alg, (notacao, f) in teoria.items():

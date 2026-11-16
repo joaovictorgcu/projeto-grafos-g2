@@ -1083,7 +1083,7 @@
     },
     {
       "algoritmo": "BELLMAN_FORD",
-      "complexidade": "O(V · E)",
+      "complexidade": "O(V × E)",
       "tamanho_pct": 10,
       "V": 214,
       "E": 314,
@@ -1094,7 +1094,7 @@
     },
     {
       "algoritmo": "BELLMAN_FORD",
-      "complexidade": "O(V · E)",
+      "complexidade": "O(V × E)",
       "tamanho_pct": 25,
       "V": 743,
       "E": 1965,
@@ -1105,7 +1105,7 @@
     },
     {
       "algoritmo": "BELLMAN_FORD",
-      "complexidade": "O(V · E)",
+      "complexidade": "O(V × E)",
       "tamanho_pct": 50,
       "V": 1900,
       "E": 7695,
@@ -1116,7 +1116,7 @@
     },
     {
       "algoritmo": "BELLMAN_FORD",
-      "complexidade": "O(V · E)",
+      "complexidade": "O(V × E)",
       "tamanho_pct": 75,
       "V": 3276,
       "E": 17966,
@@ -1127,7 +1127,7 @@
     },
     {
       "algoritmo": "BELLMAN_FORD",
-      "complexidade": "O(V · E)",
+      "complexidade": "O(V × E)",
       "tamanho_pct": 100,
       "V": 4739,
       "E": 31626,

@@ -1,4 +1,4 @@
-# Parte 1 — Notas analíticas das visualizações
+# Parte 1: notas analíticas das visualizações
 
 > [IA] Claude Code (Claude Opus 5.5) – "O que mostra" e rascunho de "Insight" e "Por que esse gráfico";
 > revisado por Caio.

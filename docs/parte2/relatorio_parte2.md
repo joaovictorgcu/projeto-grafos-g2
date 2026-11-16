@@ -1,4 +1,4 @@
-# Parte 2 — Rede de transferências entre clubes
+# Parte 2: Rede de transferências entre clubes
 
 Números reproduzíveis com os comandos do README; todos saem de `out/parte2/parte2_report.json`,
 `out/parte2/eda_resumo.json` e `out/parte2/ficha_dataset.json`.
@@ -69,16 +69,16 @@ data. Os 8 self-loops saem do grafo. A posição desconhecida vem gravada como o
 | valor pago | 35,12% |
 | os dois ao mesmo tempo | 23,78% |
 
-- **Valor de mercado — MAR em relação à temporada.** A ausência depende de uma variável observada:
+- **Valor de mercado: MAR em relação à temporada.** A ausência depende de uma variável observada:
   é 100% até 2003, cai de 97% (2004) para 16% (2025) (`e3_faltantes.png`). O Transfermarkt só
   passou a registrar valor de mercado de forma sistemática a partir de meados dos anos 2000.
-- **Valor pago — parte MAR, parte MNAR.** Também falta menos nas temporadas recentes, mas cai bem
-  menos que o valor de mercado: 55% das transferências de 2000–2009, 39% em 2010–2019 e 30% a
+- **Valor pago: parte MAR, parte MNAR.** Também falta menos nas temporadas recentes, mas cai bem
+  menos que o valor de mercado: 55% das transferências de 2000 a 2009, 39% em 2010 a 2019 e 30% a
   partir de 2020 (35% no total). O valor de mercado mediano das transferências sem valor pago
   (250 mil) é metade do das com valor pago (500 mil): falta mais em transferências antigas e de
   jogadores baratos, o que é observável (MAR). Mas uma parte é "valor não divulgado", que depende
   do próprio valor ausente (MNAR).
-- **Liga do destino — ausência estrutural.** 26,85% das transferências usadas vão para clubes fora
+- **Liga do destino: ausência estrutural.** 26,85% das transferências usadas vão para clubes fora
   das ligas que o dataset acompanha. Não é erro: virou a categoria "fora das ligas cobertas".
 - Empresário (32,79%) é tratado como categoria ("sem empresário"); idade, posição, pé e altura
   faltam em ≤ 2,3% e ficam fora só dos painéis daquele atributo.
@@ -107,9 +107,9 @@ altura 0,08 (desprezível). Entre as categóricas (`e4_relacoes.png`):
   a 96% (34+), junto com a % de gratuitas (45% → 90%). É a relação mais forte, direta e não linear
   (satura acima dos 30);
 - **posição:** goleiros 87% negativos, atacantes 73%;
-- **empresário:** sem empresário 82%, com 76% — fraca, e confundida com o valor de mercado (os com
+- **empresário:** sem empresário 82%, com 76%: fraca, e confundida com o valor de mercado (os com
   empresário valem mais);
-- **pé:** praticamente sem efeito (77%–83%);
+- **pé:** praticamente sem efeito (77% a 83%);
 - **liga do destino:** é a maior diferença entre grupos. A Premier League é a única com menos da
   metade das transferências negativas (37%, mediana do peso +950 mil); as demais ficam entre 54%
   (Serie A) e 98% (`x2_explanatoria_ligas.png`).
@@ -139,7 +139,7 @@ altura 0,08 (desprezível). Entre as categóricas (`e4_relacoes.png`):
 | Santos | 3.203 | 10 | 1, 50, 572, 1.184, 856, 364, 114, 40, 15, 6, 1 |
 
 As três fontes alcançam exatamente os mesmos 3.203 clubes (67,6% do grafo): os outros 1.536 não
-são alcançáveis a partir de clubes grandes. A maior parte está a 2–4 transferências de distância
+são alcançáveis a partir de clubes grandes. A maior parte está a 2 a 4 transferências de distância
 (`a3_camadas_bfs.png`).
 
 | Fonte | Árvore | Retorno | Avanço | Cruzamento | Ciclo? |
@@ -165,7 +165,7 @@ O Dijkstra recusa pesos negativos (79% dos arcos). A transformação usada no gr
 | Ajax → Benfica | Ajax → Inter → Benfica | −34,0 mi |
 | Flamengo → Man Utd | Flamengo → Arsenal → Man Utd | −34,8 mi |
 
-**Limite do deslocamento:** cada arco ganha +180 mi, então um caminho de k arcos ganha k · 180 mi.
+**Limite do deslocamento:** cada arco ganha +180 mi, então um caminho de k arcos ganha k × 180 mi.
 Como nenhum peso negativo passa de 180 mi, um arco a mais nunca compensa: o Dijkstra deslocado
 sempre escolhe um caminho com o menor número de arcos (o mesmo número de passos da BFS nos 6
 pares) e, entre esses, o de menor custo original. Ele não encontra o caminho de menor custo real.
@@ -177,7 +177,7 @@ distâncias do Bellman-Ford nos 7.027 nós alcançados (0 divergências).
 
 ### Bellman-Ford
 
-**Com peso negativo e sem ciclo negativo** — grafo temporal, a partir de Benfica (15/16): 7.027
+**Com peso negativo e sem ciclo negativo**: grafo temporal, a partir de Benfica (15/16): 7.027
 estados alcançados, 6.391 com distância negativa. O destino de menor custo é Bournemouth (27/28),
 com custo −335,46 mi em 12 arcos:
 
@@ -185,7 +185,7 @@ Benfica (15/16 … 19/20) → Frankfurt (20/21, Jović −37,7 mi) → AC Milan 
 → Inter (22/23, Çalhanoğlu −35 mi) → PSG (24/25, Škriniar −50 mi) → Real Madrid (25/26, Mbappé
 −180 mi) → AC Milan (26/27, Modrić −4 mi) → Bournemouth (27/28, Jiménez −3,5 mi).
 
-**Com ciclo negativo** — grafo de clubes completo, a partir do Real Madrid: ciclo detectado e
+**Com ciclo negativo**: grafo de clubes completo, a partir do Real Madrid: ciclo detectado e
 exibido, Abdysh-Ata Kant → Alga Bishkek → Abdysh-Ata Kant, custo −100 mil. No recorte dos 40 clubes
 de maior grau: Lyon → Lille → Lyon, custo −1 mi. O Bellman-Ford devolve o primeiro ciclo que ainda
 relaxa na |V|-ésima passada, não o mais negativo. Por contagem direta dos pares recíprocos há 1.780
@@ -221,10 +221,10 @@ mesma razão da complexidade teórica.
 | BFS | O(V + E) | 0,011 / 0,015 | 0,252 / 0,264 |
 | DFS | O(V + E) | 0,017 / 0,015 | 0,299 / 0,264 |
 | Dijkstra | O((V + E) log V) | 0,014 / 0,009 | 0,286 / 0,235 |
-| Bellman-Ford | O(V · E) | 0,0003 / 0,0004 | 0,098 / 0,098 |
+| Bellman-Ford | O(V × E) | 0,0003 / 0,0004 | 0,098 / 0,098 |
 
 As quatro curvas medidas acompanham a teórica. O Bellman-Ford é o caso mais claro: do 50% para o
-100% o |V| · |E| cresce 10,2 vezes e o tempo cresceu 10,2 vezes, e o custo por relaxação fica em
+100% o |V| × |E| cresce 10,2 vezes e o tempo cresceu 10,2 vezes, e o custo por relaxação fica em
 ~145 ns a partir de 50%. Nos tamanhos pequenos, a parte fixa (montar listas, dicionários) pesa
 mais, e o tempo relativo fica um pouco acima ou abaixo da teoria. No grafo completo, o Bellman-Ford
 foi cerca de 9 mil vezes mais lento que a BFS.
@@ -268,12 +268,12 @@ Dortmund ⇄ Bayern) que formam os ciclos mais negativos.
 
 ## 6. Notas analíticas das visualizações
 
-**E1 — `e1_graus.png` (exploratória).** Mostra, em log-log, a fração de clubes com grau de saída e
+**E1: `e1_graus.png` (exploratória).** Mostra, em log-log, a fração de clubes com grau de saída e
 de entrada ≥ k. Insight: a curva cai devagar, poucos clubes têm dezenas de parceiros e a maioria tem
-1 ou 2 — há hubs. Por que esse gráfico: a distribuição complementar acumulada em log-log mostra a
+1 ou 2: há hubs. Por que esse gráfico: a distribuição complementar acumulada em log-log mostra a
 cauda inteira sem depender da escolha de bins, o que um histograma linear esconderia.
 
-**E2 — `e2_pesos.png` (exploratória).** Histograma do peso por transferência, separado em saídas
+**E2: `e2_pesos.png` (exploratória).** Histograma do peso por transferência, separado em saídas
 gratuitas e vendas pagas. Insight: as gratuitas são 100% negativas e concentradas entre −100 mil e
 −5 mi; as pagas se dividem quase ao meio, com a massa negativa um pouco maior. Por que esse
 gráfico: histograma para distribuição; escala symlog (logarítmica a partir de ±1 mil, o menor
@@ -281,27 +281,27 @@ gráfico: histograma para distribuição; escala symlog (logarítmica a partir d
 têm sinal; o bin central mostra as 978 vendas pagas exatamente pelo valor de mercado (peso 0);
 dois painéis com o mesmo eixo x em vez de barras sobrepostas.
 
-**E3 — `e3_faltantes.png` (exploratória).** % de transferências sem valor de mercado e sem valor
+**E3: `e3_faltantes.png` (exploratória).** % de transferências sem valor de mercado e sem valor
 pago por temporada. Insight: os dois faltam menos quanto mais recente a transferência, mas o valor
 de mercado depende muito mais da época (100% até 2003, 16% em 2025) que o valor pago (56% em 2000,
 25% em 2025). Por que esse gráfico: linha para evolução no tempo; as duas séries têm a mesma
 unidade (%), então dividem o mesmo eixo sem distorção.
 
-**E4 — `e4_relacoes.png` (exploratória, multivariada).** % de transferências com peso negativo por
+**E4: `e4_relacoes.png` (exploratória, multivariada).** % de transferências com peso negativo por
 faixa etária, posição, pé e empresário, com a média geral tracejada. Insight: a idade separa muito
 mais que os outros atributos e a relação é monotônica. Por que esse gráfico: gráfico de pontos
 (dot plot) com os quatro painéis empilhados sobre o mesmo eixo x, cada um com altura proporcional
 ao número de categorias, permite comparar os efeitos entre atributos; o n de cada grupo fica
 escrito para não supervalorizar grupos pequenos.
 
-**E5 — `e5_outliers.png` (exploratória).** Valor pago contra valor de mercado nas vendas pagas, em
+**E5: `e5_outliers.png` (exploratória).** Valor pago contra valor de mercado nas vendas pagas, em
 log-log, com a diagonal de peso 0 e os outliers do IQR (sobre o log da razão) em laranja. Insight:
 os outliers são as vendas muito acima ou muito abaixo do valor, concentradas nos valores de mercado
 baixos; os maiores pesos absolutos (Neymar, Dembélé, Haaland) estão perto da diagonal em termos
 relativos. Por que esse gráfico: dispersão para relação entre duas variáveis contínuas; log porque
 os valores cobrem 5 ordens de grandeza.
 
-**X1 — `x1_explanatoria_caminho.png` (explanatória, responde à pergunta).** Custo acumulado ao
+**X1: `x1_explanatoria_caminho.png` (explanatória, responde à pergunta).** Custo acumulado ao
 longo do caminho de menor custo do Bellman-Ford no grafo temporal, com a saída do Mbappé em
 destaque. De onde nasceu: na E2 vimos que as saídas gratuitas são mais da metade da massa negativa,
 e no Bellman-Ford o melhor caminho passava por elas. Mensagem: um único jogador saindo de graça
@@ -309,30 +309,30 @@ responde por 54% do custo do caminho inteiro. Por que esse gráfico: o degrau ac
 contribuição de cada transferência na ordem do caminho; o destaque é por cor (laranja contra cinza)
 e tamanho, e a legenda separa o destaque (laranja) das demais transferências (cinza).
 
-**X2 — `x2_explanatoria_ligas.png` (explanatória).** % de transferências com peso negativo por liga
+**X2: `x2_explanatoria_ligas.png` (explanatória).** % de transferências com peso negativo por liga
 do clube de destino. De onde nasceu: na E4 a idade e a posição mudavam a proporção de negativos;
 olhando a liga do destino apareceu a maior diferença entre grupos. Mensagem: só a Premier League
 compra, em geral, acima do valor de mercado. Por que esse gráfico: barras horizontais ordenadas
 para comparar muitas categorias com nomes longos; uma só cor de destaque e as demais em cinza; a
 linha de 50% dá a referência.
 
-**A1 — `a1_tempos.png` (algoritmos).** Tempo médio de cada algoritmo no grafo completo, em escala
+**A1: `a1_tempos.png` (algoritmos).** Tempo médio de cada algoritmo no grafo completo, em escala
 log, com o desvio padrão e a razão para a BFS. Insight: BFS, Dijkstra e DFS ficam em milissegundos;
 o Bellman-Ford leva segundos (9 mil vezes a BFS). Por que esse gráfico: pontos com barra de erro,
 e não barras, porque numa escala log o comprimento de uma barra não representa nada; escala log
 porque os tempos diferem em quatro ordens de grandeza.
 
-**A2 — `a2_escalabilidade.png` (algoritmos).** Tempo medido e curva teórica, ambos relativos ao
+**A2: `a2_escalabilidade.png` (algoritmos).** Tempo medido e curva teórica, ambos relativos ao
 grafo completo, um painel por algoritmo. Insight: as duas curvas andam juntas, então o crescimento
 medido segue a complexidade. Por que esse gráfico: linhas para crescimento em função do tamanho;
 normalizar pelo maior grafo deixa medida e teoria na mesma escala sem eixo duplo.
 
-**A3 — `a3_camadas_bfs.png` (algoritmos).** Clubes descobertos por nível da BFS a partir das três
-fontes. Insight: o pico fica no nível 3; 77%–83% dos clubes alcançáveis estão a 2–4 transferências
-da fonte e 93%–95% a até 5 — mundo pequeno. Por que esse gráfico: linha porque o nível é ordenado;
+**A3: `a3_camadas_bfs.png` (algoritmos).** Clubes descobertos por nível da BFS a partir das três
+fontes. Insight: o pico fica no nível 3; 77% a 83% dos clubes alcançáveis estão a 2 a 4 transferências
+da fonte e 93% a 95% a até 5: mundo pequeno. Por que esse gráfico: linha porque o nível é ordenado;
 três séries no mesmo eixo para comparar as fontes.
 
-**A4 — `a4_caminhos.png` (algoritmos).** Para os 6 pares do Dijkstra, uma barra com o custo
+**A4: `a4_caminhos.png` (algoritmos).** Para os 6 pares do Dijkstra, uma barra com o custo
 original do caminho encontrado, a rota escrita ao lado e o número de arcos do Dijkstra contra o de
 passos da BFS. Insight: nos 6 pares o caminho "mais barato" tem os mesmos 2 arcos do caminho mais
 curto. Com o deslocamento de +180 mi por arco, cada arco a mais custa muito, e o Dijkstra acaba
