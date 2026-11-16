@@ -1,10 +1,10 @@
 // Parte 1: página de escolha do mapa, abas do labirinto, estado compartilhado (mapa, algoritmo, passo) e envio do mapa surpresa
-import { ArrowLeft, ServerCrash } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { analisarTexto, carregarMapa, listarMapas } from "./api";
 import { FigurasDaParte1 } from "./componentes/FigurasDaParte1";
-import { Carregando } from "./componentes/Futebol";
+import { Cartao, Carregando } from "./componentes/Futebol";
 import { Topo, type Aba } from "./componentes/Topo";
 import { Comparacao } from "./componentes/Comparacao";
 import { Controles } from "./componentes/Controles";
@@ -133,7 +133,7 @@ export function Parte1({ aoInicio }: { aoInicio: () => void }) {
   if (erroServidor) {
     return (
       <div className="tela-erro">
-        <ServerCrash size={42} aria-hidden />
+        <Cartao cor="vermelho" className="cartao-grande" />
         <h1>{erroServidor}</h1>
         <p>Abra um terminal na pasta do projeto e rode <code>python -m src.servidor</code>.</p>
       </div>

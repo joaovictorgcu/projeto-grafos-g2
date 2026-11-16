@@ -4,6 +4,8 @@ import { AnimatePresence, motion } from "motion/react";
 import type { CSSProperties } from "react";
 import { ALGORITMOS, NOME_DO_ALGORITMO, NOME_DO_STATUS, nomeDaCamada } from "../modelo";
 import type { Algoritmo, DadosDoMapa } from "../tipos";
+import { Cartao } from "./Futebol";
+import { CARTAO } from "./Status";
 
 export function AvisoDeErro({ erro, limparErro }: { erro: string | null; limparErro: () => void }) {
   return (
@@ -57,7 +59,8 @@ export function Ferramentas({ dados, algoritmo, setAlgoritmo, mostrarAlgoritmo, 
                 onClick={() => setAlgoritmo(a)} title={NOME_DO_STATUS[status]}>
                 {a === algoritmo && <motion.span layoutId="algoritmo-ativo" className="segmentado-fundo" />}
                 <span>{NOME_DO_ALGORITMO[a]}</span>
-                <span className={`ponto-status status-${status.toLowerCase()}`} />
+                <Cartao cor={CARTAO[status]} />
+                <span className="so-leitor">{NOME_DO_STATUS[status]}</span>
               </button>
             );
           })}

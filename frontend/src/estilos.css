@@ -8,7 +8,7 @@
   --borda-forte: #b9c4b1;
   --texto: #0f1d15;
   --texto-2: #43524a;
-  --texto-3: #6b7a70;
+  --texto-3: #56655c;
   --gramado: #1a6b3c;
   --gramado-escuro: #0d2a1c;
   --gramado-faixa: #11331f;
@@ -42,7 +42,8 @@ body { font-family: var(--fonte-texto); font-size: 15.5px; line-height: 1.5; -we
 button, input, select { font: inherit; color: inherit; }
 button { cursor: pointer; }
 button:disabled { cursor: not-allowed; opacity: 0.4; }
-:focus-visible { outline: 2px solid var(--amarelo); outline-offset: 2px; }
+:focus-visible { outline: 3px solid var(--gramado-escuro); outline-offset: 2px; }
+.topo :focus-visible, .placar-confronto :focus-visible, .visor :focus-visible { outline-color: var(--amarelo); }
 code { font-family: var(--fonte-mono); font-size: 0.88em; background: var(--superficie-3); padding: 1px 5px; border-radius: 2px; }
 
 .app { position: relative; min-height: 100dvh; isolation: isolate; }
@@ -646,3 +647,20 @@ code { font-family: var(--fonte-mono); font-size: 0.88em; background: var(--supe
   .abas { mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); padding-right: 20px; }
   .topo { padding-bottom: 0; }
 }
+
+/* barras de comparação atrás dos números, como nas estatísticas de transmissão */
+.com-barra { position: relative; }
+.com-barra::before { content: ""; position: absolute; right: 8px; bottom: 6px; height: 3px; width: calc((100% - 16px) * var(--p, 0%) / 100%); max-width: calc(100% - 16px); background: var(--borda-forte); }
+.linha-ativa .com-barra::before { background: var(--gramado); }
+.tela-erro .cartao-grande { margin: 0 auto 8px; width: 34px; height: 46px; }
+.placar-nome small, .placar-rotulo { color: rgba(255, 255, 255, 0.68); }
+/* impressão: só o conteúdo, sem topo, controles e animações */
+@media print {
+  body { background: #fff; }
+  .topo, .controles, .ferramentas, .voltar, .galeria-indice, .galeria-setas, .galeria-ampliar, .chip, .exemplos, .lados { display: none !important; }
+  .galeria { grid-template-columns: 1fr; }
+  .cartao, .galeria-palco, .quadro, .par { break-inside: avoid; }
+  .placar, .placar-confronto, .jogada { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+}
+.so-leitor { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.segmentado .cartao-arbitro { width: 9px; height: 12px; }

@@ -1,4 +1,5 @@
 // painel de métricas do grafo de estados e tabela dos três algoritmos no mesmo mapa
+import type { CSSProperties } from "react";
 import { ALGORITMOS, NOME_DO_ALGORITMO, NOME_DO_STATUS, camadasDoMapa } from "../modelo";
 import type { Algoritmo, DadosDoMapa } from "../tipos";
 import { NumeroAnimado } from "./NumeroAnimado";
@@ -17,6 +18,9 @@ export function Metricas({ dados, algoritmo, aoEscolher }: {
     { nome: "casas livres", valor: livres, ajuda: "o grafo de posições teria esse número de nós" },
     { nome: "armadilhas", valor: armadilhas, ajuda: "estados que nunca chegam ao G" },
   ];
+
+  const maiorPassos = Math.max(1, ...ALGORITMOS.map((a) => dados.algoritmos[a].passos ?? 0));
+  const maiorCusto = Math.max(1, ...ALGORITMOS.map((a) => dados.algoritmos[a].custo ?? 0));
 
   return (
     <section className="metricas" aria-label="Métricas do grafo de estados">
@@ -42,8 +46,8 @@ export function Metricas({ dados, algoritmo, aoEscolher }: {
                 <tr key={a} className={a === algoritmo ? "linha-ativa" : ""} onClick={() => aoEscolher(a)}>
                   <th scope="row">{NOME_DO_ALGORITMO[a]}</th>
                   <td><span className={`etiqueta status-${r.status.toLowerCase()}`}>{NOME_DO_STATUS[r.status]}</span></td>
-                  <td className="numero">{r.passos ?? "-"}</td>
-                  <td className="numero">{r.custo ?? "-"}</td>
+                  <td className="numero com-barra" style={{ "--p": `${((r.passos ?? 0) / maiorPassos) * 100}%` } as CSSProperties}>{r.passos ?? "-"}</td>
+                  <td className="numero com-barra" style={{ "--p": `${(Math.max(0, r.custo ?? 0) / maiorCusto) * 100}%` } as CSSProperties}>{r.custo ?? "-"}</td>
                 </tr>
               );
             })}
