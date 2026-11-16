@@ -2,7 +2,7 @@
 export type Algoritmo = "BFS" | "DIJKSTRA" | "BELLMAN_FORD";
 export type Status = "OK" | "RECUSA" | "CICLO_NEGATIVO" | "SEM_SOLUCAO";
 export type Origem = "enunciado" | "grupo" | "enviado";
-export type Vista = "labirinto" | "exploracao" | "grafo" | "comparar";
+export type Vista = "labirinto" | "exploracao" | "grafo" | "comparar" | "visualizacoes";
 
 export interface Estado {
   rotulo: string;
@@ -86,6 +86,15 @@ export interface Figura {
   codigo: string;
   tipo: string;
   nota: string;
+}
+
+export type BlocoDaNota = { tipo: "paragrafo"; texto: string } | { tipo: "tabela"; linhas: string[][] };
+
+export interface FiguraDaParte1 {
+  arquivo: string;
+  codigo: string;
+  tipo: string;
+  blocos: BlocoDaNota[];
 }
 
 export interface DadosDaParte2 {

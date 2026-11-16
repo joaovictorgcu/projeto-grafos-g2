@@ -3,6 +3,8 @@ import { ArrowLeft, ServerCrash } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { analisarTexto, carregarMapa, listarMapas } from "./api";
+import { FigurasDaParte1 } from "./componentes/FigurasDaParte1";
+import { Carregando } from "./componentes/Futebol";
 import { Topo, type Aba } from "./componentes/Topo";
 import { Comparacao } from "./componentes/Comparacao";
 import { Controles } from "./componentes/Controles";
@@ -24,6 +26,7 @@ const ABAS: Aba<Vista>[] = [
   { id: "exploracao", nome: "Exploração" },
   { id: "grafo", nome: "Grafo de estados" },
   { id: "comparar", nome: "Comparar" },
+  { id: "visualizacoes", nome: "Visualizações" },
 ];
 
 const parametros = new URLSearchParams(window.location.search);
@@ -33,7 +36,7 @@ export function Parte1({ aoInicio }: { aoInicio: () => void }) {
   const [mapaId, setMapaId] = useState(parametros.get("mapa") ?? "");
   const [algoritmo, setAlgoritmo] = useState<Algoritmo>(
     ALGORITMOS.includes(parametros.get("alg") as Algoritmo) ? (parametros.get("alg") as Algoritmo) : "DIJKSTRA");
-  const [vista, setVista] = useState<Vista>((["labirinto", "exploracao", "grafo", "comparar"] as Vista[]).includes(parametros.get("vista") as Vista)
+  const [vista, setVista] = useState<Vista>(ABAS.map((a) => a.id).includes(parametros.get("vista") as Vista)
     ? (parametros.get("vista") as Vista) : "labirinto");
   const [fonte, setFonte] = useState(parametros.get("fonte") === "1");
   const [camada, setCamada] = useState<string | null>(null);
@@ -78,6 +81,7 @@ export function Parte1({ aoInicio }: { aoInicio: () => void }) {
   useEffect(() => {
     const p = new URLSearchParams();
     p.set("parte", "1");
+    if (vista === "visualizacoes") p.set("vista", vista);
     if (mapaId) {
       p.set("mapa", mapaId);
       p.set("alg", algoritmo);
@@ -94,7 +98,7 @@ export function Parte1({ aoInicio }: { aoInicio: () => void }) {
   const reproducao = usarReproducao(Math.max(0, passos.length - 1), `${mapaId}|${fonte}|${algoritmo}`, vista === "labirinto" || vista === "grafo");
   const duracao = Math.min(0.32, 0.85 / reproducao.velocidade);
   const atual = passos[reproducao.passo];
-  const corAtual = atual ? corDaCamada(camadas, atual.estado.chaves) : "#2563eb";
+  const corAtual = atual ? corDaCamada(camadas, atual.estado.chaves) : "#2a78d6";
   const inicialDoParametro = useRef(Number(parametros.get("passo") ?? 0));
 
   useEffect(() => {
@@ -138,16 +142,32 @@ export function Parte1({ aoInicio }: { aoInicio: () => void }) {
 
   return (
     <div className="app">
-      <div className="fundo-animado" aria-hidden />
       <AvisoDeErro erro={erroEnvio} limparErro={() => setErroEnvio(null)} />
-      {!mapaId ? (
+      {vista === "visualizacoes" ? (
         <>
-          <Topo parte="Parte 1 · Labirinto com chaves" aoInicio={aoInicio} />
+          <Topo parte="Parte 1: labirinto com chaves" abas={ABAS} ativa={vista} aoTrocar={setVista} aoInicio={aoInicio} />
+          <div className="corpo sem-lateral">
+            <main className="conteudo">
+              <div className="vista">
+                <div className="titulo-vista">
+                  <div>
+                    <h2>Visualizações</h2>
+                    <span>Figuras da Seção 8 geradas pelo <code>src/viz.py</code>, com as notas analíticas do grupo</span>
+                  </div>
+                </div>
+                <FigurasDaParte1 />
+              </div>
+            </main>
+          </div>
+        </>
+      ) : !mapaId ? (
+        <>
+          <Topo parte="Parte 1: labirinto com chaves" abas={ABAS} ativa={vista} aoTrocar={setVista} aoInicio={aoInicio} />
           {mapas.length > 0 && <EscolhaDeMapa mapas={mapas} aoEscolher={setMapaId} aoEnviar={enviarArquivo} enviando={enviando} />}
         </>
       ) : (
       <>
-      <Topo parte="Parte 1 · Labirinto com chaves" abas={ABAS} ativa={vista} aoTrocar={setVista} aoInicio={aoInicio} />
+      <Topo parte="Parte 1: labirinto com chaves" abas={ABAS} ativa={vista} aoTrocar={setVista} aoInicio={aoInicio} />
 
       <div className="corpo sem-lateral">
         <main className="conteudo">
@@ -160,7 +180,7 @@ export function Parte1({ aoInicio }: { aoInicio: () => void }) {
                   <Comparacao mapas={mapas} mapaInicial={mapaId} obterDados={obterDados} />
                 </>
               ) : !pronto || !resultado || !atual ? (
-                <div className="carregando"><span className="girando" />Montando o grafo de estados…</div>
+                <Carregando texto="Montando o grafo de estados…" />
               ) : (
                 vista === "exploracao" ? (
                   <>
@@ -168,7 +188,7 @@ export function Parte1({ aoInicio }: { aoInicio: () => void }) {
                       <div>
                         <button type="button" className="voltar" onClick={() => setMapaId("")}><ArrowLeft size={16} aria-hidden /> Mapas</button>
                         <h2>{pronto.titulo}</h2>
-                        <span>{pronto.grade[0].length}×{pronto.grade.length} casas · {pronto.metricas.ordem} estados · os quatro
+                        <span>{pronto.grade[0].length}×{pronto.grade.length} casas, {pronto.metricas.ordem} estados, os quatro
                           algoritmos partindo do S ao mesmo tempo</span>
                       </div>
                     </div>
@@ -183,7 +203,7 @@ export function Parte1({ aoInicio }: { aoInicio: () => void }) {
                     <div>
                       <button type="button" className="voltar" onClick={() => setMapaId("")}><ArrowLeft size={16} aria-hidden /> Mapas</button>
                       <h2>{pronto.titulo}</h2>
-                      <span>{pronto.grade[0].length}×{pronto.grade.length} casas · {pronto.metricas.ordem} estados · camada atual:{" "}
+                      <span>{pronto.grade[0].length}×{pronto.grade.length} casas, {pronto.metricas.ordem} estados, camada atual:{" "}
                         <b style={{ color: corAtual }}>{nomeDaCamada(atual.estado.chaves)}</b></span>
                     </div>
                     <Status algoritmo={algoritmo} resultado={resultado} fonte={fonte} />
