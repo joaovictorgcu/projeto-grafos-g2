@@ -1,4 +1,4 @@
-# Projeto Final de Grafos + AVD — Grupo 2 (turma 5A)
+# Projeto Final de Grafos + AVD: Grupo 2 (turma 5A)
 
 Teoria dos Grafos + Análise e Visualização de Dados, CESAR School, 2026.2.
 
@@ -14,23 +14,23 @@ biblioteca de grafos é usada fora de `tests/`, onde o `networkx` entra só como
 - [Integrantes e pacotes](#integrantes-e-pacotes-de-trabalho)
 - [Andamento](#andamento)
 - [Instalação](#instalação)
-- [Parte 1 — labirintos](#parte-1--labirintos)
-- [Parte 2 — rede de transferências](#parte-2--rede-de-transferências)
+- [Parte 1: labirintos](#parte-1-labirintos)
+- [Parte 2: rede de transferências](#parte-2-rede-de-transferências)
 - [Testes](#testes)
 - [Estrutura do repositório](#estrutura-do-repositório)
 
 ## Integrantes e pacotes de trabalho
 
 Cada pacote tem um dono e um revisor. A revisão é em anel: cada um revisa o pacote do seguinte,
-e revisar significa commitar alguma coisa lá — um teste, uma correção, uma documentação.
+e revisar significa commitar alguma coisa lá: um teste, uma correção, uma documentação.
 
 | Integrante | Pacote | Revisa |
 |---|---|---|
-| Gabriel França | **P1** — modelagem e grafo de estados | P2 |
-| Luís Eduardo Bérard | **P2** — algoritmos e testes | P3 |
-| Guilherme Burle | **P3** — análises da Parte 1 | P4 |
-| João Victor Uchôa | **P4** — Parte 2: dados e experimentos | P5 |
-| Caio Leimig | **P5** — visualização e comunicação | P1 |
+| Gabriel França | **P1**: modelagem e grafo de estados | P2 |
+| Luís Eduardo Bérard | **P2**: algoritmos e testes | P3 |
+| Guilherme Burle | **P3**: análises da Parte 1 | P4 |
+| João Victor Uchôa | **P4**: Parte 2: dados e experimentos | P5 |
+| Caio Leimig | **P5**: visualização e comunicação | P1 |
 
 ## Andamento
 
@@ -63,7 +63,7 @@ pip install -r requirements.txt
 
 Todos os comandos abaixo rodam a partir da raiz do repositório.
 
-## Parte 1 — labirintos
+## Parte 1: labirintos
 
 Os mapas ficam em `data/mapas/` (fornecidos) e `data/mapas_grupo/` (do grupo).
 
@@ -103,7 +103,7 @@ sem ciclo negativo), BFS e DFS a partir de 3 clubes, desempenho e escalabilidade
 `out/parte2/` com as notas analíticas do `docs/parte2/relatorio_parte2.md`.
 
 **Parte 1:** primeiro uma página para escolher o mapa (ou enviar um `.txt`, como o mapa surpresa);
-depois, quatro abas, com o algoritmo e as opções numa barra acima do tabuleiro:
+depois, cinco abas, com o algoritmo e as opções numa barra acima do tabuleiro:
 
 - **Labirinto:** escolha do mapa (ou envio de um `.txt`, como o mapa surpresa) e do algoritmo;
   animação passo a passo com posição, chaves, bônus consumidos e custo acumulado; camada em
@@ -116,6 +116,11 @@ depois, quatro abas, com o algoritmo e as opções numa barra acima do tabuleiro
   sobe de andar. Arraste para girar.
 - **Comparar (bônus):** dois percursos na mesma linha do tempo, sobrepostos ou lado a lado, com a
   curva de custo acumulado e exemplos prontos.
+- **Visualizações:** as figuras da Seção 8 (`out/parte1/`), uma por vez, com as notas de
+  `docs/parte1/notas_visualizacoes.md` ao lado. As setas ← → trocam de figura.
+
+O resultado de cada algoritmo aparece como cartão do árbitro: verde (caminho encontrado), amarelo
+(recusou o mapa), vermelho (ciclo negativo) e azul (sem solução).
 
 Teclado: espaço toca/pausa, ← → andam um passo, Home/End vão ao início/fim.
 
@@ -168,7 +173,7 @@ estados-armadilha dos mapas fornecidos e dos mapas do grupo. A discussão está 
 `docs/parte1_p3_guilherme.md`, `docs/p3_guilherme_entrega_final.md` e
 `docs/relatorio_execucao_p3_guilherme.md`.
 
-## Parte 2 — rede de transferências
+## Parte 2: rede de transferências
 
 ### O dataset
 
