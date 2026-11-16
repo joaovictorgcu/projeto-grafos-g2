@@ -1,4 +1,4 @@
-// [IA] Claude Code (Claude Opus 5.5) – ponto de entrada do frontend: fontes locais, estilos e respeito ao "reduzir movimento"
+// ponto de entrada do frontend: fontes locais, estilos e respeito ao "reduzir movimento"
 import "@fontsource/barlow/400.css";
 import "@fontsource/barlow/500.css";
 import "@fontsource/barlow/600.css";

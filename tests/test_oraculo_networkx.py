@@ -1,5 +1,5 @@
 """networkx usado só aqui, como oráculo, para conferir os algoritmos próprios."""
-# [IA] Claude – testes de oráculo com networkx gerados pela IA; executados e integrados por mim
+# testes de oráculo com networkx
 import random
 
 import networkx as nx

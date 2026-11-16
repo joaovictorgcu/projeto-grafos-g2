@@ -1,4 +1,4 @@
-// [IA] Claude Code (Claude Opus 5.5) – faixa com o resultado do algoritmo: caminho, recusa, ciclo negativo ou sem solução
+// faixa com o resultado do algoritmo: caminho, recusa, ciclo negativo ou sem solução
 import { AnimatePresence, motion } from "motion/react";
 import { NOME_DO_ALGORITMO, NOME_DO_STATUS } from "../modelo";
 import { Cartao, type CorDoCartao } from "./Futebol";

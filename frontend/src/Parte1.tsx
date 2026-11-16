@@ -1,4 +1,4 @@
-// [IA] Claude Code (Claude Opus 5.5) – Parte 1: página de escolha do mapa, abas do labirinto, estado compartilhado (mapa, algoritmo, passo) e envio do mapa surpresa
+// Parte 1: página de escolha do mapa, abas do labirinto, estado compartilhado (mapa, algoritmo, passo) e envio do mapa surpresa
 import { ArrowLeft, ServerCrash } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";

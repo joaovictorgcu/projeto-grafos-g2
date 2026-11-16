@@ -1,4 +1,4 @@
-# [IA] Claude Code (Claude Opus 5.5) – leitura do mapa .txt e localização de S, G, chaves, portas, bônus, fontes e esteiras
+# leitura do mapa .txt e localização de S, G, chaves, portas, bônus, fontes e esteiras
 from dataclasses import dataclass, field
 from pathlib import Path
 

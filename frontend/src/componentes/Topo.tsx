@@ -1,4 +1,4 @@
-// [IA] Claude Code (Claude Opus 5.5) – barra do topo: volta para o início e mostra as abas da parte aberta
+// barra do topo: volta para o início e mostra as abas da parte aberta
 import { motion } from "motion/react";
 
 export interface Aba<T extends string> {

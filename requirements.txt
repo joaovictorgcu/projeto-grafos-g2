@@ -1,4 +1,4 @@
-# [IA] Claude Code (Claude Opus 5) – lista inicial de dependências sugerida pela IA, revisada pelo grupo
+# lista inicial de dependências
 # Leitura e manipulação de dados (IO da Parte 2)
 pandas>=2.0
 

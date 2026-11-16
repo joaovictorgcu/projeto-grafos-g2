@@ -1,7 +1,7 @@
 from src.graphs.algorithms import bfs, caminho
 from src.graphs.graph import Grafo
 
-# [IA] Claude – casos de teste do BFS conferidos por mim.
+# casos de teste do BFS.
 
 
 def montar():

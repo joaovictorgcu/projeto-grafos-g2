@@ -1,4 +1,4 @@
-// [IA] Claude Code (Claude Opus 5.5) – controles da animação: tocar/pausar, passo a passo, linha do tempo com marcos e velocidade
+// controles da animação: tocar/pausar, passo a passo, linha do tempo com marcos e velocidade
 import { ChevronLeft, ChevronRight, Gauge, Pause, Play, SkipBack, SkipForward } from "lucide-react";
 import { motion } from "motion/react";
 import type { CSSProperties } from "react";

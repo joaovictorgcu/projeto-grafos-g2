@@ -1,4 +1,4 @@
-// [IA] Claude Code (Claude Opus 5.5) – aba Exploração: os quatro algoritmos visitando o labirinto ao mesmo tempo, com expandidas, fronteira e o caminho achado
+// aba Exploração: os quatro algoritmos visitando o labirinto ao mesmo tempo, com expandidas, fronteira e o caminho achado
 import { motion } from "motion/react";
 import { useMemo } from "react";
 import { chave } from "../modelo";

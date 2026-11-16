@@ -1,4 +1,4 @@
-// [IA] Claude Code (Claude Opus 5.5) – página de escolha do mapa da Parte 1, com o envio do mapa surpresa
+// página de escolha do mapa da Parte 1, com o envio do mapa surpresa
 import { Upload } from "lucide-react";
 import { motion } from "motion/react";
 import { useRef, useState } from "react";

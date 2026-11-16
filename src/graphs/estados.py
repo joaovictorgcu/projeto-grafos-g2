@@ -1,4 +1,4 @@
-# [IA] Claude Code (Claude Opus 5.5) – grafo de posições e grafo de estados, construído por exploração a partir do início
+# grafo de posições e grafo de estados, construído por exploração a partir do início
 import argparse
 import csv
 from collections import deque
@@ -154,7 +154,7 @@ def escrever_arestas_csv(arcos, caminho) -> Path:
     return caminho
 
 
-# [IA] Claude Code (Claude Opus 5.5) – métricas sem o ALVO e exportação do arestas_<mapa>.csv de todos os mapas
+# métricas sem o ALVO e exportação do arestas_<mapa>.csv de todos os mapas
 def metricas(construido: GrafoConstruido) -> dict:
     nos = [n for n in construido.grafo.nos() if n != ALVO]
     tamanho = sum(1 for n in nos for v, _ in construido.grafo.arcos(n) if v != ALVO)

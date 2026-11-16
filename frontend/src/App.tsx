@@ -1,4 +1,4 @@
-// [IA] Claude Code (Claude Opus 5.5) – escolhe a tela: início, Parte 1 ou Parte 2
+// escolhe a tela: início, Parte 1 ou Parte 2
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { Inicio } from "./componentes/Inicio";

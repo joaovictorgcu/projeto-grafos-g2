@@ -1,4 +1,4 @@
-// [IA] Claude Code (Claude Opus 5.5) – painel do passo atual: rótulo do estado, posição, chaves, bônus e custo acumulado
+// painel do passo atual: rótulo do estado, posição, chaves, bônus e custo acumulado
 import { Gem, KeyRound, MapPin, Skull } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import type { CSSProperties } from "react";

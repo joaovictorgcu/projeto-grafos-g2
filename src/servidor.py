@@ -1,4 +1,4 @@
-# [IA] Claude Code (Claude Opus 5.5) – servidor local do labirinto interativo: entrega o frontend React e os dados do grafo de estados em JSON
+# servidor local do labirinto interativo: entrega o frontend React e os dados do grafo de estados em JSON
 import argparse
 import json
 import re
@@ -38,7 +38,7 @@ def titulo_do_mapa(nome, origem="enunciado"):
     return texto[:1].upper() + texto[1:]
 
 
-# [IA] Claude Code (Claude Opus 5.5) – dados da Parte 2 para o frontend: relatório dos experimentos, figuras e as notas escritas pelo grupo
+# dados da Parte 2 para o frontend: relatório dos experimentos, figuras e as notas escritas pelo grupo
 def dados_da_parte2():
     relatorio = json.loads((PARTE2 / "parte2_report.json").read_text(encoding="utf-8"))
     notas = {}
@@ -55,7 +55,7 @@ def dados_da_parte2():
     return {"relatorio": relatorio, "figuras": figuras}
 
 
-# [IA] Claude Code (Claude Opus 5.5) – figuras da Parte 1 para o frontend, com as notas do grupo em docs/parte1/notas_visualizacoes.md
+# figuras da Parte 1 para o frontend, com as notas do grupo em docs/parte1/notas_visualizacoes.md
 def blocos_da_nota(texto):
     blocos = []
     for trecho in re.split(r"\n\s*\n", texto.strip()):
@@ -157,7 +157,7 @@ def rodar_algoritmos(grafo, inicio, indice):
     return algoritmos
 
 
-# [IA] Claude Code (Claude Opus 5.5) – ordem em que DFS, BFS, Dijkstra e Bellman-Ford visitam os estados, para a aba Exploração
+# ordem em que DFS, BFS, Dijkstra e Bellman-Ford visitam os estados, para a aba Exploração
 def expansao(grafo, ordem, pai, indice, em_g):
     ordem = [n for n in ordem if n != ALVO]
     posicao = {n: i for i, n in enumerate(ordem)}

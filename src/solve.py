@@ -5,7 +5,7 @@
     python -m src.cli --mapa ./data/mapas/m04_esteiras.txt --armadilhas --out ./out/parte1/
     python -m src.cli --mapa ./data/mapas/m03_tres_chaves.txt --interactive
 """
-# [IA] Claude – despacho do --mapa (algoritmos, armadilhas, interativo) gerado pela IA; testado e integrado por mim
+# despacho do --mapa (algoritmos, armadilhas, interativo)
 import csv
 import json
 import re

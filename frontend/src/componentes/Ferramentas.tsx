@@ -1,4 +1,4 @@
-// [IA] Claude Code (Claude Opus 5.5) – barra de ferramentas acima do tabuleiro: algoritmo, fonte consumível, armadilhas, camada e aviso de mapa inválido
+// barra de ferramentas acima do tabuleiro: algoritmo, fonte consumível, armadilhas, camada e aviso de mapa inválido
 import { FileWarning, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import type { CSSProperties } from "react";

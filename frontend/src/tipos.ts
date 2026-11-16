@@ -1,4 +1,4 @@
-// [IA] Claude Code (Claude Opus 5.5) – tipos dos dados que o servidor Python (src/servidor.py) envia ao frontend
+// tipos dos dados que o servidor Python (src/servidor.py) envia ao frontend
 export type Algoritmo = "BFS" | "DIJKSTRA" | "BELLMAN_FORD";
 export type Status = "OK" | "RECUSA" | "CICLO_NEGATIVO" | "SEM_SOLUCAO";
 export type Origem = "enunciado" | "grupo" | "enviado";

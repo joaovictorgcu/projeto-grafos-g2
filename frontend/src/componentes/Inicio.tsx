@@ -1,4 +1,4 @@
-// [IA] Claude Code (Claude Opus 5.5) – tela inicial: escalação do grupo e escolha entre a Parte 1 (labirinto) e a Parte 2 (rede de transferências)
+// tela inicial: escalação do grupo e escolha entre a Parte 1 (labirinto) e a Parte 2 (rede de transferências)
 import { ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
 import { IconeBola } from "./Futebol";

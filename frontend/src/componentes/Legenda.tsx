@@ -1,4 +1,4 @@
-// [IA] Claude Code (Claude Opus 5.5) – legenda do tabuleiro com o custo de cada tipo de casa
+// legenda do tabuleiro com o custo de cada tipo de casa
 const ITENS = [
   { classe: "leg-chao", nome: "chão", custo: "+1" },
   { classe: "leg-lama", nome: "lama", custo: "+3" },

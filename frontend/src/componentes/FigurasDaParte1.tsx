@@ -1,4 +1,4 @@
-// [IA] Claude Code (Claude Opus 5.5) – aba Visualizações da Parte 1: as figuras de out/parte1/ com as notas de docs/parte1/notas_visualizacoes.md
+// aba Visualizações da Parte 1: as figuras de out/parte1/ com as notas de docs/parte1/notas_visualizacoes.md
 import { useEffect, useState } from "react";
 import { carregarFigurasDaParte1 } from "../api";
 import type { FiguraDaParte1 } from "../tipos";

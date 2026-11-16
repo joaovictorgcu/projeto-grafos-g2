@@ -2,7 +2,7 @@ import pytest
 from src.graphs.algorithms import dijkstra, caminho
 from src.graphs.graph import Grafo
 
-# [IA] Claude – casos de teste do Dijkstra.
+# casos de teste do Dijkstra.
 
 
 def montar(arcos):

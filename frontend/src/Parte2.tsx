@@ -1,4 +1,4 @@
-// [IA] Claude Code (Claude Opus 5.5) – Parte 2: números do grafo, caminhos e ciclos dos algoritmos, desempenho e as figuras com as notas do grupo
+// Parte 2: números do grafo, caminhos e ciclos dos algoritmos, desempenho e as figuras com as notas do grupo
 import { ChevronDown } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";

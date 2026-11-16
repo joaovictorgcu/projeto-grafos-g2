@@ -1,4 +1,4 @@
-// [IA] Claude Code (Claude Opus 5.5) – controle da animação passo a passo: tocar, pausar, avançar, voltar e velocidade
+// controle da animação passo a passo: tocar, pausar, avançar, voltar e velocidade
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export function usarReproducao(ultimo: number, chaveDeReinicio: string, teclado = true, velocidadeInicial = 6) {

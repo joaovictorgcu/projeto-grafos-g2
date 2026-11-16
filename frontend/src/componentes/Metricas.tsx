@@ -1,4 +1,4 @@
-// [IA] Claude Code (Claude Opus 5.5) – painel de métricas do grafo de estados e tabela dos três algoritmos no mesmo mapa
+// painel de métricas do grafo de estados e tabela dos três algoritmos no mesmo mapa
 import { ALGORITMOS, NOME_DO_ALGORITMO, NOME_DO_STATUS, camadasDoMapa } from "../modelo";
 import type { Algoritmo, DadosDoMapa } from "../tipos";
 import { NumeroAnimado } from "./NumeroAnimado";

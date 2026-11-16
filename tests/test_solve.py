@@ -1,5 +1,5 @@
 """CLI da Parte 1 (--mapa): algoritmos, fonte consumível, armadilhas, mapa surpresa e erros."""
-# [IA] Claude – testes do src/solve.py gerados pela IA; executados e integrados por mim
+# testes do src/solve.py
 import csv
 import json
 from pathlib import Path

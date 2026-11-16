@@ -1,7 +1,7 @@
 from src.graphs.algorithms import dfs
 from src.graphs.graph import Grafo
 
-# [IA] Claude – casos de teste do DFS.
+# casos de teste do DFS.
 
 
 def montar(arcos):

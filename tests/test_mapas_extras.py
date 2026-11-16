@@ -1,4 +1,4 @@
-# [IA] Claude Code (Claude Opus 5.5) – mapas de teste com o que m01–m08 não exercitam, preparação para o mapa surpresa
+# mapas de teste com o que m01 a m08 não exercitam, preparação para o mapa surpresa
 import pytest
 
 from src.graphs.algorithms import bellman_ford, bfs, caminho, dijkstra
