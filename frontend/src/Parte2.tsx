@@ -54,8 +54,19 @@ function Transferencias({ lista }: { lista: Record<string, string[]> }) {
           <motion.dl initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}>
             {Object.entries(lista).map(([arco, jogadores]) => (
               <div key={arco}>
-                <dt>{arco.replace("->", "→")}</dt>
-                {jogadores.map((j) => <dd key={j}>{j}</dd>)}
+                <dt>{arco.split(" -> ").map((clube, k) => <span key={k}>{k > 0 && " → "}<MiniEscudo nome={clube} /> {clube}</span>)}</dt>
+                {jogadores.map((j) => {
+                  const partes = /^(.*) \((\d\d\/\d\d)\): (-?[\d.]+)$/.exec(j);
+                  if (!partes) return <dd key={j}>{j}</dd>;
+                  const peso = Number(partes[3].replace(/\./g, ""));
+                  return (
+                    <dd key={j}>
+                      <span className="transferencia-nome">{partes[1]}</span>
+                      <span className="transferencia-temporada">{partes[2]}</span>
+                      <span className={peso < 0 ? "transferencia-peso negativo" : "transferencia-peso"}>{euro(peso)}</span>
+                    </dd>
+                  );
+                })}
               </div>
             ))}
           </motion.dl>

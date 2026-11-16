@@ -22,6 +22,8 @@ function Trecho({ titulo, children }: { titulo?: string; children: React.ReactNo
   );
 }
 
+const maiuscula = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
+
 const ROTULOS = ["De onde nasceu", "Insight", "Por que esse gráfico"];
 
 // Nota da Parte 2: um parágrafo só, com "Insight:", "Por que esse gráfico:" etc. no meio do texto
@@ -29,7 +31,7 @@ export function NotaCorrida({ texto }: { texto: string }) {
   const padrao = new RegExp(`(${ROTULOS.join("|")}):`, "g");
   const pedacos = texto.split(padrao);
   const trechos: { titulo: string; texto: string }[] = [{ titulo: "O que mostra", texto: pedacos[0].trim() }];
-  for (let i = 1; i < pedacos.length; i += 2) trechos.push({ titulo: pedacos[i], texto: pedacos[i + 1].trim() });
+  for (let i = 1; i < pedacos.length; i += 2) trechos.push({ titulo: pedacos[i], texto: maiuscula(pedacos[i + 1].trim()) });
   return (
     <div className="nota">
       {trechos.filter((t) => t.texto).map((t) => (

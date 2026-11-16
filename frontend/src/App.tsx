@@ -1,6 +1,6 @@
 // escolhe a tela: início, Parte 1 ou Parte 2
 import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Inicio } from "./componentes/Inicio";
 import { Topo } from "./componentes/Topo";
 import { Parte1 } from "./Parte1";
@@ -15,6 +15,10 @@ function telaInicial(): Tela {
 
 export default function App() {
   const [tela, setTela] = useState<Tela>(telaInicial);
+
+  useEffect(() => {
+    document.title = `${tela === "parte1" ? "Labirinto com chaves" : tela === "parte2" ? "Rede de transferências" : "Grafos e AVD"} | Grupo 2`;
+  }, [tela]);
 
   function irPara(nova: Tela) {
     if (nova === "inicio") window.history.replaceState(null, "", window.location.pathname);
