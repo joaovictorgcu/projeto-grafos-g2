@@ -22,9 +22,10 @@ export const NOME_DO_STATUS: Record<Status, string> = {
   SEM_SOLUCAO: "Sem solução",
 };
 
-export const CORES_CAMADA = ["#2563eb", "#ea580c", "#059669", "#db2777", "#7c3aed", "#b45309", "#0891b2", "#e11d48"];
+// as seis primeiras são as do src/viz.py, para o labirinto e as figuras da Parte 1 usarem a mesma cor por camada
+export const CORES_CAMADA = ["#2a78d6", "#eb6834", "#1baf7a", "#e87ba4", "#6250d6", "#008300", "#c99700", "#1d7f8c"];
 
-export const CORES_CHAVE: Record<string, string> = { a: "#d97706", b: "#0891b2", c: "#c026d3", d: "#65a30d" };
+export const CORES_CHAVE: Record<string, string> = { a: "#d08c00", b: "#1d7f8c", c: "#a23b72", d: "#5c8a00" };
 
 export function chave(l: number, c: number) {
   return `${l},${c}`;

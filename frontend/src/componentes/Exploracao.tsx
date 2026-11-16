@@ -128,8 +128,8 @@ function PainelDeBusca({ dados, busca, k }: { dados: DadosDoMapa; busca: Busca; 
       </div>
       <footer>
         {busca.aviso ? <span>não rodou</span>
-          : !quadro?.terminou ? <span>fronteira: {quadro?.fronteira} · procurando o G…</span>
-            : busca.achou ? <span className="achou">achou o G · caminho de {busca.caminho.length - 1} passos, custo {custoDoCaminho(dados, busca.caminho)}</span>
+          : !quadro?.terminou ? <span>fronteira: {quadro?.fronteira}, procurando o G…</span>
+            : busca.achou ? <span className="achou">achou o G: caminho de {busca.caminho.length - 1} passos, custo {custoDoCaminho(dados, busca.caminho)}</span>
               : <span className="esgotou">explorou tudo e não chegou ao G</span>}
       </footer>
     </section>
@@ -171,7 +171,7 @@ export function Exploracao({ dados }: { dados: DadosDoMapa }) {
       <div className="grade-buscas">
         {buscas.map((b) => <PainelDeBusca key={b.id} dados={dados} busca={b} k={reproducao.passo} />)}
       </div>
-      <Controles reproducao={reproducao} ultimo={ultimo} cor="#ff5a00" velocidadeMaxima={240} rotulo="expansões/s" />
+      <Controles reproducao={reproducao} ultimo={ultimo} cor="#e8590c" velocidadeMaxima={240} rotulo="expansões/s" />
     </div>
   );
 }

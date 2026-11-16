@@ -1,9 +1,11 @@
 // [IA] Claude Code (Claude Opus 5.5) – comparação lado a lado (bônus): dois percursos na mesma linha do tempo, sobrepostos ou lado a lado, com a curva de custo
+import { Cartao } from "./Futebol";
+import { CARTAO } from "./Status";
 import { Columns2, GitCompareArrows, Layers2 } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { ALGORITMOS, NOME_DO_ALGORITMO, NOME_DO_STATUS, passosDoResultado, resumoDaComparacao } from "../modelo";
-import type { Algoritmo, DadosDoMapa, ResumoDoMapa } from "../tipos";
+import type { Algoritmo, DadosDoMapa, Resultado, ResumoDoMapa } from "../tipos";
 import { usarReproducao } from "../usarReproducao";
 import { Controles } from "./Controles";
 import { GraficoCusto } from "./GraficoCusto";
@@ -15,7 +17,7 @@ interface Lado {
   fonte: boolean;
 }
 
-const COR = { A: "#2563eb", B: "#ea580c" };
+const COR = { A: "#2a78d6", B: "#eb6834" };
 
 const EXEMPLOS: { titulo: string; a: [string, Algoritmo, boolean]; b: [string, Algoritmo, boolean] }[] = [
   { titulo: "Terreno: menos passos × menor custo", a: ["m01", "BFS", false], b: ["m01", "DIJKSTRA", false] },
@@ -58,10 +60,40 @@ function ConfiguracaoDoLado({ nome, lado, setLado, mapas, dados }: {
       </label>
       {r && (
         <span className={`etiqueta status-${r.status.toLowerCase()}`}>
-          {NOME_DO_STATUS[r.status]}{r.status === "OK" ? ` · ${r.passos} passos · custo ${r.custo}` : ""}
+          {NOME_DO_STATUS[r.status]}{r.status === "OK" ? `: ${r.passos} passos, custo ${r.custo}` : ""}
         </span>
       )}
     </div>
+  );
+}
+
+// [IA] Claude Code (Claude Opus 5.5) – placar do confronto A × B: passos e custo de cada lado, com o cartão quando não há caminho
+function PlacarDoConfronto({ a, b, resA, resB, mapas }: { a: Lado; b: Lado; resA: Resultado; resB: Resultado; mapas: ResumoDoMapa[] }) {
+  const titulo = (l: Lado) => mapas.find((m) => m.id === l.mapa)?.titulo ?? l.mapa;
+  const valor = (r: Resultado, chave: "passos" | "custo") => (r.status === "OK" ? r[chave] ?? null : null);
+  const linha = (rotulo: string, chave: "passos" | "custo") => {
+    const [va, vb] = [valor(resA, chave), valor(resB, chave)];
+    return (
+      <div className="placar-linha">
+        <span className={`placar-gols ${va !== null && vb !== null && va < vb ? "vence" : ""}`}>{va ?? <Cartao cor={CARTAO[resA.status]} />}</span>
+        <span className="placar-rotulo">{rotulo}</span>
+        <span className={`placar-gols ${va !== null && vb !== null && vb < va ? "vence" : ""}`}>{vb ?? <Cartao cor={CARTAO[resB.status]} />}</span>
+      </div>
+    );
+  };
+  return (
+    <section className="placar-confronto" aria-label="Placar do confronto">
+      <div className="placar-time" style={{ "--cor": COR.A } as CSSProperties}>
+        <b>{NOME_DO_ALGORITMO[a.algoritmo]}</b><span>{titulo(a)}{a.fonte ? ", fonte consumível" : ""}</span>
+      </div>
+      <div className="placar-centro">
+        {linha("passos", "passos")}
+        {linha("custo", "custo")}
+      </div>
+      <div className="placar-time fora" style={{ "--cor": COR.B } as CSSProperties}>
+        <b>{NOME_DO_ALGORITMO[b.algoritmo]}</b><span>{titulo(b)}{b.fonte ? ", fonte consumível" : ""}</span>
+      </div>
+    </section>
   );
 }
 
@@ -117,6 +149,7 @@ export function Comparacao({ mapas, mapaInicial, obterDados }: {
         <ConfiguracaoDoLado nome="A" lado={a} setLado={setA} mapas={mapas} dados={prontos ? dadosA : null} />
         <ConfiguracaoDoLado nome="B" lado={b} setLado={setB} mapas={mapas} dados={prontos ? dadosB : null} />
       </div>
+      {resA && resB && <PlacarDoConfronto a={a} b={b} resA={resA} resB={resB} mapas={mapas} />}
 
       <div className="segmentado" role="radiogroup" aria-label="Como mostrar">
         {([["sobrepor", "Sobrepor", Layers2], ["lado", "Lado a lado", Columns2]] as const).map(([valor, nome, Icone]) => (
@@ -161,8 +194,8 @@ export function Comparacao({ mapas, mapaInicial, obterDados }: {
                 { nome: "B", cor: COR.B, custos: resB.custos ?? [] },
               ]} />
               <div className="legenda-linhas">
-                <span><i className="ponto" style={{ background: COR.A }} />A · {descrever(a, mapas)}</span>
-                <span><i className="ponto" style={{ background: COR.B }} />B · {descrever(b, mapas)}</span>
+                <span><i className="ponto" style={{ background: COR.A }} />A: {descrever(a, mapas)}</span>
+                <span><i className="ponto" style={{ background: COR.B }} />B: {descrever(b, mapas)}</span>
               </div>
             </div>
             <motion.div key={JSON.stringify([a, b])} className="cartao resumo-comparacao" initial={{ opacity: 0, y: 10 }}

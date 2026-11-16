@@ -1,4 +1,5 @@
 // [IA] Claude Code (Claude Opus 5.5) – tabuleiro em SVG no estilo plano: terreno, chaves, portas, bônus, rastro por camada, jogador, armadilhas e ciclo negativo
+import { Bola } from "./Futebol";
 import { AnimatePresence, motion } from "motion/react";
 import { memo, useEffect, useId, useMemo, useRef, type ReactNode } from "react";
 import { CORES_CHAVE, camadasDoMapa, celulasPorCamada, chave, corDaCamada } from "../modelo";
@@ -232,8 +233,14 @@ function Jogador({ passo, cor, duracao, chaves, fantasma }: {
   return (
     <motion.g initial={false} animate={{ x, y }} transition={{ duration: duracao, ease: "easeInOut" }}>
       {!fantasma && <circle r={0.5} fill={cor} className="jogador-aura" />}
-      <circle r={fantasma ? 0.24 : 0.3} fill={cor} stroke="#fff" strokeWidth={0.08}
-        strokeDasharray={fantasma ? "0.12 0.08" : undefined} className="jogador-corpo" />
+      {fantasma ? (
+        <circle r={0.24} fill={cor} stroke="#fff" strokeWidth={0.08} strokeDasharray="0.12 0.08" className="jogador-corpo" />
+      ) : (
+        <motion.g className="jogador-corpo" initial={false} animate={{ rotate: (passo.estado.l + passo.estado.c) * 90 }}
+          transition={{ duration: duracao, ease: "easeInOut" }}>
+          <Bola r={0.36} contorno={cor} aro={14} />
+        </motion.g>
+      )}
       {!fantasma && chaves && (
         <g className="orbita">
           {[...chaves].map((k, i) => {
@@ -370,7 +377,7 @@ export function Tabuleiro(props: Props) {
         )}
         {avancou && !compacto && !atual.novaChave && atual.delta !== 1 && (
           <TextoFlutuante key={`custo-${passo}`} x={atual.estado.c + 0.5} y={atual.estado.l + 0.5}
-            texto={atual.delta > 0 ? `+${atual.delta}` : `−${Math.abs(atual.delta)}`} cor={atual.delta < 0 ? "#059669" : "#c2410c"} />
+            texto={atual.delta > 0 ? `+${atual.delta}` : `−${Math.abs(atual.delta)}`} cor={atual.delta < 0 ? "#157a3e" : "#b8461b"} />
         )}
       </AnimatePresence>
     </svg>

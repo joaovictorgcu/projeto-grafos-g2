@@ -29,7 +29,6 @@ export default function App() {
           : tela === "parte2" ? <Parte2 aoInicio={() => irPara("inicio")} />
             : (
               <div className="app">
-                <div className="fundo-animado" aria-hidden />
                 <Topo aoInicio={() => irPara("inicio")} />
                 <Inicio aoEscolher={irPara} />
               </div>

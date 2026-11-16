@@ -12,8 +12,8 @@ export function Controles({ reproducao, ultimo, passos, cor, velocidadeMaxima = 
   const { passo, tocando, velocidade, setVelocidade, irPara, alternar } = reproducao;
   const desativado = ultimo === 0;
   const marcos = (passos ?? []).flatMap((p, i) =>
-    p.novaChave ? [{ i, tipo: "chave", cor: CORES_CHAVE[p.novaChave], texto: `pega a chave ${p.novaChave}` }]
-      : p.novoBonus !== null ? [{ i, tipo: "bonus", cor: "#10b981", texto: `usa o bônus ${p.novoBonus}` }] : [],
+    p.novaChave ? [{ i, tipo: "chave", cor: CORES_CHAVE[p.novaChave], texto: `pega a chave ${p.novaChave}`, sinal: p.novaChave }]
+      : p.novoBonus !== null ? [{ i, tipo: "bonus", cor: "#1baf7a", texto: `usa o bônus ${p.novoBonus}`, sinal: "−" }] : [],
   );
 
   return (
@@ -47,7 +47,7 @@ export function Controles({ reproducao, ultimo, passos, cor, velocidadeMaxima = 
             <button key={m.i} type="button" className={`marco marco-${m.tipo}`} title={`passo ${m.i}: ${m.texto}`}
               aria-label={`Ir ao passo ${m.i}: ${m.texto}`}
               style={{ left: `${(m.i / Math.max(1, ultimo)) * 100}%`, "--cor-marco": m.cor } as CSSProperties}
-              onClick={() => irPara(m.i)} />
+              onClick={() => irPara(m.i)}>{m.sinal}</button>
           ))}
           <input type="range" min={0} max={Math.max(1, ultimo)} value={passo} disabled={desativado}
             onChange={(ev) => irPara(Number(ev.target.value))} aria-label="Linha do tempo do percurso" />

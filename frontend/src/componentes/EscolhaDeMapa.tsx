@@ -3,6 +3,7 @@ import { Upload } from "lucide-react";
 import { motion } from "motion/react";
 import { useRef, useState } from "react";
 import type { ResumoDoMapa } from "../tipos";
+import { Bandeirinha } from "./Futebol";
 
 const SELO = { enunciado: "", grupo: "do grupo", enviado: "enviado" };
 
@@ -14,17 +15,17 @@ export function EscolhaDeMapa({ mapas, aoEscolher, aoEnviar, enviando }: {
 
   return (
     <main className="escolha">
-      <motion.section className="escolha-cartao" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
-        <h2>Escolha um mapa</h2>
+      <section className="escolha-cartao">
+        <h2><Bandeirinha className="bandeirinha" />Escolha um mapa</h2>
         <ol className="escolha-lista">
           {mapas.map((m, i) => (
-            <motion.li key={m.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.03 * i }}>
+            <li key={m.id}>
               <motion.button type="button" className="escolha-opcao" onClick={() => aoEscolher(m.id)} whileTap={{ scale: 0.98 }}>
                 <span className="escolha-numero">{i + 1}</span>
                 <span className="escolha-nome">{m.titulo}</span>
                 {SELO[m.origem] && <span className={`selo selo-${m.origem}`}>{SELO[m.origem]}</span>}
               </motion.button>
-            </motion.li>
+            </li>
           ))}
         </ol>
 
@@ -49,7 +50,7 @@ export function EscolhaDeMapa({ mapas, aoEscolher, aoEnviar, enviando }: {
               ev.target.value = "";
             }} />
         </div>
-      </motion.section>
+      </section>
     </main>
   );
 }

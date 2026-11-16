@@ -98,7 +98,7 @@ export function GrafoDeEstados({ dados, passos, passo, duracao }: {
                 style={{ "--cor": camada.cor, width: larguraDoPlano, height: alturaDoPlano } as CSSProperties}
                 initial={{ z: alturaDoAndar(i) + 260, opacity: 0 }} animate={{ z: alturaDoAndar(i), opacity: 1 }}
                 transition={{ delay: 0.12 * i, type: "spring", stiffness: 90, damping: 18 }}>
-                <span className="plano-rotulo">{nomeDaCamada(camada.chaves)} · {camada.estados} estados</span>
+                <span className="plano-rotulo">{nomeDaCamada(camada.chaves)}: {camada.estados} estados</span>
                 <svg viewBox={`0 0 ${largura} ${altura}`} width={larguraDoPlano} height={alturaDoPlano}>
                   {dados.grade.flatMap((linha, l) => [...linha].map((casa, c) =>
                     casa === "#" ? <rect key={`${l}-${c}`} x={c} y={l} width={1} height={1} className="plano-parede" /> : null))}
@@ -113,7 +113,7 @@ export function GrafoDeEstados({ dados, passos, passo, duracao }: {
                     return (
                       <circle key={idx} cx={e.c + 0.5} cy={e.l + 0.5} r={e.saida ? 0.34 : 0.2}
                         className={e.armadilha ? "plano-no armadilha" : e.saida ? "plano-no saida" : "plano-no"}>
-                        <title>{e.rotulo}{e.armadilha ? " · armadilha" : ""}</title>
+                        <title>{e.rotulo}{e.armadilha ? " (armadilha)" : ""}</title>
                       </circle>
                     );
                   })}

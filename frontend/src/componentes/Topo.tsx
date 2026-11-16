@@ -6,19 +6,27 @@ export interface Aba<T extends string> {
   nome: string;
 }
 
+export function Escudo({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} aria-hidden>
+      <rect x="3" y="7" width="26" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M16 7v18M3 12h4v8H3M29 12h-4v8h4" fill="none" stroke="currentColor" strokeWidth="1.8" />
+      <circle cx="16" cy="16" r="3.6" fill="none" stroke="currentColor" strokeWidth="1.8" />
+      <circle cx="16" cy="16" r="1.5" className="escudo-bola" />
+    </svg>
+  );
+}
+
 export function Topo<T extends string>({ parte, abas, ativa, aoTrocar, aoInicio }: {
   parte?: string; abas?: Aba<T>[]; ativa?: T; aoTrocar?: (id: T) => void; aoInicio: () => void;
 }) {
   return (
     <header className="topo">
       <button type="button" className="marca" onClick={aoInicio} aria-label="Voltar para o início">
-        <svg viewBox="0 0 32 32" className="logo" aria-hidden>
-          <path d="M7 7h8v6h6V7h4v12h-6v6H7z" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinejoin="round" />
-          <circle cx="23" cy="23" r="3" className="logo-ponto" />
-        </svg>
+        <Escudo className="logo" />
         <span className="marca-texto">
-          <span className="marca-titulo">Grafos · Grupo 2</span>
-          <span className="marca-sub">{parte ?? "Teoria dos Grafos e AVD · CESAR School"}</span>
+          <span className="marca-titulo">Grupo 2</span>
+          <span className="marca-sub">{parte ?? "Teoria dos Grafos e AVD, CESAR School"}</span>
         </span>
       </button>
       {abas && ativa && aoTrocar && (
@@ -26,8 +34,8 @@ export function Topo<T extends string>({ parte, abas, ativa, aoTrocar, aoInicio 
           {abas.map(({ id, nome }) => (
             <button key={id} type="button" className={ativa === id ? "aba ativa" : "aba"} onClick={() => aoTrocar(id)}
               aria-current={ativa === id ? "page" : undefined}>
-              {ativa === id && <motion.span layoutId="aba-ativa" className="aba-fundo" transition={{ type: "spring", stiffness: 400, damping: 32 }} />}
               <span>{nome}</span>
+              {ativa === id && <motion.span layoutId="aba-ativa" className="aba-fundo" transition={{ type: "spring", stiffness: 500, damping: 40 }} />}
             </button>
           ))}
         </nav>

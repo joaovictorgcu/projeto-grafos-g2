@@ -1,5 +1,4 @@
 // [IA] Claude Code (Claude Opus 5.5) – painel de métricas do grafo de estados e tabela dos três algoritmos no mesmo mapa
-import { motion } from "motion/react";
 import { ALGORITMOS, NOME_DO_ALGORITMO, NOME_DO_STATUS, camadasDoMapa } from "../modelo";
 import type { Algoritmo, DadosDoMapa } from "../tipos";
 import { NumeroAnimado } from "./NumeroAnimado";
@@ -13,7 +12,7 @@ export function Metricas({ dados, algoritmo, aoEscolher }: {
   const itens = [
     { nome: "estados", valor: dados.metricas.ordem, ajuda: "nós do grafo, sem o ALVO" },
     { nome: "arcos", valor: dados.metricas.tamanho, ajuda: "movimentos possíveis, sem os arcos até o ALVO" },
-    { nome: "densidade", valor: dados.metricas.densidade, casas: 4, ajuda: "|E| / (|V|·(|V|−1))" },
+    { nome: "densidade", valor: dados.metricas.densidade, casas: 4, ajuda: "|E| / (|V| × (|V| − 1))" },
     { nome: "camadas", valor: camadas, ajuda: "conjuntos de chaves diferentes" },
     { nome: "casas livres", valor: livres, ajuda: "o grafo de posições teria esse número de nós" },
     { nome: "armadilhas", valor: armadilhas, ajuda: "estados que nunca chegam ao G" },
@@ -21,15 +20,14 @@ export function Metricas({ dados, algoritmo, aoEscolher }: {
 
   return (
     <section className="metricas" aria-label="Métricas do grafo de estados">
-      <div className="contadores">
-        {itens.map((m, i) => (
-          <motion.div key={m.nome} className="contador-cartao" title={m.ajuda}
-            initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 * i }}>
-            <NumeroAnimado valor={m.valor} casas={m.casas} className="contador-valor" />
-            <span className="contador-nome">{m.nome}</span>
-          </motion.div>
+      <dl className="estatisticas">
+        {itens.map((m) => (
+          <div key={m.nome} title={m.ajuda}>
+            <dt>{m.nome}</dt>
+            <dd><NumeroAnimado valor={m.valor} casas={m.casas} /></dd>
+          </div>
         ))}
-      </div>
+      </dl>
 
       <div className="tabela-bloco">
         <span className="rotulo-pequeno">os três algoritmos neste mapa</span>
