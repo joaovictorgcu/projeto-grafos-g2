@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 from src.graphs.io import MapaInvalido
-from src.servidor import Servidor, analisar, dados_da_parte2, mapas_do_projeto, titulo_do_mapa
+from src.servidor import Servidor, analisar, blocos_da_nota, dados_da_parte2, figuras_da_parte1, mapas_do_projeto, titulo_do_mapa
 
 MAPAS = Path(__file__).resolve().parent.parent / "data" / "mapas"
 
@@ -109,3 +109,18 @@ def test_rotas_do_servidor():
     finally:
         servidor.shutdown()
         servidor.server_close()
+
+
+# [IA] Claude Code (Claude Opus 5.5) – figuras da Parte 1 com as notas do docs/parte1/notas_visualizacoes.md
+def test_parte1_traz_cada_figura_com_a_nota_do_grupo():
+    figuras = figuras_da_parte1()
+    arquivos = [f["arquivo"] for f in figuras]
+    assert arquivos[:2] == ["percurso_m03.png", "percurso_m08.png"]
+    assert all(f["blocos"] for f in figuras)
+    assert figuras[0]["tipo"] == "mapa m03_tres_chaves"
+
+
+def test_nota_separa_paragrafos_e_tabelas():
+    blocos = blocos_da_nota("**O que mostra.** texto\nquebrado\n\n| a | b |\n|---|---|\n| 1 | 2 |\n")
+    assert blocos == [{"tipo": "paragrafo", "texto": "**O que mostra.** texto quebrado"},
+                      {"tipo": "tabela", "linhas": [["a", "b"], ["1", "2"]]}]

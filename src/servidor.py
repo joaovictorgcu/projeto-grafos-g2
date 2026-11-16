@@ -15,11 +15,14 @@ from .graphs.io import MapaInvalido, interpretar_mapa
 RAIZ = Path(__file__).resolve().parent.parent
 PASTAS = (("enunciado", RAIZ / "data" / "mapas"), ("grupo", RAIZ / "data" / "mapas_grupo"))
 SITE = RAIZ / "frontend" / "dist"
+PARTE1 = RAIZ / "out" / "parte1"
 PARTE2 = RAIZ / "out" / "parte2"
+NOTAS_PARTE1 = RAIZ / "docs" / "parte1" / "notas_visualizacoes.md"
 RELATORIO_PARTE2 = RAIZ / "docs" / "parte2" / "relatorio_parte2.md"
 NOMES_DOS_MAPAS = {"m01": "Terreno", "m02": "Uma chave", "m03": "Três chaves", "m04": "Esteiras", "m05": "Bônus",
                    "m06": "Fonte", "m07": "Impossível", "m08": "Grande"}
-NOTA = re.compile(r"\*\*([A-Z]\d) \S+ `([^`]+)` \(([^)]*)\)\.\*\*(.*?)(?=\n\s*\n|\Z)", re.S)
+SECAO_PARTE1 = re.compile(r"^## `([^`]+\.png)` \(([^)]*)\)\s*$", re.M)
+NOTA = re.compile(r"\*\*([A-Z]\d)\S*\s*\S*\s*`([^`]+)` \(([^)]*)\)\.\*\*(.*?)(?=\n\s*\n|\Z)", re.S)
 ROTULO = re.compile(r"^\((\d+),(\d+)\)\|([a-z]+|-)\|\{([\d,]*)\}$")
 LIMITE_DO_MAPA = 200_000
 TIPOS = {".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml",
@@ -50,6 +53,38 @@ def dados_da_parte2():
     ordem = {"E": 0, "X": 1, "A": 2}
     figuras.sort(key=lambda f: (ordem.get(f["codigo"][:1], 3), f["codigo"]))
     return {"relatorio": relatorio, "figuras": figuras}
+
+
+# [IA] Claude Code (Claude Opus 5.5) – figuras da Parte 1 para o frontend, com as notas do grupo em docs/parte1/notas_visualizacoes.md
+def blocos_da_nota(texto):
+    blocos = []
+    for trecho in re.split(r"\n\s*\n", texto.strip()):
+        linhas = [l.strip() for l in trecho.strip().splitlines()]
+        if not linhas:
+            continue
+        if all(l.startswith("|") for l in linhas):
+            celulas = [[c.strip() for c in l.strip("|").split("|")] for l in linhas]
+            celulas = [c for c in celulas if not all(re.fullmatch(r":?-+:?", x) for x in c)]
+            blocos.append({"tipo": "tabela", "linhas": celulas})
+        else:
+            blocos.append({"tipo": "paragrafo", "texto": " ".join(linhas)})
+    return blocos
+
+
+def figuras_da_parte1():
+    notas = {}
+    if NOTAS_PARTE1.is_file():
+        texto = NOTAS_PARTE1.read_text(encoding="utf-8")
+        cabecalhos = list(SECAO_PARTE1.finditer(texto))
+        for i, m in enumerate(cabecalhos):
+            fim = cabecalhos[i + 1].start() if i + 1 < len(cabecalhos) else len(texto)
+            notas[m.group(1)] = {"tipo": m.group(2), "blocos": blocos_da_nota(texto[m.end():fim])}
+    ordem = list(notas)
+    figuras = []
+    for arquivo in sorted(PARTE1.glob("*.png"), key=lambda a: (ordem.index(a.name) if a.name in ordem else len(ordem), a.name)):
+        info = notas.get(arquivo.name, {"tipo": "", "blocos": []})
+        figuras.append({"arquivo": arquivo.name, "codigo": f"P{len(figuras) + 1}", **info})
+    return figuras
 
 
 def ler_rotulo(rotulo):
@@ -237,8 +272,10 @@ class Atendente(BaseHTTPRequestHandler):
             if not (PARTE2 / "parte2_report.json").is_file():
                 return self.responder(404, {"erro": "falta o out/parte2/parte2_report.json (rode o --benchmark)"})
             return self.responder(200, dados_da_parte2())
-        if url.path.startswith("/parte2/"):
-            arquivo = PARTE2 / Path(unquote(url.path)).name
+        if url.path == "/api/parte1/figuras":
+            return self.responder(200, figuras_da_parte1())
+        if url.path.startswith(("/parte1/", "/parte2/")):
+            arquivo = (PARTE1 if url.path.startswith("/parte1/") else PARTE2) / Path(unquote(url.path)).name
             if arquivo.suffix == ".png" and arquivo.is_file():
                 return self.responder(200, arquivo.read_bytes(), "image/png")
             return self.responder(404, {"erro": "figura não encontrada"})
