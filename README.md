@@ -18,6 +18,7 @@ biblioteca de grafos é usada fora de `tests/`, onde o `networkx` entra só como
 - [Parte 2: rede de transferências](#parte-2-rede-de-transferências)
 - [Testes](#testes)
 - [Estrutura do repositório](#estrutura-do-repositório)
+- [Declaração de uso de IA](#declaração-de-uso-de-ia)
 
 ## Integrantes e pacotes de trabalho
 
@@ -305,6 +306,10 @@ projeto-grafos-g2/
 ├─ frontend/             # labirinto interativo em React + TypeScript (dist/ = versão compilada)
 └─ tests/
 ```
+
+## Declaração de uso de IA
+
+[Documento de declaração de uso de IA](https://docs.google.com/document/d/1SiJGyYy2NjCxJ7fLpFQMiJrf3mn1L_Vi/edit)
 
 ## Apresentação do checkpoint
 
