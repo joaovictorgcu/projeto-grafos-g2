@@ -1,38 +1,16 @@
-// painel de métricas do grafo de estados e tabela dos três algoritmos no mesmo mapa
+// tabela dos algoritmos no mesmo mapa
 import type { CSSProperties } from "react";
-import { ALGORITMOS, NOME_DO_ALGORITMO, NOME_DO_STATUS, camadasDoMapa } from "../modelo";
+import { ALGORITMOS, NOME_DO_ALGORITMO, NOME_DO_STATUS } from "../modelo";
 import type { Algoritmo, DadosDoMapa } from "../tipos";
-import { NumeroAnimado } from "./NumeroAnimado";
 
 export function Metricas({ dados, algoritmo, aoEscolher }: {
   dados: DadosDoMapa; algoritmo: Algoritmo; aoEscolher: (a: Algoritmo) => void;
 }) {
-  const armadilhas = dados.estados.filter((e) => e.armadilha).length;
-  const camadas = camadasDoMapa(dados).length;
-  const livres = dados.grade.reduce((t, linha) => t + [...linha].filter((c) => c !== "#").length, 0);
-  const itens = [
-    { nome: "estados", valor: dados.metricas.ordem, ajuda: "nós do grafo, sem o ALVO" },
-    { nome: "arcos", valor: dados.metricas.tamanho, ajuda: "movimentos possíveis, sem os arcos até o ALVO" },
-    { nome: "densidade", valor: dados.metricas.densidade, casas: 4, ajuda: "|E| / (|V| × (|V| − 1))" },
-    { nome: "camadas", valor: camadas, ajuda: "conjuntos de chaves diferentes" },
-    { nome: "casas livres", valor: livres, ajuda: "o grafo de posições teria esse número de nós" },
-    { nome: "armadilhas", valor: armadilhas, ajuda: "estados que nunca chegam ao G" },
-  ];
-
   const maiorPassos = Math.max(1, ...ALGORITMOS.map((a) => dados.algoritmos[a].passos ?? 0));
   const maiorCusto = Math.max(1, ...ALGORITMOS.map((a) => dados.algoritmos[a].custo ?? 0));
 
   return (
-    <section className="metricas" aria-label="Métricas do grafo de estados">
-      <dl className="estatisticas">
-        {itens.map((m) => (
-          <div key={m.nome} title={m.ajuda}>
-            <dt>{m.nome}</dt>
-            <dd><NumeroAnimado valor={m.valor} casas={m.casas} /></dd>
-          </div>
-        ))}
-      </dl>
-
+    <section className="metricas so-tabela" aria-label="Os algoritmos neste mapa">
       <div className="tabela-bloco">
         <span className="rotulo-pequeno">os três algoritmos neste mapa</span>
         <table className="tabela-algoritmos">
