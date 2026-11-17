@@ -1,4 +1,5 @@
-// barra do topo: volta para o início e mostra as abas da parte aberta
+// barra do topo: volta para o menu inicial e mostra as abas da parte aberta
+import { ArrowLeft } from "lucide-react";
 import { motion } from "motion/react";
 
 export interface Aba<T extends string> {
@@ -29,17 +30,24 @@ export function Topo<T extends string>({ parte, abas, ativa, aoTrocar, aoInicio 
           <span className="marca-sub">{parte ?? "Teoria dos Grafos e AVD, CESAR School"}</span>
         </span>
       </button>
-      {abas && ativa && aoTrocar && (
-        <nav className="abas" aria-label="Seções">
-          {abas.map(({ id, nome }) => (
-            <button key={id} type="button" className={ativa === id ? "aba ativa" : "aba"} onClick={() => aoTrocar(id)}
-              aria-current={ativa === id ? "page" : undefined}>
-              <span>{nome}</span>
-              {ativa === id && <motion.span layoutId="aba-ativa" className="aba-fundo" transition={{ type: "spring", stiffness: 500, damping: 40 }} />}
-            </button>
-          ))}
-        </nav>
-      )}
+      <div className="topo-direita">
+        {abas && ativa && aoTrocar && (
+          <nav className="abas" aria-label="Seções">
+            {abas.map(({ id, nome }) => (
+              <button key={id} type="button" className={ativa === id ? "aba ativa" : "aba"} onClick={() => aoTrocar(id)}
+                aria-current={ativa === id ? "page" : undefined}>
+                <span>{nome}</span>
+                {ativa === id && <motion.span layoutId="aba-ativa" className="aba-fundo" transition={{ type: "spring", stiffness: 500, damping: 40 }} />}
+              </button>
+            ))}
+          </nav>
+        )}
+        {parte && (
+          <button type="button" className="botao-menu" onClick={aoInicio}>
+            <ArrowLeft size={16} aria-hidden /> Menu
+          </button>
+        )}
+      </div>
     </header>
   );
 }
