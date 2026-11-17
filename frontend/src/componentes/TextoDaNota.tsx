@@ -1,6 +1,7 @@
 // mostra as notas analíticas escritas pelo grupo (negrito e código do markdown, tabelas e os trechos "Insight", "Por que esse gráfico")
 import { Fragment } from "react";
 import type { BlocoDaNota } from "../tipos";
+import { Rosto } from "./Pixel";
 
 export function TextoEmLinha({ texto }: { texto: string }) {
   const partes = texto.split(/(\*\*[^*]+\*\*|`[^`]+`)/g);
@@ -16,8 +17,11 @@ export function TextoEmLinha({ texto }: { texto: string }) {
 function Trecho({ titulo, children }: { titulo?: string; children: React.ReactNode }) {
   return (
     <section className="nota-trecho">
-      {titulo && <h5>{titulo}</h5>}
-      {children}
+      <Rosto camisa="#1a6b3c" tamanho={34} />
+      <div className="balao">
+        {titulo && <h5>{titulo}</h5>}
+        {children}
+      </div>
     </section>
   );
 }
