@@ -1,7 +1,7 @@
 // tela inicial: escalação do grupo e escolha entre a Parte 1 (labirinto) e a Parte 2 (rede de transferências)
 import { ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
-import { IconeBola } from "./Futebol";
+import { CampoIsometrico, Rosto } from "./Pixel";
 
 const LABIRINTO = [
   "###########",
@@ -14,11 +14,11 @@ const LABIRINTO = [
 ];
 
 const ESCALACAO = [
-  { numero: "P1", nome: "Gabriel França", funcao: "modelagem e grafo de estados" },
-  { numero: "P2", nome: "Luís Eduardo Bérard", funcao: "algoritmos e testes" },
-  { numero: "P3", nome: "Guilherme Burle", funcao: "análises da Parte 1" },
-  { numero: "P4", nome: "João Victor Uchôa", funcao: "dados e experimentos" },
-  { numero: "P5", nome: "Caio Leimig", funcao: "visualização e comunicação" },
+  { numero: "P1", nome: "Gabriel França", funcao: "modelagem e grafo de estados", camisa: "#2a78d6", pele: 0, cabelo: 0, i: 3, j: 2 },
+  { numero: "P2", nome: "Luís Eduardo Bérard", funcao: "algoritmos e testes", camisa: "#eb6834", pele: 4, cabelo: 3, i: 4, j: 5 },
+  { numero: "P3", nome: "Guilherme Burle", funcao: "análises da Parte 1", camisa: "#1baf7a", pele: 1, cabelo: 1, i: 7, j: 6 },
+  { numero: "P4", nome: "João Victor Uchôa", funcao: "dados e experimentos", camisa: "#ffcc00", pele: 2, cabelo: 2, i: 8, j: 4 },
+  { numero: "P5", nome: "Caio Leimig", funcao: "visualização e comunicação", camisa: "#9a5fd8", pele: 0, cabelo: 4, i: 9, j: 1 },
 ];
 
 const NOS: [number, number][] = [[34, 34], [66, 22], [108, 30], [44, 74], [86, 64], [126, 76], [62, 104], [112, 106], [146, 46]];
@@ -77,32 +77,24 @@ export function Inicio({ aoEscolher }: { aoEscolher: (parte: "parte1" | "parte2"
   return (
     <main className="inicio">
       <section className="inicio-faixa">
-        <svg className="faixa-campo" viewBox="0 0 1000 400" preserveAspectRatio="xMidYMid slice" aria-hidden>
-          <line x1="520" y1="0" x2="520" y2="400" />
-          <circle cx="520" cy="200" r="92" />
-          <rect x="-1" y="70" width="120" height="260" />
-          <rect x="-1" y="140" width="44" height="120" />
-          <path d="M119 150a70 70 0 0 1 0 100" />
-        </svg>
-        <motion.div className="faixa-bola" initial={{ x: -420, rotate: -540, opacity: 0 }} animate={{ x: 0, rotate: 0, opacity: 1 }}
-          transition={{ duration: 1.4, ease: [0.2, 0.8, 0.2, 1] }}>
-          <IconeBola tamanho={38} />
-        </motion.div>
         <div className="inicio-cabecalho">
           <span className="rotulo-claro">Teoria dos Grafos + AVD, CESAR School, 2026.2, turma 5A</span>
           <h1>Grupo 2</h1>
           <p>Projeto final: um labirinto com chaves e uma rede de transferências do futebol, os dois resolvidos como grafos.</p>
         </div>
-        <ol className="escalacao" aria-label="Integrantes">
-          {ESCALACAO.map((j) => (
-            <li key={j.numero}>
-              <span className="escalacao-numero">{j.numero}</span>
-              <span className="escalacao-nome">{j.nome}</span>
-              <span className="escalacao-funcao">{j.funcao}</span>
-            </li>
-          ))}
-        </ol>
+        <CampoIsometrico className="iso-campo" jogadores={ESCALACAO} />
       </section>
+      <ol className="escalacao" aria-label="Integrantes">
+        {ESCALACAO.map((j) => (
+          <li key={j.numero}>
+            <Rosto camisa={j.camisa} pele={j.pele} cabelo={j.cabelo} />
+            <span className="escalacao-texto">
+              <span className="escalacao-nome"><b className="escalacao-numero">{j.numero}</b> {j.nome}</span>
+              <span className="escalacao-funcao">{j.funcao}</span>
+            </span>
+          </li>
+        ))}
+      </ol>
       <div className="inicio-cartoes">
         {cartoes.map(({ id, rotulo, titulo, texto, Desenho }) => (
           <button key={id} type="button" className={`inicio-cartao inicio-${id}`} onClick={() => aoEscolher(id)}>

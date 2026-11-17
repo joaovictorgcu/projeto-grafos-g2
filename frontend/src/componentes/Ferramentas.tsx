@@ -43,7 +43,7 @@ function Interruptor({ ligado, aoMudar, texto, desativado, dica }: {
 
 export function Ferramentas({ dados, algoritmo, setAlgoritmo, mostrarAlgoritmo, fonte, setFonte, armadilhas, setArmadilhas, camada, setCamada, camadas }: {
   dados: DadosDoMapa; algoritmo: Algoritmo; setAlgoritmo: (a: Algoritmo) => void; mostrarAlgoritmo: boolean;
-  fonte: boolean; setFonte: (v: boolean) => void;
+  fonte?: boolean; setFonte?: (v: boolean) => void;
   armadilhas?: boolean; setArmadilhas?: (v: boolean) => void;
   camada?: string | null; setCamada?: (c: string | null) => void; camadas?: { chaves: string; estados: number; cor: string }[];
 }) {
@@ -66,8 +66,8 @@ export function Ferramentas({ dados, algoritmo, setAlgoritmo, mostrarAlgoritmo, 
           })}
         </div>
       )}
-      <Interruptor ligado={fonte} aoMudar={setFonte} texto="Fonte consumível" desativado={!temFonte}
-        dica={temFonte ? "a fonte * vale −2 só na primeira passagem" : "este mapa não tem fonte *"} />
+      {setFonte && <Interruptor ligado={!!fonte} aoMudar={setFonte} texto="Fonte consumível" desativado={!temFonte}
+        dica={temFonte ? "a fonte * vale −2 só na primeira passagem" : "este mapa não tem fonte *"} />}
       {setArmadilhas && <Interruptor ligado={!!armadilhas} aoMudar={setArmadilhas} texto="Destacar armadilhas" />}
       {setCamada && camadas && (
         <div className="chips" aria-label="Camada em destaque">
