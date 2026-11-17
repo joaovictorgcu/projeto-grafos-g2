@@ -99,9 +99,10 @@ python -m src.cli --mapa ./data/mapas/m03_tres_chaves.txt --interactive
 
 Abre em `http://127.0.0.1:8000`, numa tela inicial para escolher a Parte 1 ou a Parte 2.
 
-**Parte 2:** números do grafo e do recorte, os caminhos do Dijkstra, os casos do Bellman-Ford (com e
-sem ciclo negativo), BFS e DFS a partir de 3 clubes, desempenho e escalabilidade e as figuras de
-`out/parte2/` com as notas analíticas do `docs/parte2/relatorio_parte2.md`.
+**Parte 2:** números do grafo, os caminhos do Dijkstra, os casos do Bellman-Ford (com e sem ciclo
+negativo), BFS e DFS a partir de 3 clubes, desempenho e escalabilidade e as visualizações de AVD
+(exploratórias e explanatórias de `out/parte2/`) com as notas analíticas do
+`docs/parte2/relatorio_parte2.md`.
 
 **Parte 1:** primeiro uma página para escolher o mapa (ou enviar um `.txt`, como o mapa surpresa);
 depois, cinco abas, com o algoritmo e as opções numa barra acima do tabuleiro:

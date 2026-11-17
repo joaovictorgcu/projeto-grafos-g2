@@ -1,5 +1,5 @@
-// Parte 2: números do grafo, caminhos e ciclos dos algoritmos, desempenho e as figuras com as notas do grupo
-import { ChevronDown } from "lucide-react";
+// Parte 2: números do grafo, caminhos e ciclos dos algoritmos, desempenho e as visualizações de AVD com as notas do grupo
+// [IA] Claude Code (Claude Opus 5.5) – Parte 2 mais enxuta: sem funil, sem lista de ciclos de ida e volta, sem transferências por arco e sem as figuras A1 a A4, que repetiam as abas Caminhos e Desempenho
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { carregarParte2 } from "./api";
@@ -16,7 +16,7 @@ const ABAS: Aba<Secao>[] = [
   { id: "geral", nome: "Visão geral" },
   { id: "caminhos", nome: "Caminhos e ciclos" },
   { id: "desempenho", nome: "Desempenho" },
-  { id: "figuras", nome: "Visualizações" },
+  { id: "figuras", nome: "Visualizações de AVD" },
 ];
 
 const NOME = { BFS: "BFS", DFS: "DFS", DIJKSTRA: "Dijkstra", BELLMAN_FORD: "Bellman-Ford" } as Record<string, string>;
@@ -41,47 +41,9 @@ function Rota({ clubes, ciclo }: { clubes: string[]; ciclo?: boolean }) {
   );
 }
 
-function Transferencias({ lista }: { lista: Record<string, string[]> }) {
-  const [aberto, setAberto] = useState(false);
-  return (
-    <div className="transferencias">
-      <button type="button" className="chip" onClick={() => setAberto((a) => !a)} aria-expanded={aberto}>
-        <ChevronDown size={14} aria-hidden style={{ transform: aberto ? "rotate(180deg)" : undefined, transition: "transform .2s" }} />
-        {aberto ? "esconder as transferências" : "ver as transferências de cada arco"}
-      </button>
-      <AnimatePresence>
-        {aberto && (
-          <motion.dl initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}>
-            {Object.entries(lista).map(([arco, jogadores]) => (
-              <div key={arco}>
-                <dt>{arco.split(" -> ").map((clube, k) => <span key={k}>{k > 0 && " → "}<MiniEscudo nome={clube} /> {clube}</span>)}</dt>
-                {jogadores.map((j) => {
-                  const partes = /^(.*) \((\d\d\/\d\d)\): (-?[\d.]+)$/.exec(j);
-                  if (!partes) return <dd key={j}>{j}</dd>;
-                  const peso = Number(partes[3].replace(/\./g, ""));
-                  return (
-                    <dd key={j}>
-                      <span className="transferencia-nome">{partes[1]}</span>
-                      <span className="transferencia-temporada">{partes[2]}</span>
-                      <span className={peso < 0 ? "transferencia-peso negativo" : "transferencia-peso"}>{euro(peso)}</span>
-                    </dd>
-                  );
-                })}
-              </div>
-            ))}
-          </motion.dl>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
-
 function VisaoGeral({ dados }: { dados: DadosDaParte2 }) {
   const d = dados.relatorio.dataset;
-  const maiorEtapa = Math.max(...d.funil.map((f) => f.linhas));
   const ciclos2 = dados.relatorio.ciclos_de_comprimento_2;
-  const [todos, setTodos] = useState(false);
-  const confrontos = todos ? ciclos2.mais_negativos : ciclos2.mais_negativos.slice(0, 5);
   const placar = [
     { nome: "clubes", detalhe: "nós", valor: d.V },
     { nome: "pares de clubes", detalhe: "arcos", valor: d.E },
@@ -99,61 +61,16 @@ function VisaoGeral({ dados }: { dados: DadosDaParte2 }) {
         ))}
       </section>
 
-      <div className="duas-colunas">
-        <section className="cartao">
-          <h3 className="cartao-titulo">Ficha do grafo</h3>
-          <dl className="ficha">
-            <div><dt>Nó</dt><dd>clube</dd></div>
-            <div><dt>Arco</dt><dd>clube que vendeu → clube que comprou</dd></div>
-            <div><dt>Peso</dt><dd>valor pago − valor de mercado, somado nas transferências do par</dd></div>
-            <div><dt>Pesos</dt><dd className="numero-linha"><span>{euro(d.peso_min)} <small>mín</small></span> <span>{euro(d.peso_mediana)} <small>mediana</small></span> <span>{euro(d.peso_max)} <small>máx</small></span></dd></div>
-            <div><dt>Por temporada</dt><dd className="numero-linha">{numero(d.temporal.V)} nós, {numero(d.temporal.E)} arcos</dd></div>
-          </dl>
-          <span className="detalhe">Fonte: {d.fonte}</span>
-        </section>
-
-        <section className="cartao">
-          <h3 className="cartao-titulo">Do arquivo bruto ao grafo</h3>
-          <ul className="funil">
-            {d.funil.map((f, i) => (
-              <li key={f.etapa}>
-                <span className="funil-etapa">{f.etapa}</span>
-                <span className="funil-valor">{numero(f.linhas)}</span>
-                <div className="funil-barra">
-                  <motion.span initial={{ width: 0 }} animate={{ width: `${(f.linhas / maiorEtapa) * 100}%` }} transition={{ delay: 0.05 * i, duration: 0.5 }} />
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
-      </div>
-
       <section className="cartao">
-        <div className="cartao-cabeca">
-          <h3 className="cartao-titulo">Ida e volta com saldo negativo</h3>
-          <span className="detalhe">ciclos de 2 arcos mais negativos</span>
-        </div>
-        <ol className="confrontos">
-          {confrontos.map((c, i) => (
-            <li key={c.clubes.join("|")}>
-              <span className="confronto-pos">{i + 1}</span>
-              <span className="confronto-time">{c.clubes[0]} <MiniEscudo nome={c.clubes[0]} /></span>
-              <span className="confronto-placar">
-                <span title="ida">{euro(c.ida)}</span>
-                <i>⇄</i>
-                <span title="volta">{euro(c.volta)}</span>
-              </span>
-              <span className="confronto-time fora"><MiniEscudo nome={c.clubes[1]} /> {c.clubes[1]}</span>
-              <span className="confronto-soma">{euro(c.soma)}</span>
-            </li>
-          ))}
-        </ol>
-        {ciclos2.mais_negativos.length > 5 && (
-          <button type="button" className="chip" onClick={() => setTodos((t) => !t)} aria-expanded={todos}>
-            <ChevronDown size={14} aria-hidden style={{ transform: todos ? "rotate(180deg)" : undefined }} />
-            {todos ? "mostrar só os 5 primeiros" : `ver os ${ciclos2.mais_negativos.length}`}
-          </button>
-        )}
+        <h3 className="cartao-titulo">Ficha do grafo</h3>
+        <dl className="ficha">
+          <div><dt>Nó</dt><dd>clube</dd></div>
+          <div><dt>Arco</dt><dd>clube que vendeu → clube que comprou</dd></div>
+          <div><dt>Peso</dt><dd>valor pago − valor de mercado, somado nas transferências do par</dd></div>
+          <div><dt>Pesos</dt><dd className="numero-linha"><span>{euro(d.peso_min)} <small>mín</small></span> <span>{euro(d.peso_mediana)} <small>mediana</small></span> <span>{euro(d.peso_max)} <small>máx</small></span></dd></div>
+          <div><dt>Por temporada</dt><dd className="numero-linha">{numero(d.temporal.V)} nós, {numero(d.temporal.E)} arcos</dd></div>
+        </dl>
+        <span className="detalhe">Fonte: {d.fonte}</span>
       </section>
     </div>
   );
@@ -168,7 +85,6 @@ function CartaoDoPar({ par }: { par: ParDoDijkstra }) {
       </header>
       <Rota clubes={par.caminho} />
       <span className="detalhe">{par.arcos} arcos no Dijkstra, {par.passos_bfs} arcos no menor caminho da BFS</span>
-      <Transferencias lista={par.transferencias} />
     </article>
   );
 }
@@ -197,7 +113,6 @@ function Caminhos({ dados }: { dados: DadosDaParte2 }) {
             </header>
             <span className="detalhe">{semCiclo.grafo}: {numero(semCiclo.ordem)} nós, {numero(semCiclo.tamanho)} arcos, {numero(semCiclo.arcos_negativos)} negativos</span>
             <Rota clubes={semCiclo.menor_custo.caminho} />
-            <Transferencias lista={semCiclo.menor_custo.transferencias} />
           </article>
           {r.bellman_ford.com_ciclo_negativo.map((c) => (
             <article key={c.grafo} className="cartao par ciclo">
@@ -207,7 +122,6 @@ function Caminhos({ dados }: { dados: DadosDaParte2 }) {
               </header>
               <span className="detalhe">{c.grafo}: {numero(c.ordem)} nós, {numero(c.tamanho)} arcos</span>
               <Rota clubes={c.ciclo.clubes} ciclo />
-              <Transferencias lista={c.ciclo.transferencias} />
             </article>
           ))}
         </div>
@@ -257,7 +171,6 @@ function Desempenho({ dados }: { dados: DadosDaParte2 }) {
   const algoritmos = ["BFS", "DFS", "DIJKSTRA", "BELLMAN_FORD"];
   const [foco, setFoco] = useState<{ alg: string; pct: number } | null>(null);
   const completo = r.desempenho.filter((d) => d.tamanho_pct === 100);
-  const maisRapido = Math.min(...completo.map((d) => d.media_s));
   const valores = r.escalabilidade.flatMap((p) => [p.tempo_relativo, p.teoria_relativa]).filter((v) => v > 0);
   const piso = Math.floor(Math.log10(Math.min(...valores)));
   const decadas = Array.from({ length: -piso + 1 }, (_, i) => 10 ** -i);
@@ -324,7 +237,7 @@ function Desempenho({ dados }: { dados: DadosDaParte2 }) {
           <span className="detalhe">{numero(completo[0]?.V ?? 0)} nós, {numero(completo[0]?.E ?? 0)} arcos</span>
         </div>
         <table className="tabela-algoritmos simples classificacao">
-          <thead><tr><th className="numero">#</th><th>algoritmo</th><th>tarefa</th><th className="numero">média</th><th className="numero">desvio</th><th className="numero">vezes o mais rápido</th><th className="numero">memória</th></tr></thead>
+          <thead><tr><th className="numero">#</th><th>algoritmo</th><th>tarefa</th><th className="numero">média</th><th className="numero">desvio</th></tr></thead>
           <tbody>
             {[...completo].sort((a, b) => a.media_s - b.media_s).map((d, i) => (
               <tr key={d.algoritmo}>
@@ -333,8 +246,6 @@ function Desempenho({ dados }: { dados: DadosDaParte2 }) {
                 <td>{d.tarefa}</td>
                 <td className="numero">{numero(d.media_s * 1000, 2)} ms</td>
                 <td className="numero">{numero(d.desvio_s * 1000, 2)} ms</td>
-                <td className="numero">{numero(d.media_s / maisRapido, d.media_s / maisRapido < 10 ? 1 : 0)}×</td>
-                <td className="numero">{d.memoria_pico_kb === null ? "não medida" : `${numero(d.memoria_pico_kb, 0)} KB`}</td>
               </tr>
             ))}
           </tbody>
@@ -344,7 +255,7 @@ function Desempenho({ dados }: { dados: DadosDaParte2 }) {
   );
 }
 
-const GRUPOS_DE_FIGURA: [string, string][] = [["E", "Exploratórias"], ["X", "Explanatórias"], ["A", "Algoritmos"]];
+const GRUPOS_DE_FIGURA: [string, string][] = [["E", "Exploratórias"], ["X", "Explanatórias"]];
 
 function Figuras({ figuras }: { figuras: Figura[] }) {
   const grupos: GrupoDaGaleria[] = GRUPOS_DE_FIGURA.map(([letra, nome]) => ({
@@ -354,8 +265,6 @@ function Figuras({ figuras }: { figuras: Figura[] }) {
       src: `/parte2/${f.arquivo}`, nota: f.nota ? <NotaCorrida texto={f.nota} /> : null,
     })),
   })).filter((g) => g.itens.length);
-  const soltas = figuras.filter((f) => !GRUPOS_DE_FIGURA.some(([letra]) => f.codigo.startsWith(letra)));
-  if (soltas.length) grupos.push({ nome: "Outras", itens: soltas.map((f) => ({ id: f.arquivo, codigo: f.codigo, titulo: tituloDoArquivo(f.arquivo), subtitulo: f.arquivo, src: `/parte2/${f.arquivo}`, nota: null })) });
   return <Galeria grupos={grupos} />;
 }
 
