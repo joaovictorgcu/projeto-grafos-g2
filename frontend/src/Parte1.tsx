@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { analisarTexto, carregarMapa, listarMapas } from "./api";
 import { FigurasDaParte1 } from "./componentes/FigurasDaParte1";
 import { Cartao, Carregando } from "./componentes/Futebol";
-import { Topo, type Aba } from "./componentes/Topo";
+import { Topo } from "./componentes/Topo";
 import { Comparacao } from "./componentes/Comparacao";
 import { Controles } from "./componentes/Controles";
 import { Exploracao } from "./componentes/Exploracao";
@@ -21,14 +21,6 @@ import { ALGORITMOS, camadasDoMapa, corDaCamada, nomeDaCamada, passosDoResultado
 import type { Algoritmo, DadosDoMapa, ResumoDoMapa, Vista } from "./tipos";
 import { usarReproducao } from "./usarReproducao";
 
-const ABAS: Aba<Vista>[] = [
-  { id: "labirinto", nome: "Labirinto" },
-  { id: "exploracao", nome: "Exploração" },
-  { id: "grafo", nome: "Grafo de estados" },
-  { id: "comparar", nome: "Comparar" },
-  { id: "visualizacoes", nome: "Visualizações" },
-];
-
 const parametros = new URLSearchParams(window.location.search);
 
 export function Parte1({ aoInicio }: { aoInicio: () => void }) {
@@ -36,8 +28,7 @@ export function Parte1({ aoInicio }: { aoInicio: () => void }) {
   const [mapaId, setMapaId] = useState(parametros.get("mapa") ?? "");
   const [algoritmo, setAlgoritmo] = useState<Algoritmo>(
     ALGORITMOS.includes(parametros.get("alg") as Algoritmo) ? (parametros.get("alg") as Algoritmo) : "DIJKSTRA");
-  const [vista, setVista] = useState<Vista>(ABAS.map((a) => a.id).includes(parametros.get("vista") as Vista)
-    ? (parametros.get("vista") as Vista) : "labirinto");
+  const [vista] = useState<Vista>("labirinto");
   const [fonte, setFonte] = useState(parametros.get("fonte") === "1");
   const [camada, setCamada] = useState<string | null>(null);
   const [armadilhas, setArmadilhas] = useState(false);
@@ -145,7 +136,7 @@ export function Parte1({ aoInicio }: { aoInicio: () => void }) {
       <AvisoDeErro erro={erroEnvio} limparErro={() => setErroEnvio(null)} />
       {vista === "visualizacoes" ? (
         <>
-          <Topo parte="Parte 1: labirinto com chaves" abas={ABAS} ativa={vista} aoTrocar={setVista} aoInicio={aoInicio} />
+          <Topo parte="Parte 1: labirinto com chaves" aoInicio={aoInicio} />
           <div className="corpo sem-lateral">
             <main className="conteudo">
               <div className="vista">
@@ -162,12 +153,12 @@ export function Parte1({ aoInicio }: { aoInicio: () => void }) {
         </>
       ) : !mapaId ? (
         <>
-          <Topo parte="Parte 1: labirinto com chaves" abas={ABAS} ativa={vista} aoTrocar={setVista} aoInicio={aoInicio} />
+          <Topo parte="Parte 1: labirinto com chaves" aoInicio={aoInicio} />
           {mapas.length > 0 && <EscolhaDeMapa mapas={mapas} aoEscolher={setMapaId} aoEnviar={enviarArquivo} enviando={enviando} />}
         </>
       ) : (
       <>
-      <Topo parte="Parte 1: labirinto com chaves" abas={ABAS} ativa={vista} aoTrocar={setVista} aoInicio={aoInicio} />
+      <Topo parte="Parte 1: labirinto com chaves" aoInicio={aoInicio} />
 
       <div className="corpo sem-lateral">
         <main className="conteudo">
