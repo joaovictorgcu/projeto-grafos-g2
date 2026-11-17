@@ -75,6 +75,24 @@ code { font-family: var(--fonte-mono); font-size: 0.88em; background: var(--supe
 .selo-grupo { background: #fff1c7; color: #8f3a12; }
 .selo-enviado { background: #dcefe2; color: #0f5a32; }
 
+.ampliavel { position: relative; display: flex; flex-direction: column; gap: 8px; }
+.ampliavel-barra { position: absolute; top: 8px; right: 8px; z-index: 5; display: flex; align-items: center; gap: 2px; padding: 3px; border-radius: 4px; background: rgba(255, 255, 255, 0.94); border: 1px solid var(--borda); box-shadow: 0 4px 14px -8px rgba(0, 0, 0, 0.5); }
+.ampliavel-barra .botao-icone.pequeno { color: var(--texto); }
+.ampliavel-barra .botao-icone.pequeno:hover:not(:disabled) { background: var(--superficie-2); }
+.ampliavel-nivel { min-width: 44px; text-align: center; font-family: var(--fonte-mono); font-size: 12.5px; font-weight: 600; }
+.ampliavel-seguir { display: inline-flex; align-items: center; gap: 5px; padding: 0 8px; font-size: 12.5px; color: var(--texto-2); cursor: pointer; }
+.ampliavel-seguir input { accent-color: var(--destaque); }
+.ampliavel-area { overflow: hidden; }
+.ampliavel.ampliado .ampliavel-area { overflow: auto; max-height: calc(100dvh - 380px); min-height: 320px; }
+.ampliavel.ampliado .ampliavel-area svg { width: calc(var(--zoom) * 100%); max-height: none; }
+.ampliavel-area.arrastavel { cursor: grab; touch-action: none; }
+.ampliavel-area.arrastavel:active { cursor: grabbing; }
+.ampliavel.cheia { background: var(--fundo); padding: 16px; justify-content: center; }
+.ampliavel.cheia .ampliavel-barra { top: 20px; right: 20px; }
+.ampliavel.cheia .ampliavel-area { max-height: calc(100vh - 32px); }
+.ampliavel.cheia .ampliavel-area svg { max-height: calc(100vh - 32px); }
+.ampliavel.cheia.ampliado .ampliavel-area { height: calc(100vh - 32px); max-height: none; }
+.ampliavel.cheia.ampliado .ampliavel-area svg { max-height: none; }
 .escolha { padding: 40px 20px 64px; display: flex; justify-content: center; }
 .escolha-cartao { width: min(680px, 100%); display: flex; flex-direction: column; gap: 18px; }
 .bandeirinha { width: 26px; height: 34px; margin-right: 8px; vertical-align: -3px; color: var(--gramado-escuro); }

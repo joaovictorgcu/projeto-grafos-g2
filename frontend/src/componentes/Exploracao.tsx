@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { chave } from "../modelo";
 import type { DadosDoMapa, Expansao } from "../tipos";
 import { usarReproducao } from "../usarReproducao";
+import { Ampliavel } from "./Ampliavel";
 import { Controles } from "./Controles";
 import { Itens, Marcos, Terreno } from "./Tabuleiro";
 
@@ -110,6 +111,7 @@ function PainelDeBusca({ dados, busca, k }: { dados: DadosDoMapa; busca: Busca; 
         {quadro && <span className="expandidas">expandidas: <b>{quadro.expandidas}</b></span>}
       </header>
       <div className="busca-quadro">
+        <Ampliavel rotulo={busca.titulo}>
         <svg viewBox={`0 0 ${largura} ${altura}`} className="tabuleiro-busca" role="img"
           aria-label={`${busca.titulo} em ${dados.titulo}: ${quadro?.expandidas ?? 0} estados expandidos`}>
           <Terreno grade={grade} />
@@ -124,6 +126,7 @@ function PainelDeBusca({ dados, busca, k }: { dados: DadosDoMapa; busca: Busca; 
               transition={{ duration: 1.1, ease: "easeInOut" }} />
           )}
         </svg>
+        </Ampliavel>
         {busca.aviso && <div className="busca-aviso">{busca.aviso}</div>}
       </div>
       <footer>

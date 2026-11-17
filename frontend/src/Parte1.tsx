@@ -10,6 +10,7 @@ import { Comparacao } from "./componentes/Comparacao";
 import { Controles } from "./componentes/Controles";
 import { Exploracao } from "./componentes/Exploracao";
 import { GrafoDeEstados } from "./componentes/GrafoDeEstados";
+import { Ampliavel } from "./componentes/Ampliavel";
 import { EscolhaDeMapa } from "./componentes/EscolhaDeMapa";
 import { AvisoDeErro, Ferramentas } from "./componentes/Ferramentas";
 import { Legenda } from "./componentes/Legenda";
@@ -218,8 +219,12 @@ export function Parte1({ aoInicio }: { aoInicio: () => void }) {
                   {vista === "labirinto" ? (
                     <div className="grade-labirinto">
                       <div className="quadro">
-                        <Tabuleiro dados={pronto} resultado={resultado} passos={passos} passo={reproducao.passo} duracao={duracao}
-                          camadaFixa={camada} mostrarArmadilhas={armadilhas} />
+                        <Ampliavel rotulo="labirinto" foco={{
+                          x: (atual.estado.c + 0.5) / pronto.grade[0].length, y: (atual.estado.l + 0.5) / pronto.grade.length,
+                        }}>
+                          <Tabuleiro dados={pronto} resultado={resultado} passos={passos} passo={reproducao.passo} duracao={duracao}
+                            camadaFixa={camada} mostrarArmadilhas={armadilhas} />
+                        </Ampliavel>
                         <Legenda />
                       </div>
                       <Painel dados={pronto} passos={passos} passo={reproducao.passo} cor={corAtual} />

@@ -157,3 +157,11 @@ def test_vizinhos_na_ordem_n_l_s_o():
     g = construir_estados(interpretar_mapa(CRUZAMENTO))
     assert [a.movimento for a in g.arcos if a.origem == "(2,2)|-|{}"] == ["N", "L", "S", "O"]
     assert g.grafo.vizinhos("(2,2)|-|{}") == ["(1,2)|-|{}", "(2,3)|-|{}", "(3,2)|-|{}", "(2,1)|-|{}"]
+
+
+# [IA] Claude Code (Claude Opus 5.5) – arestas de todos os mapas, inclusive os do grupo, cada um no seu arquivo
+def test_exportar_inclui_os_mapas_do_grupo_sem_um_apagar_o_outro(tmp_path):
+    grupo = MAPAS.parent / "mapas_grupo"
+    gerados = exportar_arestas([MAPAS, grupo], tmp_path)
+    assert len(gerados) == 8 + len(list(grupo.glob("*.txt")))
+    assert len({p.name for p in gerados}) == len(gerados)

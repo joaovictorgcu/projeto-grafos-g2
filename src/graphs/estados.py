@@ -1,6 +1,7 @@
 # grafo de posições e grafo de estados, construído por exploração a partir do início
 import argparse
 import csv
+import re
 from collections import deque
 from dataclasses import dataclass
 from pathlib import Path
@@ -164,7 +165,9 @@ def metricas(construido: GrafoConstruido) -> dict:
 
 
 def nome_curto(arquivo) -> str:
-    return Path(arquivo).stem.split("_")[0]
+    nome = Path(arquivo).stem
+    codigo = nome.split("_")[0]
+    return codigo if re.fullmatch(r"m\d+", codigo) else nome
 
 
 def exportar_arestas(pastas, saida) -> list:
