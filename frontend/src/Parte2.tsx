@@ -2,7 +2,7 @@
 // [IA] Claude Code (Claude Opus 5.5) – Parte 2 mais enxuta: sem funil, sem lista de ciclos de ida e volta, sem transferências por arco e sem as figuras A1 a A4, que repetiam as abas Caminhos e Desempenho
 import { ChevronDown } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { carregarParte2 } from "./api";
 import { Galeria, tituloDoArquivo, type GrupoDaGaleria } from "./componentes/Galeria";
 import { Cartao, Carregando, Jogada, MiniEscudo } from "./componentes/Futebol";
@@ -77,14 +77,14 @@ function VisaoGeral({ dados }: { dados: DadosDaParte2 }) {
   );
 }
 
-function CartaoDoPar({ par }: { par: ParDoDijkstra }) {
+function Recolhivel({ titulo, valor, classe = "", children }: { titulo: ReactNode; valor: number; classe?: string; children: ReactNode }) {
   const [aberto, setAberto] = useState(false);
   return (
-    <article className={aberto ? "cartao par recolhivel aberto" : "cartao par recolhivel"}>
+    <article className={`cartao par recolhivel ${classe}${aberto ? " aberto" : ""}`}>
       <h4 className="par-titulo">
         <button type="button" className="par-cabeca" onClick={() => setAberto((a) => !a)} aria-expanded={aberto}>
-          <span className="par-nome">{par.origem} → {par.destino}</span>
-          <span className={par.custo_original < 0 ? "valor negativo" : "valor"}>{euro(par.custo_original)}</span>
+          <span className="par-nome">{titulo}</span>
+          <span className={valor < 0 ? "valor negativo" : "valor"}>{euro(valor)}</span>
           <ChevronDown size={18} aria-hidden className="par-seta" />
         </button>
       </h4>
@@ -92,14 +92,20 @@ function CartaoDoPar({ par }: { par: ParDoDijkstra }) {
         {aberto && (
           <motion.div className="par-corpo" initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }}>
-            <div>
-              <Rota clubes={par.caminho} />
-              <span className="detalhe">{par.arcos} arcos no Dijkstra, {par.passos_bfs} arcos no menor caminho da BFS</span>
-            </div>
+            <div>{children}</div>
           </motion.div>
         )}
       </AnimatePresence>
     </article>
+  );
+}
+
+function CartaoDoPar({ par }: { par: ParDoDijkstra }) {
+  return (
+    <Recolhivel titulo={`${par.origem} → ${par.destino}`} valor={par.custo_original}>
+      <Rota clubes={par.caminho} />
+      <span className="detalhe">{par.arcos} arcos no Dijkstra, {par.passos_bfs} arcos no menor caminho da BFS</span>
+    </Recolhivel>
   );
 }
 
@@ -119,24 +125,16 @@ function Caminhos({ dados }: { dados: DadosDaParte2 }) {
 
       <section>
         <h3 className="titulo-secao">Bellman-Ford</h3>
-        <div className="pares">
-          <article className="cartao par">
-            <header>
-              <h4>Sem ciclo negativo: {semCiclo.fonte} → {semCiclo.menor_custo.destino}</h4>
-              <span className="valor negativo">{euro(semCiclo.menor_custo.custo)}</span>
-            </header>
+        <div className="pares-lista">
+          <Recolhivel titulo={`Sem ciclo negativo: ${semCiclo.fonte} → ${semCiclo.menor_custo.destino}`} valor={semCiclo.menor_custo.custo}>
             <span className="detalhe">{semCiclo.grafo}: {numero(semCiclo.ordem)} nós, {numero(semCiclo.tamanho)} arcos, {numero(semCiclo.arcos_negativos)} negativos</span>
             <Rota clubes={semCiclo.menor_custo.caminho} />
-          </article>
+          </Recolhivel>
           {r.bellman_ford.com_ciclo_negativo.map((c) => (
-            <article key={c.grafo} className="cartao par ciclo">
-              <header>
-                <h4><Cartao cor="vermelho" /> Ciclo negativo a partir de {c.fonte}</h4>
-                <span className="valor negativo">{euro(c.ciclo.custo)}</span>
-              </header>
+            <Recolhivel key={c.grafo} classe="ciclo" titulo={<><Cartao cor="vermelho" /> Ciclo negativo a partir de {c.fonte}</>} valor={c.ciclo.custo}>
               <span className="detalhe">{c.grafo}: {numero(c.ordem)} nós, {numero(c.tamanho)} arcos</span>
               <Rota clubes={c.ciclo.clubes} ciclo />
-            </article>
+            </Recolhivel>
           ))}
         </div>
       </section>
