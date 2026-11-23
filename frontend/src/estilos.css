@@ -449,6 +449,27 @@ code { font-family: var(--fonte-mono); font-size: 0.88em; background: var(--supe
 .transferencias tbody tr { cursor: default; }
 .transferencias th[scope="rowgroup"] { font-weight: 600; vertical-align: top; white-space: nowrap; }
 .transferencias .negativo { color: #b3261e; }
+.editor { display: flex; flex-direction: column; gap: 16px; }
+.editor-barra { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; padding: 12px 14px; background: var(--superficie); border: 1px solid var(--borda); border-radius: var(--raio); }
+.editor-barra label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--texto-3); }
+.editor-barra input, .editor-barra select { min-height: 34px; padding: 4px 8px; border: 1px solid var(--borda-forte); border-radius: 4px; font: inherit; font-size: 14px; color: var(--texto); background: #fff; }
+.editor-barra input[type=number] { width: 76px; }
+.editor-corpo { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 16px; align-items: start; }
+.editor-paleta { display: flex; flex-direction: column; gap: 12px; padding: 12px; background: var(--superficie); border: 1px solid var(--borda); border-radius: var(--raio); }
+.editor-simbolos { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px; }
+.editor-simbolo { display: flex; align-items: center; gap: 6px; padding: 5px 6px; border: 1.5px solid var(--borda); border-radius: 4px; background: #fff; font: inherit; font-size: 12.5px; text-align: left; cursor: pointer; }
+.editor-simbolo svg { width: 22px; height: 22px; flex: none; }
+.editor-simbolo.ativo { border-color: var(--destaque); background: var(--destaque-suave); font-weight: 600; }
+.editor-simbolo:focus-visible { outline: 2px solid var(--destaque); outline-offset: 1px; }
+.editor-quadro { display: flex; flex-direction: column; gap: 10px; padding: 14px; background: var(--superficie); border: 1px solid var(--borda); border-radius: var(--raio); }
+.editor-grade { width: 100%; max-height: 62vh; background: var(--parede); cursor: crosshair; touch-action: none; user-select: none; }
+.editor-glifo { font-size: 0.62px; font-weight: 700; font-family: var(--fonte-texto); pointer-events: none; }
+.editor-aviso { margin: 0; color: #b3261e; font-weight: 600; }
+.editor-ok { margin: 0; color: var(--ok); }
+.editor-acoes { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.editor-acoes .botao-envio { padding: 0 18px; }
+.editor-texto pre { max-height: 220px; overflow: auto; padding: 10px; background: var(--superficie-2); font-family: var(--fonte-mono, monospace); font-size: 13px; line-height: 1.25; }
+@media (max-width: 860px) { .editor-corpo { grid-template-columns: 1fr; } }
 .nome-jogador { padding: 0; border: 0; background: none; font: inherit; color: var(--destaque); text-align: left; cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
 .nome-jogador:focus-visible { outline: 2px solid var(--destaque); outline-offset: 2px; }
 .linha-ficha td { background: var(--superficie-2); }

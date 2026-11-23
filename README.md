@@ -105,7 +105,7 @@ negativo), BFS e DFS a partir de 3 clubes, desempenho e escalabilidade e as visu
 `docs/parte2/relatorio_parte2.md`.
 
 **Parte 1:** primeiro uma página para escolher o mapa (ou enviar um `.txt`, como o mapa surpresa);
-depois, quatro abas, com o algoritmo e as opções numa barra acima do tabuleiro:
+depois, cinco abas, com o algoritmo e as opções numa barra acima do tabuleiro:
 
 - **Labirinto:** escolha do mapa (ou envio de um `.txt`, como o mapa surpresa) e do algoritmo;
   animação passo a passo com posição, chaves, bônus consumidos e custo acumulado; camada em
@@ -116,6 +116,9 @@ depois, quatro abas, com o algoritmo e as opções numa barra acima do tabuleiro
   curva de custo acumulado e exemplos prontos.
 - **Visualizações:** as figuras da Seção 8 (`out/parte1/`), uma por vez, com as notas de
   `docs/parte1/notas_visualizacoes.md` ao lado. As setas ← → trocam de figura.
+- **Editor de mapas:** desenhe um mapa clicando na grade (terreno, S, G, chaves, portas, esteiras,
+  bônus e fonte), comece de um mapa existente se quiser, baixe o `.txt` ou teste direto no labirinto.
+  O mapa passa pela mesma validação do `src/graphs/io.py`.
 
 O resultado de cada algoritmo aparece como cartão do árbitro: verde (caminho encontrado), amarelo
 (recusou o mapa), vermelho (ciclo negativo) e azul (sem solução).

@@ -5,11 +5,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { analisarTexto, carregarMapa, listarMapas } from "./api";
 import { FigurasDaParte1 } from "./componentes/FigurasDaParte1";
 import { Cartao, Carregando } from "./componentes/Futebol";
-import { Topo } from "./componentes/Topo";
+import { Topo, type Aba } from "./componentes/Topo";
 import { Comparacao } from "./componentes/Comparacao";
 import { Controles } from "./componentes/Controles";
 import { GrafoDeEstados } from "./componentes/GrafoDeEstados";
 import { Ampliavel } from "./componentes/Ampliavel";
+import { EditorDeMapas } from "./componentes/EditorDeMapas";
 import { EscolhaDeMapa } from "./componentes/EscolhaDeMapa";
 import { AvisoDeErro, Ferramentas } from "./componentes/Ferramentas";
 import { Legenda } from "./componentes/Legenda";
@@ -21,6 +22,14 @@ import { ALGORITMOS, camadasDoMapa, corDaCamada, nomeDaCamada, passosDoResultado
 import type { Algoritmo, DadosDoMapa, ResumoDoMapa, Vista } from "./tipos";
 import { usarReproducao } from "./usarReproducao";
 
+const ABAS: Aba<Vista>[] = [
+  { id: "labirinto", nome: "Labirinto" },
+  { id: "grafo", nome: "Grafo de estados" },
+  { id: "comparar", nome: "Comparar" },
+  { id: "visualizacoes", nome: "Visualizações" },
+  { id: "editor", nome: "Editor de mapas" },
+];
+
 const parametros = new URLSearchParams(window.location.search);
 
 export function Parte1({ aoInicio }: { aoInicio: () => void }) {
@@ -28,7 +37,8 @@ export function Parte1({ aoInicio }: { aoInicio: () => void }) {
   const [mapaId, setMapaId] = useState(parametros.get("mapa") ?? "");
   const [algoritmo, setAlgoritmo] = useState<Algoritmo>(
     ALGORITMOS.includes(parametros.get("alg") as Algoritmo) ? (parametros.get("alg") as Algoritmo) : "DIJKSTRA");
-  const [vista] = useState<Vista>("labirinto");
+  const [vista, setVista] = useState<Vista>(ABAS.some((a) => a.id === parametros.get("vista"))
+    ? (parametros.get("vista") as Vista) : "labirinto");
   const [fonte, setFonte] = useState(parametros.get("fonte") === "1");
   const [camada, setCamada] = useState<string | null>(null);
   const [armadilhas, setArmadilhas] = useState(false);
@@ -72,7 +82,7 @@ export function Parte1({ aoInicio }: { aoInicio: () => void }) {
   useEffect(() => {
     const p = new URLSearchParams();
     p.set("parte", "1");
-    if (vista === "visualizacoes") p.set("vista", vista);
+    if (vista === "visualizacoes" || vista === "editor") p.set("vista", vista);
     if (mapaId) {
       p.set("mapa", mapaId);
       p.set("alg", algoritmo);
@@ -100,12 +110,19 @@ export function Parte1({ aoInicio }: { aoInicio: () => void }) {
   }, [passos, reproducao]);
 
   async function enviarArquivo(arquivo: File) {
+    const base = arquivo.name.replace(/\.txt$/i, "").replace(/[^\w-]+/g, "_") || "enviado";
+    try {
+      await enviarTexto(await arquivo.text(), base);
+    } catch (e) {
+      setErroEnvio((e as Error).message);
+    }
+  }
+
+  async function enviarTexto(texto: string, base: string) {
     setErroEnvio(null);
     setEnviando(true);
-    const base = arquivo.name.replace(/\.txt$/i, "").replace(/[^\w-]+/g, "_") || "enviado";
     const nome = mapas.some((m) => m.id === base && m.origem !== "enviado") ? `${base}_enviado` : base;
     try {
-      const texto = await arquivo.text();
       const analise = await analisarTexto(texto, nome, false);
       enviados.current.set(nome, texto);
       analisesEnviadas.current.set(`${nome}|false`, Promise.resolve(analise));
@@ -114,6 +131,7 @@ export function Parte1({ aoInicio }: { aoInicio: () => void }) {
         { id: nome, titulo: analise.titulo, origem: "enviado", grade: analise.grade }]);
       setFonte(false);
       setMapaId(nome);
+      setVista("labirinto");
     } catch (e) {
       setErroEnvio((e as Error).message);
     } finally {
@@ -134,9 +152,26 @@ export function Parte1({ aoInicio }: { aoInicio: () => void }) {
   return (
     <div className="app">
       <AvisoDeErro erro={erroEnvio} limparErro={() => setErroEnvio(null)} />
-      {vista === "visualizacoes" ? (
+      {vista === "editor" ? (
         <>
-          <Topo parte="Parte 1: labirinto com chaves" aoInicio={aoInicio} />
+          <Topo parte="Parte 1: labirinto com chaves" abas={ABAS} ativa={vista} aoTrocar={setVista} aoInicio={aoInicio} />
+          <div className="corpo sem-lateral">
+            <main className="conteudo">
+              <div className="vista">
+                <div className="titulo-vista">
+                  <div>
+                    <h2>Editor de mapas</h2>
+                    <span>Desenhe um mapa clicando na grade e teste no labirinto, com o mesmo código que analisa os mapas do enunciado</span>
+                  </div>
+                </div>
+                <EditorDeMapas mapas={mapas} aoTestar={enviarTexto} testando={enviando} />
+              </div>
+            </main>
+          </div>
+        </>
+      ) : vista === "visualizacoes" ? (
+        <>
+          <Topo parte="Parte 1: labirinto com chaves" abas={ABAS} ativa={vista} aoTrocar={setVista} aoInicio={aoInicio} />
           <div className="corpo sem-lateral">
             <main className="conteudo">
               <div className="vista">
@@ -153,12 +188,12 @@ export function Parte1({ aoInicio }: { aoInicio: () => void }) {
         </>
       ) : !mapaId ? (
         <>
-          <Topo parte="Parte 1: labirinto com chaves" aoInicio={aoInicio} />
+          <Topo parte="Parte 1: labirinto com chaves" abas={ABAS} ativa={vista} aoTrocar={setVista} aoInicio={aoInicio} />
           {mapas.length > 0 && <EscolhaDeMapa mapas={mapas} aoEscolher={setMapaId} aoEnviar={enviarArquivo} enviando={enviando} />}
         </>
       ) : (
       <>
-      <Topo parte="Parte 1: labirinto com chaves" aoInicio={aoInicio} />
+      <Topo parte="Parte 1: labirinto com chaves" abas={ABAS} ativa={vista} aoTrocar={setVista} aoInicio={aoInicio} />
 
       <div className="corpo sem-lateral">
         <main className="conteudo">
@@ -188,7 +223,8 @@ export function Parte1({ aoInicio }: { aoInicio: () => void }) {
                       armadilhas={armadilhas} setArmadilhas={setArmadilhas} camada={camada} setCamada={setCamada} camadas={camadas}
                       {...(pronto.grade.some((linha) => linha.includes("*")) ? { fonte, setFonte } : {})} />
                   ) : (
-                    <Ferramentas dados={pronto} algoritmo={algoritmo} setAlgoritmo={setAlgoritmo} mostrarAlgoritmo fonte={fonte} setFonte={setFonte} />
+                    <Ferramentas dados={pronto} algoritmo={algoritmo} setAlgoritmo={setAlgoritmo} mostrarAlgoritmo
+                      {...(pronto.grade.some((linha) => linha.includes("*")) ? { fonte, setFonte } : {})} />
                   )}
 
                   {vista === "labirinto" ? (

@@ -2,7 +2,7 @@
 export type Algoritmo = "BFS" | "DIJKSTRA" | "BELLMAN_FORD";
 export type Status = "OK" | "RECUSA" | "CICLO_NEGATIVO" | "SEM_SOLUCAO";
 export type Origem = "enunciado" | "grupo" | "enviado";
-export type Vista = "labirinto" | "grafo" | "comparar" | "visualizacoes";
+export type Vista = "labirinto" | "grafo" | "comparar" | "visualizacoes" | "editor";
 
 export interface Estado {
   rotulo: string;
