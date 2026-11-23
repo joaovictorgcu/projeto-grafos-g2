@@ -1,4 +1,4 @@
-// peças de futebol desenhadas em SVG: bola, cartão, bandeirinha de escanteio e linhas do campo
+// [IA] Claude Code (Claude Opus 5.5) – peças de futebol desenhadas em SVG: bola, cartão, bandeirinha de escanteio e linhas do campo
 import type { CSSProperties } from "react";
 
 const PENTAGONO = (cx: number, cy: number, r: number, giro = -90) =>
@@ -71,7 +71,7 @@ export function Carregando({ texto }: { texto: string }) {
   );
 }
 
-// escudo genérico de clube (iniciais numa forma de escudo, cor fixa por nome) e a "jogada": um caminho desenhado como troca de passes num campo
+// [IA] Claude Code (Claude Opus 5.5) – escudo genérico de clube (iniciais numa forma de escudo, cor fixa por nome) e a "jogada": um caminho desenhado como troca de passes num campo
 const CORES_DE_CLUBE = ["#2a78d6", "#eb6834", "#1baf7a", "#e87ba4", "#6250d6", "#008300", "#c99700", "#1d7f8c", "#b3261e", "#0d2a1c"];
 
 export function corDoClube(nome: string) {

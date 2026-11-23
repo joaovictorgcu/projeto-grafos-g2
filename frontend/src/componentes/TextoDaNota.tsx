@@ -1,4 +1,4 @@
-// mostra as notas analíticas escritas pelo grupo (negrito e código do markdown, tabelas e os trechos "Insight", "Por que esse gráfico")
+// [IA] Claude Code (Claude Opus 5.5) – mostra as notas analíticas escritas pelo grupo (negrito e código do markdown, tabelas e os trechos "Insight", "Por que esse gráfico")
 import { Fragment } from "react";
 import type { BlocoDaNota } from "../tipos";
 import { Rosto } from "./Pixel";

@@ -1,4 +1,4 @@
-// Parte 2: números do grafo, caminhos e ciclos dos algoritmos, desempenho e as visualizações de AVD com as notas do grupo
+// [IA] Claude Code (Claude Opus 5.5) – Parte 2: números do grafo, caminhos e ciclos dos algoritmos, desempenho e as visualizações de AVD com as notas do grupo
 // [IA] Claude Code (Claude Opus 5.5) – Parte 2 mais enxuta: sem funil, sem lista de ciclos de ida e volta, sem transferências por arco e sem as figuras A1 a A4, que repetiam as abas Caminhos e Desempenho
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";

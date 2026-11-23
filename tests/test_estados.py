@@ -8,7 +8,7 @@ from src.graphs.io import interpretar_mapa, ler_mapa
 MAPAS = Path(__file__).resolve().parent.parent / "data" / "mapas"
 
 
-# testes das métricas sem o ALVO e do formato do arestas_<mapa>.csv
+# [IA] Claude Code (Claude Opus 5.5) – testes das métricas sem o ALVO e do formato do arestas_<mapa>.csv
 def test_metricas_nao_contam_o_alvo():
     m = metricas(construir_estados(interpretar_mapa("#####\n#S.G#\n#####")))
     assert (m["ordem"], m["tamanho"]) == (3, 3)
@@ -40,7 +40,7 @@ def test_exportar_gera_um_csv_por_mapa(tmp_path):
     assert sorted(p.name for p in gerados) == [f"arestas_m0{i}.csv" for i in range(1, 9)]
 
 
-# testes das regras do grafo de estados num mapa mínimo calculado à mão
+# [IA] Claude Code (Claude Opus 5.5) – testes das regras do grafo de estados num mapa mínimo calculado à mão; contas conferidas por Caio
 #
 # Mapa mínimo, 5x7: 1 chave (a), 1 porta (A), 1 esteira (^), lama (,) e água (~).
 #

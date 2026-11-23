@@ -1,7 +1,7 @@
 from src.graphs.algorithms import bellman_ford, caminho
 from src.graphs.graph import Grafo
 
-# casos de teste do Bellman-Ford.
+# [IA] Claude – casos de teste do Bellman-Ford.
 
 
 def montar(arcos):

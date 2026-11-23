@@ -1,4 +1,4 @@
-// tabela dos algoritmos no mesmo mapa
+// [IA] Claude Code (Claude Opus 5.5) – tabela dos algoritmos no mesmo mapa
 import type { CSSProperties } from "react";
 import { ALGORITMOS, NOME_DO_ALGORITMO, NOME_DO_STATUS } from "../modelo";
 import type { Algoritmo, DadosDoMapa } from "../tipos";

@@ -1,4 +1,4 @@
-// contas do frontend sobre os dados prontos: camadas, passos do percurso, onda de exploração
+// [IA] Claude Code (Claude Opus 5.5) – contas do frontend sobre os dados prontos: camadas, passos do percurso, onda de exploração
 import type { Algoritmo, DadosDoMapa, Estado, Passo, Resultado, Status } from "./tipos";
 
 export const ALGORITMOS: Algoritmo[] = ["BFS", "DIJKSTRA", "BELLMAN_FORD"];

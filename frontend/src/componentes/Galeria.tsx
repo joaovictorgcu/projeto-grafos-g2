@@ -1,4 +1,4 @@
-// galeria das figuras: índice agrupado à esquerda, uma figura grande por vez com a nota do grupo, ← → para navegar e clique para ampliar
+// [IA] Claude Code (Claude Opus 5.5) – galeria das figuras: índice agrupado à esquerda, uma figura grande por vez com a nota do grupo, ← → para navegar e clique para ampliar
 import { ChevronLeft, ChevronRight, Maximize2, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState, type ReactNode } from "react";

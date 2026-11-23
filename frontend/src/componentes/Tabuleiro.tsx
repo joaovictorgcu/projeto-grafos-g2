@@ -1,4 +1,4 @@
-// tabuleiro em SVG no estilo plano: terreno, chaves, portas, bônus, rastro por camada, jogador, armadilhas e ciclo negativo
+// [IA] Claude Code (Claude Opus 5.5) – tabuleiro em SVG no estilo plano: terreno, chaves, portas, bônus, rastro por camada, jogador, armadilhas e ciclo negativo
 import { Bola } from "./Futebol";
 import { AnimatePresence, motion } from "motion/react";
 import { memo, useEffect, useId, useMemo, useRef, type ReactNode } from "react";

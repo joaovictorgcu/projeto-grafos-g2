@@ -1,4 +1,4 @@
-# casos de teste da leitura e da validação dos mapas
+# [IA] Claude Code (Claude Opus 5.5) – casos de teste da leitura e da validação dos mapas
 from pathlib import Path
 
 import pytest

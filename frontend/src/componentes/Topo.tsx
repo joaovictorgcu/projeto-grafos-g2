@@ -1,4 +1,4 @@
-// barra do topo: volta para o menu inicial e mostra as abas da parte aberta
+// [IA] Claude Code (Claude Opus 5.5) – barra do topo: volta para o menu inicial e mostra as abas da parte aberta
 import { ArrowLeft } from "lucide-react";
 import { motion } from "motion/react";
 

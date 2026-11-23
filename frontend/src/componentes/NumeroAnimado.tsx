@@ -1,4 +1,4 @@
-// número que desliza até o valor novo, usado no custo acumulado e nas métricas
+// [IA] Claude Code (Claude Opus 5.5) – número que desliza até o valor novo, usado no custo acumulado e nas métricas
 import { motion, useSpring, useTransform } from "motion/react";
 import { useEffect } from "react";
 import { formatar } from "../modelo";

@@ -1,4 +1,4 @@
-// curva do custo acumulado por passo, com o passo atual marcado
+// [IA] Claude Code (Claude Opus 5.5) – curva do custo acumulado por passo, com o passo atual marcado
 import { motion } from "motion/react";
 
 interface Serie {

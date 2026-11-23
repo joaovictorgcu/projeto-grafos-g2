@@ -37,7 +37,7 @@ COR_TEXTO = "#0b0b0b"
 COR_TEXTO_2 = "#52514e"
 
 # Uma cor por camada, na ordem em que as camadas aparecem no percurso.
-# paleta categórica
+# [IA] Claude Code (Claude Opus 5.5) – paleta categórica conferida com validador de daltonismo; revisada por Caio
 CORES_CAMADA = ["#2a78d6", "#eb6834", "#1baf7a", "#e87ba4", "#6250d6", "#008300"]
 
 CUSTO = {",": 3, "~": 5, "*": -2}
@@ -92,7 +92,7 @@ def _desenhar_grade(ax, linhas, dy=0, fonte=11, alpha=1.0):
                         color=COR_TEXTO, alpha=0.55 * alpha, zorder=2)
 
 
-# desenho do percurso em camadas com deslocamento por camada
+# [IA] Claude Code (Claude Opus 5.5) – desenho do percurso em camadas com deslocamento por camada; revisado por Caio
 def desenhar_percurso(linhas, rotulos, saida, nome_mapa="", algoritmo="menor custo"):
     """Desenha o percurso sobre a grade e salva em `saida` (PNG).
 
@@ -201,7 +201,7 @@ def _desenhar_trecho(ax, trecho, cor, desloc, desloc_fim=None, lw=2.6):
     ax.plot(xs, ys, color=cor, lw=lw, solid_capstyle="round", solid_joinstyle="round", zorder=4)
 
 
-# layout do grafo de estados em faixas, uma por camada
+# [IA] Claude Code (Claude Opus 5.5) – layout do grafo de estados em faixas, uma por camada; revisado por Caio
 def desenhar_camadas(linhas, grafo, saida, nome_mapa=""):
     """Desenha o grafo de estados com uma faixa por camada (conjunto de chaves).
 
@@ -316,7 +316,7 @@ def desenhar_camadas(linhas, grafo, saida, nome_mapa=""):
     return saida
 
 
-# árvore BFS desenhada por níveis, com layout de árvore arrumada
+# [IA] Claude Code (Claude Opus 5.5) – árvore BFS desenhada por níveis, com layout de árvore arrumada; revisado por Caio
 def desenhar_arvore_bfs(grafo, inicial, saida, nome_mapa=""):
     """Desenha a árvore BFS do grafo de estados a partir de `inicial`, um nível por linha.
 
@@ -428,7 +428,7 @@ def desenhar_arvore_bfs(grafo, inicial, saida, nome_mapa=""):
 # Rampa sequencial azul (clara -> escura) para contagens pequenas e discretas. Começa no
 # passo 250, não no mais claro, para "1 estado" não sumir no fundo; a parede fica em
 # cinza claro, para não competir com os azuis escuros.
-# passos da rampa ordinal
+# [IA] Claude Code (Claude Opus 5.5) – passos da rampa ordinal escolhidos com o skill de dataviz; revisado por Caio
 RAMPA_MULTIPLICIDADE = ["#86b6ef", "#6da7ec", "#3987e5", "#2a78d6", "#256abf", "#1c5cab",
                         "#184f95", "#104281", "#0d366b"]
 COR_PAREDE_CLARA = "#dcdbd6"
@@ -444,7 +444,7 @@ def multiplicidade_por_casa(grafo):
     return mult
 
 
-# heatmap discreto da multiplicidade sobre a grade
+# [IA] Claude Code (Claude Opus 5.5) – heatmap discreto da multiplicidade sobre a grade; revisado por Caio
 def desenhar_multiplicidade(linhas, grafo, saida, nome_mapa=""):
     """Heatmap da multiplicidade de cada casa: quantos estados alcançáveis ficam nela.
 
@@ -535,7 +535,7 @@ def _ler_percurso(caminho):
     return dados
 
 
-# percurso calculado pelo pipeline do grupo (estados.py + Dijkstra), sem JSON de fora
+# [IA] Claude Code (Claude Opus 5.5) – percurso calculado pelo pipeline do grupo (estados.py + Dijkstra), sem JSON de fora
 def percurso_de_menor_custo(construido):
     """Rótulos do caminho de menor custo do início ao ALVO (sem o ALVO), e o algoritmo usado.
 

@@ -1,4 +1,4 @@
-// grafo de estados em 3D: uma camada por conjunto de chaves, empilhadas, com o jogador subindo de andar ao pegar chave
+// [IA] Claude Code (Claude Opus 5.5) – grafo de estados em 3D: uma camada por conjunto de chaves, empilhadas, com o jogador subindo de andar ao pegar chave
 import { Box, Eye, Layers, Move3d, Rows3 } from "lucide-react";
 import { motion } from "motion/react";
 import { useMemo, useRef, useState, type CSSProperties, type PointerEvent } from "react";

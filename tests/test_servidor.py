@@ -1,4 +1,4 @@
-# testes do servidor do labirinto interativo: dados de cada algoritmo e mapa inválido
+# [IA] Claude Code (Claude Opus 5.5) – testes do servidor do labirinto interativo: dados de cada algoritmo e mapa inválido
 import json
 import threading
 import urllib.error
@@ -111,7 +111,7 @@ def test_rotas_do_servidor():
         servidor.server_close()
 
 
-# figuras da Parte 1 com as notas do docs/parte1/notas_visualizacoes.md
+# [IA] Claude Code (Claude Opus 5.5) – figuras da Parte 1 com as notas do docs/parte1/notas_visualizacoes.md
 def test_parte1_traz_cada_figura_com_a_nota_do_grupo():
     figuras = figuras_da_parte1()
     arquivos = [f["arquivo"] for f in figuras]

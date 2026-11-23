@@ -1,4 +1,4 @@
-// comparação lado a lado (bônus): dois percursos na mesma linha do tempo, sobrepostos ou lado a lado, com a curva de custo
+// [IA] Claude Code (Claude Opus 5.5) – comparação lado a lado (bônus): dois percursos na mesma linha do tempo, sobrepostos ou lado a lado, com a curva de custo
 import { Cartao } from "./Futebol";
 import { CARTAO } from "./Status";
 import { Columns2, GitCompareArrows, Layers2 } from "lucide-react";
@@ -67,7 +67,7 @@ function ConfiguracaoDoLado({ nome, lado, setLado, mapas, dados }: {
   );
 }
 
-// placar do confronto A × B: passos e custo de cada lado, com o cartão quando não há caminho
+// [IA] Claude Code (Claude Opus 5.5) – placar do confronto A × B: passos e custo de cada lado, com o cartão quando não há caminho
 function PlacarDoConfronto({ a, b, resA, resB, mapas }: { a: Lado; b: Lado; resA: Resultado; resB: Resultado; mapas: ResumoDoMapa[] }) {
   const titulo = (l: Lado) => mapas.find((m) => m.id === l.mapa)?.titulo ?? l.mapa;
   const valor = (r: Resultado, chave: "passos" | "custo") => (r.status === "OK" ? r[chave] ?? null : null);

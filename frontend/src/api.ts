@@ -1,4 +1,4 @@
-// chamadas ao servidor Python, com cache para não recalcular o mesmo mapa
+// [IA] Claude Code (Claude Opus 5.5) – chamadas ao servidor Python, com cache para não recalcular o mesmo mapa
 import type { DadosDaParte2, DadosDoMapa, FiguraDaParte1, ResumoDoMapa } from "./tipos";
 
 const guardados = new Map<string, Promise<DadosDoMapa>>();

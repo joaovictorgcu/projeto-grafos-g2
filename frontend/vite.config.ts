@@ -1,4 +1,4 @@
-// configuração do Vite: em desenvolvimento, /api vai para o servidor Python
+// [IA] Claude Code (Claude Opus 5.5) – configuração do Vite: em desenvolvimento, /api vai para o servidor Python
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
