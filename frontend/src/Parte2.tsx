@@ -5,7 +5,8 @@ import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState, type ReactNode } from "react";
 import { carregarParte2 } from "./api";
 import { Galeria, tituloDoArquivo, type GrupoDaGaleria } from "./componentes/Galeria";
-import { Cartao, Carregando, Jogada, MiniEscudo } from "./componentes/Futebol";
+import { Cartao, Carregando, Jogada, MiniEscudo, corDoClube } from "./componentes/Futebol";
+import { Boneco } from "./componentes/Pixel";
 import { NumeroAnimado } from "./componentes/NumeroAnimado";
 import { NotaCorrida } from "./componentes/TextoDaNota";
 import { Topo, type Aba } from "./componentes/Topo";
@@ -100,11 +101,35 @@ function Recolhivel({ titulo, valor, classe = "", children }: { titulo: ReactNod
   );
 }
 
+function FichaDoJogador({ nome, temporada, arco, peso }: { nome: string; temporada: string; arco: string; peso: number | null }) {
+  const [de, para] = arco.split(" -> ");
+  return (
+    <motion.div className="ficha-jogador" initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
+      <svg viewBox="-14 -42 28 46" className="ficha-boneco" aria-hidden>
+        <g className="ficha-corpo"><Boneco camisa={corDoClube(para)} /></g>
+        <g className="ficha-bola">
+          <circle cx={5} cy={-2} r={2.4} fill="#fff" stroke="#14201a" strokeWidth={0.6} />
+          <circle cx={5} cy={-2} r={0.9} fill="#14201a" />
+        </g>
+      </svg>
+      <div className="ficha-texto">
+        <strong>{nome}</strong>
+        <span><MiniEscudo nome={de} /> {de} → <MiniEscudo nome={para} /> {para}</span>
+        <span>transferência na temporada {temporada}</span>
+        {peso !== null && (
+          <span><b className={peso < 0 ? "valor negativo" : "valor"}>{euro(peso)}</b> <small>pago − valor de mercado</small></span>
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
 function TabelaDeTransferencias({ lista }: { lista: Record<string, string[]> }) {
+  const [aberto, setAberto] = useState<string | null>(null);
   const linhas = Object.entries(lista).flatMap(([arco, jogadores]) => jogadores.map((texto, i) => {
     const partes = /^(.*) \((\d\d\/\d\d)\): (-?[\d.]+)$/.exec(texto);
     return {
-      arco, i, total: jogadores.length,
+      arco, i, total: jogadores.length, chave: `${arco}#${i}`,
       nome: partes ? partes[1] : texto,
       temporada: partes ? partes[2] : "",
       peso: partes ? Number(partes[3].replace(/\./g, "")) : null,
@@ -114,14 +139,24 @@ function TabelaDeTransferencias({ lista }: { lista: Record<string, string[]> }) 
     <table className="tabela-algoritmos simples transferencias">
       <thead><tr><th>seta</th><th>jogador</th><th>temporada</th><th className="numero">pago − valor de mercado</th></tr></thead>
       <tbody>
-        {linhas.map((l) => (
-          <tr key={`${l.arco}-${l.i}`}>
-            {l.i === 0 && <th scope="rowgroup" rowSpan={l.total}>{l.arco.replace(" -> ", " → ")}</th>}
-            <td>{l.nome}</td>
+        {linhas.map((l) => [
+          <tr key={l.chave}>
+            {l.i === 0 && (
+              <th scope="rowgroup" rowSpan={l.total + (aberto?.startsWith(`${l.arco}#`) ? 1 : 0)}>{l.arco.replace(" -> ", " → ")}</th>
+            )}
+            <td>
+              <button type="button" className="nome-jogador" aria-expanded={aberto === l.chave}
+                onClick={() => setAberto((a) => (a === l.chave ? null : l.chave))}>{l.nome}</button>
+            </td>
             <td>{l.temporada}</td>
             <td className={l.peso !== null && l.peso < 0 ? "numero negativo" : "numero"}>{l.peso === null ? "" : euro(l.peso)}</td>
-          </tr>
-        ))}
+          </tr>,
+          aberto === l.chave && (
+            <tr key={`${l.chave}-ficha`} className="linha-ficha">
+              <td colSpan={3}><FichaDoJogador nome={l.nome} temporada={l.temporada} arco={l.arco} peso={l.peso} /></td>
+            </tr>
+          ),
+        ])}
       </tbody>
     </table>
   );

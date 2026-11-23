@@ -449,6 +449,20 @@ code { font-family: var(--fonte-mono); font-size: 0.88em; background: var(--supe
 .transferencias tbody tr { cursor: default; }
 .transferencias th[scope="rowgroup"] { font-weight: 600; vertical-align: top; white-space: nowrap; }
 .transferencias .negativo { color: #b3261e; }
+.nome-jogador { padding: 0; border: 0; background: none; font: inherit; color: var(--destaque); text-align: left; cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
+.nome-jogador:focus-visible { outline: 2px solid var(--destaque); outline-offset: 2px; }
+.linha-ficha td { background: var(--superficie-2); }
+.ficha-jogador { display: flex; align-items: center; gap: 18px; padding: 4px 0; }
+.ficha-boneco { width: 104px; height: auto; flex: none; overflow: visible; }
+.ficha-corpo { animation: chutar 0.9s ease-in-out infinite; }
+.ficha-bola { animation: embaixadinha 0.9s ease-in-out infinite; }
+@keyframes embaixadinha { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-16px); } }
+@keyframes chutar { 0%, 100% { transform: translateY(0); } 8% { transform: translateY(-1px); } }
+.ficha-texto { display: flex; flex-direction: column; gap: 3px; }
+.ficha-texto strong { font-family: var(--fonte-titulo); font-size: 20px; }
+.ficha-texto span { display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; color: var(--texto-2); }
+.ficha-texto .mini-escudo { width: 16px; height: 18px; }
+@media (prefers-reduced-motion: reduce) { .ficha-corpo, .ficha-bola { animation: none; } }
 .valor { font-family: var(--fonte-mono); font-weight: 600; white-space: nowrap; }
 .valor.negativo { color: #b3261e; }
 .detalhe { font-size: 12.5px; color: var(--texto-3); }
