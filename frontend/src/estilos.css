@@ -494,35 +494,23 @@ code { font-family: var(--fonte-mono); font-size: 0.88em; background: var(--supe
 .rota-clube { padding: 4px 10px; border-radius: 3px; background: #fff; border: 1px solid var(--borda-forte); font-size: 13px; font-weight: 600; }
 .rota li:first-child .rota-clube { background: var(--parede); color: #fff; border-color: var(--parede); }
 .rota:not(.ciclo) li:last-child .rota-clube { border: 2px solid var(--parede); }
-.niveis { display: flex; align-items: flex-end; gap: 4px; height: 90px; }
-.nivel { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 2px; }
-.nivel span { width: 100%; background: #2a78d6; }
-.nivel small { font-size: 10.5px; color: var(--texto-3); font-family: var(--fonte-mono); }
-.barra-arcos { display: flex; height: 14px; border-radius: 99px; overflow: hidden; }
-.barra-arcos span { height: 100%; }
-.arco-arvore { background: var(--gramado-escuro); }
-.arco-retorno { background: #eb6834; }
-.arco-avanco { background: #f2c97d; }
-.arco-cruzamento { background: #a3ab9f; }
-.legenda-arcos { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; color: var(--texto-2); }
-.legenda-arcos span { display: inline-flex; align-items: center; gap: 6px; }
-.legenda-arcos i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
-.escalas { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; margin-top: 6px; }
+.escalas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 0; margin-top: 6px; }
+.escala:nth-child(3) { border-left: 0; }
 .escala { margin: 0; padding: 4px 14px 0; display: flex; flex-direction: column; gap: 4px; }
 .escala + .escala { border-left: 1px solid var(--borda); }
 .escala figcaption { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
 .escala figcaption b { font-family: var(--fonte-titulo); font-size: 20px; font-weight: 700; text-transform: uppercase; }
 .escala figcaption span { font-family: var(--fonte-mono); font-size: 12px; color: var(--texto-3); }
+.tabela-compacta { font-size: 13.5px; }
+.tabela-compacta th, .tabela-compacta td { padding: 6px 10px; white-space: nowrap; }
+.tabela-compacta tbody tr { cursor: default; }
+.tabela-rolagem { overflow-x: auto; }
+.tabela-rolagem .tabela-compacta td { min-width: 44px; }
 .eixo-base { stroke: var(--borda-forte); }
-.legenda-escala { display: flex; gap: 14px; align-items: center; font-size: 13px; color: var(--texto-2); min-height: 22px; }
-.legenda-escala span { display: inline-flex; align-items: center; gap: 6px; }
-.legenda-escala i { width: 14px; height: 3px; display: inline-block; }
 .classificacao .posicao { font-family: var(--fonte-titulo); font-size: 18px; font-weight: 700; color: var(--texto-3); width: 40px; }
 .classificacao tbody tr:first-child .posicao { color: var(--gramado); }
 .classificacao th .ponto { margin-right: 6px; }
 
-.grafico-escala { width: 100%; height: auto; display: block; }
-.grafico-escala circle { cursor: pointer; transition: r 0.15s; }
 .legenda-linhas.horizontal { flex-direction: row; gap: 16px; align-items: center; }
 .tracejado { width: 18px; border-top: 2px dashed var(--texto-3); display: inline-block; background: none !important; height: 0 !important; }
 .foco { margin-left: auto; font-variant-numeric: tabular-nums; font-weight: 600; color: var(--texto); }
@@ -588,7 +576,7 @@ code { font-family: var(--fonte-mono); font-size: 0.88em; background: var(--supe
 }
 
 /* números no estilo placar, sem fonte monoespaçada */
-.numero, .valor, .contador, .eixo-grafico, .escala figcaption span, .pesos b, .nivel small, .delta, .galeria-posicao { font-family: var(--fonte-titulo) !important; font-variant-numeric: tabular-nums; letter-spacing: 0.01em; }
+.numero, .valor, .contador, .eixo-grafico, .escala figcaption span, .pesos b, .delta, .galeria-posicao { font-family: var(--fonte-titulo) !important; font-variant-numeric: tabular-nums; letter-spacing: 0.01em; }
 .numero, .valor { font-size: 16px; font-weight: 600; }
 .valor { font-size: 19px; font-weight: 700; }
 .eixo-grafico { font-size: 13px; }

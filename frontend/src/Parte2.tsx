@@ -175,7 +175,6 @@ function CartaoDoPar({ par }: { par: ParDoDijkstra }) {
 function Caminhos({ dados }: { dados: DadosDaParte2 }) {
   const r = dados.relatorio;
   const semCiclo = r.bellman_ford.sem_ciclo_negativo;
-  const maiorCamada = Math.max(...r.bfs.flatMap((b) => b.camadas));
   return (
     <div className="parte2-grade">
       <section>
@@ -209,7 +208,6 @@ function Caminhos({ dados }: { dados: DadosDaParte2 }) {
         <div className="pares">
           {r.bfs.map((b, i) => {
             const dfs = r.dfs[i];
-            const totalArcos = Object.values(dfs.arcos).reduce((t, v) => t + v, 0);
             return (
               <article key={b.nome} className="cartao par">
                 <header>
@@ -217,23 +215,22 @@ function Caminhos({ dados }: { dados: DadosDaParte2 }) {
                   <span className="valor">{numero(b.alcancados)} alcançados</span>
                 </header>
                 <span className="rotulo-pequeno">BFS: clubes por nível</span>
-                <div className="niveis" role="img" aria-label={`Níveis da BFS a partir de ${b.nome}: ${b.camadas.join(", ")}`}>
-                  {b.camadas.map((n, k) => (
-                    <div key={k} className="nivel" title={`nível ${k}: ${n} clubes`}>
-                      <motion.span initial={{ height: 0 }} animate={{ height: `${Math.max(3, (n / maiorCamada) * 100)}%` }} transition={{ delay: 0.04 * k }} />
-                      <small>{k}</small>
-                    </div>
-                  ))}
+                <div className="tabela-rolagem">
+                  <table className="tabela-algoritmos simples tabela-compacta">
+                    <tbody>
+                      <tr><th scope="row">nível</th>{b.camadas.map((_, k) => <td key={k} className="numero">{k}</td>)}</tr>
+                      <tr><th scope="row">clubes</th>{b.camadas.map((n, k) => <td key={k} className="numero">{numero(n)}</td>)}</tr>
+                    </tbody>
+                  </table>
                 </div>
                 <span className="rotulo-pequeno">DFS: tipos de arco {dfs.tem_ciclo ? "(tem ciclo)" : ""}</span>
-                <div className="barra-arcos">
-                  {Object.entries(dfs.arcos).map(([tipo, n]) => (
-                    <span key={tipo} className={`arco-${tipo}`} style={{ width: `${(n / totalArcos) * 100}%` }} title={`${TIPO_DE_ARCO[tipo] ?? tipo}: ${numero(n)}`} />
-                  ))}
-                </div>
-                <div className="legenda-arcos">
-                  {Object.entries(dfs.arcos).map(([tipo, n]) => <span key={tipo}><i className={`arco-${tipo}`} />{TIPO_DE_ARCO[tipo] ?? tipo} {numero(n)}</span>)}
-                </div>
+                <table className="tabela-algoritmos simples tabela-compacta">
+                  <tbody>
+                    {Object.entries(dfs.arcos).map(([tipo, n]) => (
+                      <tr key={tipo}><th scope="row">{TIPO_DE_ARCO[tipo] ?? tipo}</th><td className="numero">{numero(n)}</td></tr>
+                    ))}
+                  </tbody>
+                </table>
               </article>
             );
           })}
@@ -246,62 +243,41 @@ function Caminhos({ dados }: { dados: DadosDaParte2 }) {
 function Desempenho({ dados }: { dados: DadosDaParte2 }) {
   const r = dados.relatorio;
   const algoritmos = ["BFS", "DFS", "DIJKSTRA", "BELLMAN_FORD"];
-  const [foco, setFoco] = useState<{ alg: string; pct: number } | null>(null);
   const completo = r.desempenho.filter((d) => d.tamanho_pct === 100);
-  const valores = r.escalabilidade.flatMap((p) => [p.tempo_relativo, p.teoria_relativa]).filter((v) => v > 0);
-  const piso = Math.floor(Math.log10(Math.min(...valores)));
-  const decadas = Array.from({ length: -piso + 1 }, (_, i) => 10 ** -i);
-  const [L, R, T, B] = [52, 14, 12, 34];
-  const [W, H] = [360, 230];
-  const x = (pct: number) => L + (pct / 100) * (W - L - R);
-  const y = (v: number) => T + (Math.log10(v) / piso) * (H - T - B);
-  const rotuloDecada = (v: number) => (v >= 1 ? "1" : v.toLocaleString("pt-BR", { maximumFractionDigits: 4 }));
   return (
     <div className="parte2-grade">
       <section className="cartao">
         <div className="cartao-cabeca">
           <h3 className="cartao-titulo">Escalabilidade</h3>
-          <span className="detalhe">tempo medido (média de {r.parametros.repeticoes} execuções) e complexidade teórica, os dois relativos ao grafo completo; eixo vertical em log</span>
+          <span className="detalhe">tempo médio de {r.parametros.repeticoes} execuções; "medido" e "teoria" são relativos ao grafo completo (100% = 1)</span>
         </div>
         <div className="escalas">
           {algoritmos.map((alg) => {
             const pontos = r.escalabilidade.filter((e) => e.algoritmo === alg).sort((a, b) => a.tamanho_pct - b.tamanho_pct);
-            const linha = (chave: "tempo_relativo" | "teoria_relativa") => pontos.map((p, i) => `${i ? "L" : "M"} ${x(p.tamanho_pct)} ${y(p[chave])}`).join(" ");
-            const emFoco = foco?.alg === alg ? pontos.find((q) => q.tamanho_pct === foco.pct) : undefined;
             return (
               <figure key={alg} className="escala">
                 <figcaption>
-                  <b style={{ color: COR[alg] }}>{NOME[alg]}</b>
+                  <b>{NOME[alg]}</b>
                   <span>{pontos[0]?.complexidade}</span>
                 </figcaption>
-                <svg viewBox={`0 0 ${W} ${H}`} className="grafico-escala" role="img" aria-label={`${NOME[alg]}: tempo medido contra a teoria`}>
-                  {decadas.map((v) => (
-                    <g key={v}>
-                      <line x1={L} x2={W - R} y1={y(v)} y2={y(v)} className="grade-grafico" />
-                      <text x={L - 8} y={y(v) + 4} className="eixo-grafico" textAnchor="end">{rotuloDecada(v)}</text>
-                    </g>
-                  ))}
-                  <line x1={L} x2={W - R} y1={H - B} y2={H - B} className="eixo-base" />
-                  {[10, 25, 50, 75, 100].map((pct) => (
-                    <text key={pct} x={x(pct)} y={H - B + 18} className="eixo-grafico" textAnchor="middle">{pct}%</text>
-                  ))}
-                  <path d={linha("teoria_relativa")} fill="none" stroke="var(--texto-3)" strokeWidth={1.6} strokeDasharray="4 4" />
-                  <motion.path d={linha("tempo_relativo")} fill="none" stroke={COR[alg]} strokeWidth={2.6}
-                    initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.8 }} />
-                  {pontos.map((p) => (
-                    <circle key={p.tamanho_pct} cx={x(p.tamanho_pct)} cy={y(p.tempo_relativo)} r={emFoco === p ? 6 : 4}
-                      fill={COR[alg]} stroke="#fff" strokeWidth={1.5} tabIndex={0}
-                      onMouseEnter={() => setFoco({ alg, pct: p.tamanho_pct })} onMouseLeave={() => setFoco(null)}
-                      onFocus={() => setFoco({ alg, pct: p.tamanho_pct })} onBlur={() => setFoco(null)}>
-                      <title>{`${p.tamanho_pct}% do grafo: ${numero(p.V)} nós, ${numero(p.E)} arcos, ${numero(p.media_s * 1000, 2)} ms`}</title>
-                    </circle>
-                  ))}
-                </svg>
-                <div className="legenda-escala">
-                  <span><i style={{ background: COR[alg] }} />medido</span>
-                  <span><i className="tracejado" />teoria</span>
-                  <span className="foco">{emFoco ? `${emFoco.tamanho_pct}%: ${numero(emFoco.media_s * 1000, 2)} ms` : ""}</span>
-                </div>
+                <table className="tabela-algoritmos simples tabela-compacta">
+                  <thead>
+                    <tr><th>grafo</th><th className="numero">nós</th><th className="numero">arcos</th><th className="numero">tempo</th>
+                      <th className="numero">medido</th><th className="numero">teoria</th></tr>
+                  </thead>
+                  <tbody>
+                    {pontos.map((p) => (
+                      <tr key={p.tamanho_pct}>
+                        <th scope="row">{p.tamanho_pct}%</th>
+                        <td className="numero">{numero(p.V)}</td>
+                        <td className="numero">{numero(p.E)}</td>
+                        <td className="numero">{numero(p.media_s * 1000, 2)} ms</td>
+                        <td className="numero">{numero(p.tempo_relativo, 3)}</td>
+                        <td className="numero">{numero(p.teoria_relativa, 3)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </figure>
             );
           })}
