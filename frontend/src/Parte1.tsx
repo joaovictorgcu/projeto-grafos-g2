@@ -185,7 +185,8 @@ export function Parte1({ aoInicio }: { aoInicio: () => void }) {
                   </div>
                   {vista === "labirinto" ? (
                     <Ferramentas dados={pronto} algoritmo={algoritmo} setAlgoritmo={setAlgoritmo} mostrarAlgoritmo
-                      armadilhas={armadilhas} setArmadilhas={setArmadilhas} camada={camada} setCamada={setCamada} camadas={camadas} />
+                      armadilhas={armadilhas} setArmadilhas={setArmadilhas} camada={camada} setCamada={setCamada} camadas={camadas}
+                      {...(pronto.grade.some((linha) => linha.includes("*")) ? { fonte, setFonte } : {})} />
                   ) : (
                     <Ferramentas dados={pronto} algoritmo={algoritmo} setAlgoritmo={setAlgoritmo} mostrarAlgoritmo fonte={fonte} setFonte={setFonte} />
                   )}
