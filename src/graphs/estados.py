@@ -1,7 +1,7 @@
-# [IA] Claude Code (Claude Opus 5.5) – grafo de posições e grafo de estados, construído por exploração a partir do início
+"""Representacoes de mapas por posicoes e por estados alcançaveis."""
+
 import argparse
 import csv
-import re
 from collections import deque
 from dataclasses import dataclass
 from pathlib import Path
@@ -9,11 +9,18 @@ from pathlib import Path
 from .graph import Grafo
 from .io import CHAVES, ESTEIRAS, PAREDE, PORTAS, Mapa, ler_mapa
 
+
 ALVO = "ALVO"
-DIRECOES = (("N", -1, 0), ("L", 0, 1), ("S", 1, 0), ("O", 0, -1))
-DIRECAO_DA_ESTEIRA = {"^": "N", ">": "L", "v": "S", "<": "O"}
-CUSTO = {",": 3, "~": 5, "*": -2}
-VALOR_DO_BONUS = -4
+
+# A insercao do dicionario define a ordem em que os vizinhos sao visitados.
+PASSOS = {
+    "N": (-1, 0),
+    "L": (0, 1),
+    "S": (1, 0),
+    "O": (0, -1),
+}
+SENTIDO = dict(zip(ESTEIRAS, ("L", "O", "N", "S")))
+COLUNAS_CSV = ("origem", "destino", "movimento", "casa_destino", "peso")
 
 
 @dataclass(frozen=True)
@@ -39,153 +46,220 @@ class GrafoConstruido:
     arcos: list
     inicial: str
 
+    def registrar(self, origem, destino, movimento, simbolo, custo):
+        """Mantem o grafo e o relatorio de arcos sincronizados."""
+        self.grafo.adicionar_arco(origem, destino, custo)
+        self.arcos.append(ArcoDetalhado(origem, destino, movimento, simbolo, custo))
+
 
 def rotulo(estado: Estado) -> str:
-    chaves = "".join(sorted(estado.chaves)) or "-"
-    bonus = ",".join(str(b) for b in sorted(estado.bonus))
-    return f"({estado.linha},{estado.coluna})|{chaves}|{{{bonus}}}"
+    letras = "".join(sorted(estado.chaves))
+    identificadores = ",".join(str(item) for item in sorted(estado.bonus))
+    return f"({estado.linha},{estado.coluna})|{letras or '-'}|{{{identificadores}}}"
 
 
-def direcoes_permitidas(mapa: Mapa, l: int, c: int):
-    casa = mapa.casa(l, c)
-    if casa in ESTEIRAS:
-        return [d for d in DIRECOES if d[0] == DIRECAO_DA_ESTEIRA[casa]]
-    return DIRECOES
+def _coordenada(posicao):
+    return f"({posicao[0]},{posicao[1]})"
 
 
-def custo_e_bonus(mapa: Mapa, pos, casa: str, bonus: frozenset, fonte_consumivel: bool):
-    if casa == "+":
-        indice, valor = mapa.bonus[pos], VALOR_DO_BONUS
-    elif casa == "*" and fonte_consumivel:
-        indice, valor = len(mapa.bonus) + mapa.fontes.index(pos), CUSTO["*"]
-    else:
-        return CUSTO.get(casa, 1), bonus
-    if indice in bonus:
-        return 1, bonus
-    return valor, bonus | {indice}
+def _movimentos(mapa, posicao):
+    """Percorre a grade em N-L-S-O, considerando paredes e esteiras."""
+    linha, coluna = posicao
+    restricao = SENTIDO.get(mapa.casa(linha, coluna))
 
-
-def sucessores(mapa: Mapa, estado: Estado, fonte_consumivel: bool = False):
-    l, c = estado.linha, estado.coluna
-    if mapa.casa(l, c) == "G":
-        return
-    for movimento, dl, dc in direcoes_permitidas(mapa, l, c):
-        nl, nc = l + dl, c + dc
-        if not mapa.dentro(nl, nc):
+    for letra, (dl, dc) in PASSOS.items():
+        if restricao is not None and restricao != letra:
             continue
-        casa = mapa.casa(nl, nc)
-        if casa == PAREDE:
+
+        chegada = (linha + dl, coluna + dc)
+        if not mapa.dentro(*chegada):
             continue
-        if casa in PORTAS and casa.lower() not in estado.chaves:
-            continue
-        chaves = estado.chaves | {casa} if casa in CHAVES else estado.chaves
-        peso, bonus = custo_e_bonus(mapa, (nl, nc), casa, estado.bonus, fonte_consumivel)
-        yield movimento, Estado(nl, nc, chaves, bonus), peso, casa
+
+        terreno = mapa.casa(*chegada)
+        if terreno != PAREDE:
+            yield letra, chegada, terreno
+
+
+def _custo_terreno(simbolo):
+    if simbolo == ",":
+        return 3
+    if simbolo == "~":
+        return 5
+    if simbolo == "*":
+        return -2
+    if simbolo == "+":
+        return -4
+    return 1
+
+
+def _visitar(mapa, origem, destino, simbolo, usar_fontes, fontes_por_posicao):
+    """Atualiza o inventario ao entrar numa casa e devolve (estado, custo)."""
+    novas_chaves = origem.chaves
+    visitados = origem.bonus
+    custo = _custo_terreno(simbolo)
+
+    if simbolo in CHAVES:
+        novas_chaves = origem.chaves | frozenset((simbolo,))
+
+    identificador = None
+    if simbolo == "+":
+        identificador = mapa.bonus[destino]
+    if simbolo == "*" and usar_fontes:
+        identificador = len(mapa.bonus) + fontes_por_posicao[destino]
+
+    if identificador is not None:
+        if identificador in visitados:
+            custo = 1
+        else:
+            visitados = visitados | frozenset((identificador,))
+
+    novo = Estado(destino[0], destino[1], novas_chaves, visitados)
+    return novo, custo
 
 
 def construir_estados(mapa: Mapa, fonte_consumivel: bool = False) -> GrafoConstruido:
-    inicial = Estado(*mapa.inicio)
-    grafo = Grafo()
-    grafo.adicionar_no(rotulo(inicial))
-    arcos = []
-    vistos = {inicial}
-    fila = deque([inicial])
+    """Expande a partir de S, sem materializar combinacoes inacessiveis."""
+    if mapa.inicio is None:
+        raise ValueError("O mapa precisa ter uma posicao inicial S.")
+
+    partida = Estado(*mapa.inicio)
+    resultado = GrafoConstruido(Grafo(), [], rotulo(partida))
+    resultado.grafo.adicionar_no(resultado.inicial)
+
+    fila = deque((partida,))
+    catalogados = {partida}
+    fontes_por_posicao = {pos: indice for indice, pos in enumerate(mapa.fontes)}
 
     while fila:
-        estado = fila.popleft()
-        origem = rotulo(estado)
-        if mapa.casa(estado.linha, estado.coluna) == "G":
-            grafo.adicionar_arco(origem, ALVO, 0)
-            arcos.append(ArcoDetalhado(origem, ALVO, "-", "-", 0))
+        presente = fila.popleft()
+        nome = rotulo(presente)
+        posicao = (presente.linha, presente.coluna)
+
+        if mapa.casa(*posicao) == "G":
+            resultado.registrar(nome, ALVO, "-", "-", 0)
             continue
-        for movimento, proximo, peso, casa in sucessores(mapa, estado, fonte_consumivel):
-            destino = rotulo(proximo)
-            grafo.adicionar_arco(origem, destino, peso)
-            arcos.append(ArcoDetalhado(origem, destino, movimento, casa, peso))
-            if proximo not in vistos:
-                vistos.add(proximo)
+
+        for passo, destino, terreno in _movimentos(mapa, posicao):
+            if terreno in PORTAS and terreno.lower() not in presente.chaves:
+                continue
+
+            proximo, peso = _visitar(
+                mapa, presente, destino, terreno, fonte_consumivel, fontes_por_posicao
+            )
+            resultado.registrar(nome, rotulo(proximo), passo, terreno, peso)
+
+            if proximo not in catalogados:
+                catalogados.add(proximo)
                 fila.append(proximo)
 
-    grafo.adicionar_no(ALVO)
-    return GrafoConstruido(grafo, arcos, rotulo(inicial))
+    resultado.grafo.adicionar_no(ALVO)
+    return resultado
 
 
 def construir_posicoes(mapa: Mapa, portas: str = "chao") -> GrafoConstruido:
-    if portas not in ("chao", "parede"):
+    """Considera cada casa transitavel um no, sem inventario."""
+    if portas not in {"chao", "parede"}:
         raise ValueError(f"portas deve ser 'chao' ou 'parede', não {portas!r}")
+    if mapa.inicio is None:
+        raise ValueError("O mapa precisa ter uma posicao inicial S.")
 
-    def livre(l, c):
-        casa = mapa.casa(l, c)
-        return casa != PAREDE and not (portas == "parede" and casa in PORTAS)
+    bloquear = portas == "parede"
+    transitaveis = set()
+    resultado = GrafoConstruido(Grafo(), [], _coordenada(mapa.inicio))
 
-    casas = [(l, c) for l in range(mapa.altura) for c in range(mapa.largura) if livre(l, c)]
-    grafo = Grafo()
-    for l, c in casas:
-        grafo.adicionar_no(f"({l},{c})")
-    arcos = []
-
-    for l, c in casas:
-        origem = f"({l},{c})"
-        if mapa.casa(l, c) == "G":
-            grafo.adicionar_arco(origem, ALVO, 0)
-            arcos.append(ArcoDetalhado(origem, ALVO, "-", "-", 0))
-            continue
-        for movimento, dl, dc in direcoes_permitidas(mapa, l, c):
-            nl, nc = l + dl, c + dc
-            if not (mapa.dentro(nl, nc) and livre(nl, nc)):
+    # Nos primeiro, em ordem de leitura: linhas da esquerda para a direita.
+    for l, linha in enumerate(mapa.grade):
+        for c, terreno in enumerate(linha):
+            if terreno == PAREDE or (bloquear and terreno in PORTAS):
                 continue
-            casa = mapa.casa(nl, nc)
-            peso = VALOR_DO_BONUS if casa == "+" else CUSTO.get(casa, 1)
-            destino = f"({nl},{nc})"
-            grafo.adicionar_arco(origem, destino, peso)
-            arcos.append(ArcoDetalhado(origem, destino, movimento, casa, peso))
+            posicao = (l, c)
+            transitaveis.add(posicao)
+            resultado.grafo.adicionar_no(_coordenada(posicao))
 
-    grafo.adicionar_no(ALVO)
-    return GrafoConstruido(grafo, arcos, "({},{})".format(*mapa.inicio))
+    # Usa a mesma ordem para os arcos, mantendo os CSVs deterministas.
+    for l, linha in enumerate(mapa.grade):
+        for c, terreno in enumerate(linha):
+            atual = (l, c)
+            if atual not in transitaveis:
+                continue
+
+            origem = _coordenada(atual)
+            if terreno == "G":
+                resultado.registrar(origem, ALVO, "-", "-", 0)
+                continue
+
+            for direcao, vizinho, destino in _movimentos(mapa, atual):
+                if vizinho not in transitaveis:
+                    continue
+                resultado.registrar(
+                    origem, _coordenada(vizinho), direcao, destino,
+                    _custo_terreno(destino)
+                )
+
+    resultado.grafo.adicionar_no(ALVO)
+    return resultado
+
+
+def metricas(construido: GrafoConstruido) -> dict:
+    grafo = construido.grafo
+    vertices = tuple(vertice for vertice in grafo.nos() if vertice != ALVO)
+    numero_vertices = len(vertices)
+    numero_arcos = sum(
+        destino != ALVO
+        for vertice in vertices
+        for destino, _ in grafo.arcos(vertice)
+    )
+    divisor = numero_vertices * (numero_vertices - 1)
+    return {
+        "ordem": numero_vertices,
+        "tamanho": numero_arcos,
+        "densidade": numero_arcos / divisor if divisor else 0.0,
+    }
 
 
 def escrever_arestas_csv(arcos, caminho) -> Path:
-    caminho = Path(caminho)
-    caminho.parent.mkdir(parents=True, exist_ok=True)
-    with caminho.open("w", newline="", encoding="utf-8") as f:
-        escritor = csv.writer(f)
-        escritor.writerow(["origem", "destino", "movimento", "casa_destino", "peso"])
-        for a in arcos:
-            escritor.writerow([a.origem, a.destino, a.movimento, a.casa_destino, a.peso])
-    return caminho
+    destino = Path(caminho)
+    destino.parent.mkdir(parents=True, exist_ok=True)
 
+    with destino.open("w", newline="", encoding="utf-8") as arquivo:
+        tabela = csv.writer(arquivo)
+        tabela.writerow(COLUNAS_CSV)
+        tabela.writerows(
+            (arco.origem, arco.destino, arco.movimento, arco.casa_destino, arco.peso)
+            for arco in arcos
+        )
 
-# [IA] Claude Code (Claude Opus 5.5) – métricas sem o ALVO e exportação do arestas_<mapa>.csv de todos os mapas
-def metricas(construido: GrafoConstruido) -> dict:
-    nos = [n for n in construido.grafo.nos() if n != ALVO]
-    tamanho = sum(1 for n in nos for v, _ in construido.grafo.arcos(n) if v != ALVO)
-    ordem = len(nos)
-    densidade = tamanho / (ordem * (ordem - 1)) if ordem >= 2 else 0.0
-    return {"ordem": ordem, "tamanho": tamanho, "densidade": densidade}
+    return destino
 
 
 def nome_curto(arquivo) -> str:
     nome = Path(arquivo).stem
-    codigo = nome.split("_")[0]
-    return codigo if re.fullmatch(r"m\d+", codigo) else nome
+    comeco, separador, _ = nome.partition("_")
+    if comeco.startswith("m") and comeco[1:].isdigit():
+        return comeco
+    return nome
 
 
 def exportar_arestas(pastas, saida) -> list:
-    gerados = []
-    for pasta in pastas:
-        for arquivo in sorted(Path(pasta).glob("*.txt")):
-            construido = construir_estados(ler_mapa(arquivo))
-            destino = Path(saida) / f"arestas_{nome_curto(arquivo)}.csv"
-            gerados.append(escrever_arestas_csv(construido.arcos, destino))
-    return gerados
+    resultados = []
+    pasta_saida = Path(saida)
+
+    for diretorio in map(Path, pastas):
+        for arquivo in sorted(diretorio.glob("*.txt")):
+            arcos = construir_estados(ler_mapa(arquivo)).arcos
+            caminho = pasta_saida / f"arestas_{nome_curto(arquivo)}.csv"
+            resultados.append(escrever_arestas_csv(arcos, caminho))
+
+    return resultados
 
 
 def main(argv=None):
-    p = argparse.ArgumentParser(description="Gera o arestas_<mapa>.csv de todos os mapas fornecidos e do grupo.")
-    p.add_argument("--out", default="out/parte1", help="pasta de saída")
-    args = p.parse_args(argv)
-    for caminho in exportar_arestas(["data/mapas", "data/mapas_grupo"], args.out):
-        print(caminho)
+    parser = argparse.ArgumentParser(description="Exporta os arcos dos mapas .txt em CSV.")
+    parser.add_argument("--out", default="out/parte1", help="pasta de saida")
+    parametros = parser.parse_args(argv)
+
+    for destino in exportar_arestas(("data/mapas", "data/mapas_grupo"), parametros.out):
+        print(destino)
 
 
 if __name__ == "__main__":
