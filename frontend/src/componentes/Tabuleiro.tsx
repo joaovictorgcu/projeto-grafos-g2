@@ -314,7 +314,7 @@ export function Tabuleiro(props: Props) {
           <motion.g key={`camada-${camadaVista}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}>
             {[...grupo.todas].map((k) => {
               const [l, c] = k.split(",").map(Number);
-              return <rect key={k} x={c} y={l} width={1} height={1} fill={cor(camadaVista)} opacity={0.08} />;
+              return <rect key={k} x={c} y={l} width={1} height={1} fill={cor(camadaVista)} opacity={0.24} />;
             })}
           </motion.g>
         )}
