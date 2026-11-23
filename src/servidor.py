@@ -4,13 +4,15 @@ import json
 import re
 import threading
 import webbrowser
+
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, quote, unquote, urlparse
 
-from .graphs.algorithms import bellman_ford, bfs, caminho, dfs, dijkstra, estados_armadilha
+from .graphs.algorithms import bellman_ford, bfs, caminho, dijkstra, estados_armadilha
 from .graphs.estados import ALVO, construir_estados, metricas
 from .graphs.io import MapaInvalido, interpretar_mapa
+
 
 RAIZ = Path(__file__).resolve().parent.parent
 PASTAS = (("enunciado", RAIZ / "data" / "mapas"), ("grupo", RAIZ / "data" / "mapas_grupo"))
@@ -157,60 +159,6 @@ def rodar_algoritmos(grafo, inicio, indice):
     return algoritmos
 
 
-# [IA] Claude Code (Claude Opus 5.5) – ordem em que DFS, BFS, Dijkstra e Bellman-Ford visitam os estados, para a aba Exploração
-def expansao(grafo, ordem, pai, indice, em_g):
-    ordem = [n for n in ordem if n != ALVO]
-    posicao = {n: i for i, n in enumerate(ordem)}
-    descoberta = {}
-    for u in ordem:
-        for v in grafo.vizinhos(u):
-            if v in posicao and posicao[u] < posicao[v]:
-                descoberta[v] = min(descoberta.get(v, posicao[u]), posicao[u])
-    alvo = next((i for i, n in enumerate(ordem) if em_g(n)), None)
-    rotulos = caminho(pai, ordem[alvo]) if alvo is not None else []
-    return {
-        "ordem": [indice[n] for n in ordem],
-        "descoberta": [descoberta.get(n, -1) for n in ordem],
-        "alvo": alvo,
-        "caminho": [indice[n] for n in rotulos],
-    }
-
-
-def por_distancia(dist):
-    return [n for _, _, n in sorted((d, i, n) for i, (n, d) in enumerate(dist.items()))]
-
-
-def buscas(grafo, inicio, indice, em_g):
-    resultado = {}
-    tipo, d, f, _ = dfs(grafo, [inicio])
-    eventos = sorted([(t, 0, n) for n, t in d.items()] + [(t, 1, n) for n, t in f.items()])
-    eventos = [(e, n) for _, e, n in eventos if n != ALVO]
-    pai = {v: u for (u, v), t in tipo.items() if t == "arvore"}
-    alvo = next((i for i, (e, n) in enumerate(eventos) if e == 0 and em_g(n)), None)
-    pilha = []
-    if alvo is not None:
-        no = eventos[alvo][1]
-        while no is not None:
-            pilha.append(no)
-            no = pai.get(no)
-    resultado["DFS"] = {"eventos": [[indice[n], e] for e, n in eventos], "alvo": alvo,
-                        "caminho": [indice[n] for n in reversed(pilha)]}
-
-    dist, pai = bfs(grafo, inicio)
-    resultado["BFS"] = expansao(grafo, list(dist), pai, indice, em_g)
-    try:
-        dist, pai = dijkstra(grafo, inicio)
-        resultado["DIJKSTRA"] = expansao(grafo, por_distancia(dist), pai, indice, em_g)
-    except ValueError as erro:
-        resultado["DIJKSTRA"] = {"recusa": str(erro)}
-    dist, pai, ciclo = bellman_ford(grafo, inicio)
-    if ciclo:
-        resultado["BELLMAN_FORD"] = {"ciclo": ciclo[1]}
-    else:
-        resultado["BELLMAN_FORD"] = expansao(grafo, por_distancia(dist), pai, indice, em_g)
-    return resultado
-
-
 def analisar(texto, nome, fonte_consumivel=False, origem="enviado"):
     mapa = interpretar_mapa(texto, nome)
     construido = construir_estados(mapa, fonte_consumivel)
@@ -218,13 +166,11 @@ def analisar(texto, nome, fonte_consumivel=False, origem="enviado"):
     nos = [n for n in grafo.nos() if n != ALVO]
     indice = {n: i for i, n in enumerate(nos)}
     armadilhas = set(estados_armadilha(grafo, ALVO))
-
     estados = []
     for n in nos:
         l, c, chaves, bonus = ler_rotulo(n)
         estados.append({"rotulo": n, "l": l, "c": c, "chaves": chaves, "bonus": bonus, "armadilha": n in armadilhas,
                         "saida": mapa.casa(l, c) == "G"})
-
     return {
         "id": nome,
         "titulo": titulo_do_mapa(nome, origem),
@@ -238,7 +184,6 @@ def analisar(texto, nome, fonte_consumivel=False, origem="enviado"):
         "arcos": [[indice[u], indice[v], p] for u in nos for v, p in grafo.arcos(u) if v != ALVO],
         "metricas": metricas(construido),
         "algoritmos": rodar_algoritmos(grafo, construido.inicial, indice),
-        "buscas": buscas(grafo, construido.inicial, indice, lambda n: mapa.casa(*ler_rotulo(n)[:2]) == "G"),
     }
 
 
@@ -325,7 +270,6 @@ def main(argv=None):
     p.add_argument("--porta", type=int, default=8000)
     p.add_argument("--sem-navegador", action="store_true", help="não abre o navegador sozinho")
     args = p.parse_args(argv)
-
     extras = [Path(args.mapa)] if args.mapa else []
     servidor = Servidor(("127.0.0.1", args.porta), mapas_do_projeto(extras))
     endereco = f"http://127.0.0.1:{args.porta}/"

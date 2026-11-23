@@ -105,15 +105,11 @@ negativo), BFS e DFS a partir de 3 clubes, desempenho e escalabilidade e as visu
 `docs/parte2/relatorio_parte2.md`.
 
 **Parte 1:** primeiro uma página para escolher o mapa (ou enviar um `.txt`, como o mapa surpresa);
-depois, cinco abas, com o algoritmo e as opções numa barra acima do tabuleiro:
+depois, quatro abas, com o algoritmo e as opções numa barra acima do tabuleiro:
 
 - **Labirinto:** escolha do mapa (ou envio de um `.txt`, como o mapa surpresa) e do algoritmo;
   animação passo a passo com posição, chaves, bônus consumidos e custo acumulado; camada em
   destaque, estados-armadilha, ciclo negativo e a recusa do Dijkstra marcados no tabuleiro.
-- **Exploração:** DFS (pilha), BFS (fila), Dijkstra (fila de prioridade) e Bellman-Ford partindo
-  do S ao mesmo tempo, com o contador de expandidas, a fronteira e o caminho achado quando cada um
-  chega ao G. O Bellman-Ford não expande um estado por vez; no painel dele os estados aparecem na
-  ordem do custo final.
 - **Grafo de estados:** as camadas (uma por conjunto de chaves) empilhadas em 3D; pegar uma chave
   sobe de andar. Arraste para girar.
 - **Comparar (bônus):** dois percursos na mesma linha do tempo, sobrepostos ou lado a lado, com a

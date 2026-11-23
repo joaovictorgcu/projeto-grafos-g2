@@ -8,7 +8,6 @@ import { Cartao, Carregando } from "./componentes/Futebol";
 import { Topo } from "./componentes/Topo";
 import { Comparacao } from "./componentes/Comparacao";
 import { Controles } from "./componentes/Controles";
-import { Exploracao } from "./componentes/Exploracao";
 import { GrafoDeEstados } from "./componentes/GrafoDeEstados";
 import { Ampliavel } from "./componentes/Ampliavel";
 import { EscolhaDeMapa } from "./componentes/EscolhaDeMapa";
@@ -174,22 +173,6 @@ export function Parte1({ aoInicio }: { aoInicio: () => void }) {
               ) : !pronto || !resultado || !atual ? (
                 <Carregando texto="Montando o grafo de estados…" />
               ) : (
-                vista === "exploracao" ? (
-                  <>
-                    <div className="titulo-vista">
-                      <div>
-                        <button type="button" className="voltar" onClick={() => setMapaId("")}><ArrowLeft size={16} aria-hidden /> Mapas</button>
-                        <h2>{pronto.titulo}</h2>
-                        <span>{pronto.grade[0].length}×{pronto.grade.length} casas, {pronto.metricas.ordem} estados, os quatro
-                          algoritmos partindo do S ao mesmo tempo</span>
-                      </div>
-                    </div>
-                    {pronto.grade.some((linha) => linha.includes("*")) && (
-                      <Ferramentas dados={pronto} algoritmo={algoritmo} setAlgoritmo={setAlgoritmo} mostrarAlgoritmo={false} fonte={fonte} setFonte={setFonte} />
-                    )}
-                    <Exploracao dados={pronto} />
-                  </>
-                ) : (
                 <>
                   <div className="titulo-vista">
                     <div>
@@ -252,7 +235,6 @@ export function Parte1({ aoInicio }: { aoInicio: () => void }) {
                   <Controles reproducao={reproducao} ultimo={passos.length - 1} passos={passos} cor={corAtual} />
                   {vista === "labirinto" && <Metricas dados={pronto} algoritmo={algoritmo} aoEscolher={setAlgoritmo} />}
                 </>
-                )
               )}
             </motion.div>
           </AnimatePresence>
