@@ -31,7 +31,7 @@ export function Parte1({ aoInicio }: { aoInicio: () => void }) {
   const [vista] = useState<Vista>("labirinto");
   const [fonte, setFonte] = useState(parametros.get("fonte") === "1");
   const [camada, setCamada] = useState<string | null>(null);
-  const [armadilhas] = useState(false);
+  const [armadilhas, setArmadilhas] = useState(false);
   const [dados, setDados] = useState<DadosDoMapa | null>(null);
   const [erroServidor, setErroServidor] = useState<string | null>(null);
   const [erroEnvio, setErroEnvio] = useState<string | null>(null);
@@ -184,7 +184,8 @@ export function Parte1({ aoInicio }: { aoInicio: () => void }) {
                     <Status algoritmo={algoritmo} resultado={resultado} fonte={fonte} />
                   </div>
                   {vista === "labirinto" ? (
-                    <Ferramentas dados={pronto} algoritmo={algoritmo} setAlgoritmo={setAlgoritmo} mostrarAlgoritmo />
+                    <Ferramentas dados={pronto} algoritmo={algoritmo} setAlgoritmo={setAlgoritmo} mostrarAlgoritmo
+                      armadilhas={armadilhas} setArmadilhas={setArmadilhas} camada={camada} setCamada={setCamada} camadas={camadas} />
                   ) : (
                     <Ferramentas dados={pronto} algoritmo={algoritmo} setAlgoritmo={setAlgoritmo} mostrarAlgoritmo fonte={fonte} setFonte={setFonte} />
                   )}
