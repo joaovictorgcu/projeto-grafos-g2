@@ -306,7 +306,7 @@ projeto-grafos-g2/
 
 ## Declaração de uso de IA
 
-[Documento de declaração de uso de IA](https://docs.google.com/document/d/1SiJGyYy2NjCxJ7fLpFQMiJrf3mn1L_Vi/edit)
+[Documento de declaração de uso de IA](https://docs.google.com/document/d/1ZSdVtWTOLYGg85n6q2xN59Xl7FlnyDnUhQOxLY55iig/edit?tab=t.0#heading=h.cllfv2rnxjoa)
 
 ## Apresentação do checkpoint
 
