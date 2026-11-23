@@ -1,12 +1,14 @@
-# leitura do mapa .txt e localização de S, G, chaves, portas, bônus, fontes e esteiras
+
 from dataclasses import dataclass, field
 from pathlib import Path
+
 
 PAREDE = "#"
 CHAVES = "abcd"
 PORTAS = "ABCD"
 ESTEIRAS = "><^v"
-SIMBOLOS = set("#.SG,~+*") | set(CHAVES) | set(PORTAS) | set(ESTEIRAS)
+
+SIMBOLOS = set("#.SG,~+*") | set(CHAVES + PORTAS + ESTEIRAS)
 
 
 class MapaInvalido(ValueError):
@@ -17,6 +19,7 @@ class MapaInvalido(ValueError):
 class Mapa:
     nome: str
     grade: list[str]
+
     inicios: list[tuple[int, int]] = field(default_factory=list)
     saidas: list[tuple[int, int]] = field(default_factory=list)
     chaves: dict[str, list[tuple[int, int]]] = field(default_factory=dict)
@@ -31,95 +34,188 @@ class Mapa:
 
     @property
     def largura(self) -> int:
-        return len(self.grade[0]) if self.grade else 0
+        return len(self.grade[0]) if self.altura else 0
 
     @property
     def inicio(self) -> tuple[int, int] | None:
-        return self.inicios[0] if self.inicios else None
+        if len(self.inicios) == 0:
+            return None
+        return self.inicios[0]
 
     @property
     def livres(self) -> int:
-        return sum(1 for linha in self.grade for casa in linha if casa != PAREDE)
+        quantidade = 0
+
+        for linha in self.grade:
+            quantidade += len(linha) - linha.count(PAREDE)
+
+        return quantidade
 
     @property
     def tipos_de_chave(self) -> list[str]:
-        return sorted(self.chaves)
+        return sorted(self.chaves.keys())
 
     def casa(self, l: int, c: int) -> str:
         return self.grade[l][c]
 
     def dentro(self, l: int, c: int) -> bool:
-        return 0 <= l < self.altura and 0 <= c < len(self.grade[l])
+        if l < 0 or l >= self.altura:
+            return False
+
+        return 0 <= c < len(self.grade[l])
 
 
 def validar_mapa(mapa: Mapa) -> None:
-    nome = f"{mapa.nome}: " if mapa.nome else ""
-    if not mapa.grade:
-        raise MapaInvalido(f"{nome}o mapa está vazio.")
+    prefixo = f"{mapa.nome}: " if mapa.nome else ""
 
-    largura = len(mapa.grade[0])
-    for l, linha in enumerate(mapa.grade):
-        if not linha:
-            raise MapaInvalido(f"{nome}a linha {l} está vazia. O mapa precisa ser retangular.")
-        if len(linha) != largura:
+    if len(mapa.grade) == 0:
+        raise MapaInvalido(prefixo + "o mapa está vazio.")
+
+    colunas = mapa.largura
+
+    for indice, conteudo in enumerate(mapa.grade):
+        quantidade = len(conteudo)
+
+        if quantidade == 0:
             raise MapaInvalido(
-                f"{nome}o mapa não é retangular: a linha {l} tem {len(linha)} casas, "
-                f"mas a linha 0 tem {largura}."
+                f"{prefixo}a linha {indice} está vazia."
             )
 
-    for l, linha in enumerate(mapa.grade):
-        for c, casa in enumerate(linha):
-            if casa not in SIMBOLOS:
-                raise MapaInvalido(
-                    f"{nome}símbolo desconhecido {casa!r} na posição ({l},{c}). "
-                    f"Os símbolos válidos são: # . S G , ~ + * a-d A-D > < ^ v"
-                )
+        if quantidade != colunas:
+            raise MapaInvalido(
+                f"{prefixo}o mapa não é retangular: "
+                f"a linha {indice} tem {quantidade} casas, "
+                f"mas a primeira tem {colunas}."
+            )
 
-    if not mapa.inicios:
-        raise MapaInvalido(f"{nome}o mapa não tem início S; precisa ter exatamente um.")
-    if len(mapa.inicios) > 1:
-        posicoes = ", ".join(f"({l},{c})" for l, c in mapa.inicios)
+    desconhecidos = (
+        (linha, coluna, simbolo)
+        for linha, conteudo in enumerate(mapa.grade)
+        for coluna, simbolo in enumerate(conteudo)
+        if simbolo not in SIMBOLOS
+    )
+
+    primeiro_erro = next(desconhecidos, None)
+
+    if primeiro_erro is not None:
+        linha, coluna, simbolo = primeiro_erro
+
         raise MapaInvalido(
-            f"{nome}o mapa tem {len(mapa.inicios)} inícios S, em {posicoes}; precisa ter exatamente um."
+            f"{prefixo}símbolo desconhecido {simbolo!r} "
+            f"na posição ({linha},{coluna})."
         )
-    if not mapa.saidas:
-        raise MapaInvalido(f"{nome}o mapa não tem saída G; precisa ter pelo menos uma.")
+
+    quantidade_inicios = len(mapa.inicios)
+
+    if quantidade_inicios != 1:
+        if quantidade_inicios == 0:
+            raise MapaInvalido(
+                f"{prefixo}o mapa não tem início S."
+            )
+
+        coordenadas = ", ".join(
+            f"({linha},{coluna})"
+            for linha, coluna in mapa.inicios
+        )
+
+        raise MapaInvalido(
+            f"{prefixo}o mapa tem {quantidade_inicios} "
+            f"inícios S, em {coordenadas}."
+        )
+
+    if len(mapa.saidas) == 0:
+        raise MapaInvalido(
+            f"{prefixo}o mapa não tem saída G."
+        )
 
 
 def interpretar_mapa(texto: str, nome: str = "") -> Mapa:
-    texto = texto.removeprefix("\ufeff")
-    linhas = [l for l in texto.splitlines() if not l.startswith(";")]
-    while linhas and not linhas[0].strip():
-        linhas.pop(0)
-    while linhas and not linhas[-1].strip():
-        linhas.pop()
+    conteudo = texto.removeprefix("\ufeff").splitlines()
 
-    mapa = Mapa(nome=nome, grade=linhas)
-    for l, linha in enumerate(linhas):
-        for c, casa in enumerate(linha):
-            pos = (l, c)
-            if casa == "S":
-                mapa.inicios.append(pos)
-            elif casa == "G":
-                mapa.saidas.append(pos)
-            elif casa in CHAVES:
-                mapa.chaves.setdefault(casa, []).append(pos)
-            elif casa in PORTAS:
-                mapa.portas.setdefault(casa, []).append(pos)
-            elif casa == "+":
-                mapa.bonus[pos] = len(mapa.bonus)
-            elif casa == "*":
-                mapa.fontes.append(pos)
-            elif casa in ESTEIRAS:
-                mapa.esteiras[pos] = casa
+    linhas = [
+        linha for linha in conteudo
+        if not linha.startswith(";")
+    ]
+
+    primeira = 0
+    ultima = len(linhas)
+
+    while primeira < ultima and not linhas[primeira].strip():
+        primeira += 1
+
+    while ultima > primeira and not linhas[ultima - 1].strip():
+        ultima -= 1
+
+    grade = linhas[primeira:ultima]
+
+    # Agrupa todas as posições pelo símbolo encontrado.
+    posicoes = {}
+
+    for l, linha in enumerate(grade):
+        for c, simbolo in enumerate(linha):
+            if simbolo not in posicoes:
+                posicoes[simbolo] = []
+
+            posicoes[simbolo].append((l, c))
+
+    # Separa as posições conforme o tipo de elemento.
+    inicios = posicoes.get("S", [])
+    saidas = posicoes.get("G", [])
+    fontes = posicoes.get("*", [])
+
+    chaves = {
+        letra: posicoes[letra]
+        for letra in CHAVES
+        if letra in posicoes
+    }
+
+    portas = {
+        letra: posicoes[letra]
+        for letra in PORTAS
+        if letra in posicoes
+    }
+
+    esteiras = {
+        coordenada: direcao
+        for direcao in ESTEIRAS
+        for coordenada in posicoes.get(direcao, [])
+    }
+
+    bonus = {
+        coordenada: numero
+        for numero, coordenada in enumerate(
+            posicoes.get("+", [])
+        )
+    }
+
+    mapa = Mapa(
+        nome=nome,
+        grade=grade,
+        inicios=inicios,
+        saidas=saidas,
+        chaves=chaves,
+        portas=portas,
+        bonus=bonus,
+        fontes=fontes,
+        esteiras=esteiras
+    )
+
     validar_mapa(mapa)
+
     return mapa
 
 
 def ler_mapa(caminho) -> Mapa:
-    caminho = Path(caminho)
-    texto = caminho.read_text(encoding="utf-8-sig")
-    return interpretar_mapa(texto, nome=caminho.stem)
+    arquivo = Path(caminho)
+
+    try:
+        conteudo = arquivo.read_text(encoding="utf-8-sig")
+    except OSError as erro:
+        raise MapaInvalido(
+            f"Não foi possível ler o mapa '{arquivo}': {erro}"
+        ) from erro
+
+    return interpretar_mapa(conteudo, nome=arquivo.stem)
 
 
 def ler_dataset(pasta):
