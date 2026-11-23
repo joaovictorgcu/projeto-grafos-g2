@@ -100,11 +100,39 @@ function Recolhivel({ titulo, valor, classe = "", children }: { titulo: ReactNod
   );
 }
 
+function TabelaDeTransferencias({ lista }: { lista: Record<string, string[]> }) {
+  const linhas = Object.entries(lista).flatMap(([arco, jogadores]) => jogadores.map((texto, i) => {
+    const partes = /^(.*) \((\d\d\/\d\d)\): (-?[\d.]+)$/.exec(texto);
+    return {
+      arco, i, total: jogadores.length,
+      nome: partes ? partes[1] : texto,
+      temporada: partes ? partes[2] : "",
+      peso: partes ? Number(partes[3].replace(/\./g, "")) : null,
+    };
+  }));
+  return (
+    <table className="tabela-algoritmos simples transferencias">
+      <thead><tr><th>seta</th><th>jogador</th><th>temporada</th><th className="numero">pago − valor de mercado</th></tr></thead>
+      <tbody>
+        {linhas.map((l) => (
+          <tr key={`${l.arco}-${l.i}`}>
+            {l.i === 0 && <th scope="rowgroup" rowSpan={l.total}>{l.arco.replace(" -> ", " → ")}</th>}
+            <td>{l.nome}</td>
+            <td>{l.temporada}</td>
+            <td className={l.peso !== null && l.peso < 0 ? "numero negativo" : "numero"}>{l.peso === null ? "" : euro(l.peso)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
 function CartaoDoPar({ par }: { par: ParDoDijkstra }) {
   return (
     <Recolhivel titulo={`${par.origem} → ${par.destino}`} valor={par.custo_original}>
       <Rota clubes={par.caminho} />
       <span className="detalhe">{par.arcos} arcos no Dijkstra, {par.passos_bfs} arcos no menor caminho da BFS</span>
+      <TabelaDeTransferencias lista={par.transferencias} />
     </Recolhivel>
   );
 }
@@ -129,11 +157,13 @@ function Caminhos({ dados }: { dados: DadosDaParte2 }) {
           <Recolhivel titulo={`Sem ciclo negativo: ${semCiclo.fonte} → ${semCiclo.menor_custo.destino}`} valor={semCiclo.menor_custo.custo}>
             <span className="detalhe">{semCiclo.grafo}: {numero(semCiclo.ordem)} nós, {numero(semCiclo.tamanho)} arcos, {numero(semCiclo.arcos_negativos)} negativos</span>
             <Rota clubes={semCiclo.menor_custo.caminho} />
+            <TabelaDeTransferencias lista={semCiclo.menor_custo.transferencias} />
           </Recolhivel>
           {r.bellman_ford.com_ciclo_negativo.map((c) => (
             <Recolhivel key={c.grafo} classe="ciclo" titulo={<><Cartao cor="vermelho" /> Ciclo negativo a partir de {c.fonte}</>} valor={c.ciclo.custo}>
               <span className="detalhe">{c.grafo}: {numero(c.ordem)} nós, {numero(c.tamanho)} arcos</span>
               <Rota clubes={c.ciclo.clubes} ciclo />
+              <TabelaDeTransferencias lista={c.ciclo.transferencias} />
             </Recolhivel>
           ))}
         </div>

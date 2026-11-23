@@ -445,6 +445,10 @@ code { font-family: var(--fonte-mono); font-size: 0.88em; background: var(--supe
 .par-corpo { overflow: hidden; }
 .par-corpo > div { padding: 0 18px 16px; display: flex; flex-direction: column; gap: 8px; }
 .par-corpo .jogada { max-width: 520px; }
+.transferencias { font-size: 14px; margin-top: 4px; }
+.transferencias tbody tr { cursor: default; }
+.transferencias th[scope="rowgroup"] { font-weight: 600; vertical-align: top; white-space: nowrap; }
+.transferencias .negativo { color: #b3261e; }
 .valor { font-family: var(--fonte-mono); font-weight: 600; white-space: nowrap; }
 .valor.negativo { color: #b3261e; }
 .detalhe { font-size: 12.5px; color: var(--texto-3); }
