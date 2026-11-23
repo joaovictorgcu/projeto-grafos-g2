@@ -37,7 +37,7 @@ COR_TEXTO = "#0b0b0b"
 COR_TEXTO_2 = "#52514e"
 
 # Uma cor por camada, na ordem em que as camadas aparecem no percurso.
-# [IA] Claude Code (Claude Opus 5.5) – paleta categórica conferida com validador de daltonismo; revisada por Caio
+# [IA] Claude Code (Claude Opus 5.5) – cores escolhidas por Caio; a IA ajustou os tons e conferiu a separação para daltonismo
 CORES_CAMADA = ["#2a78d6", "#eb6834", "#1baf7a", "#e87ba4", "#6250d6", "#008300"]
 
 CUSTO = {",": 3, "~": 5, "*": -2}
@@ -428,7 +428,7 @@ def desenhar_arvore_bfs(grafo, inicial, saida, nome_mapa=""):
 # Rampa sequencial azul (clara -> escura) para contagens pequenas e discretas. Começa no
 # passo 250, não no mais claro, para "1 estado" não sumir no fundo; a parede fica em
 # cinza claro, para não competir com os azuis escuros.
-# [IA] Claude Code (Claude Opus 5.5) – passos da rampa ordinal escolhidos com o skill de dataviz; revisado por Caio
+# [IA] Claude Code (Claude Opus 5.5) – rampa azul escolhida por Caio; a IA ajustou os tons de cada passo
 RAMPA_MULTIPLICIDADE = ["#86b6ef", "#6da7ec", "#3987e5", "#2a78d6", "#256abf", "#1c5cab",
                         "#184f95", "#104281", "#0d366b"]
 COR_PAREDE_CLARA = "#dcdbd6"
