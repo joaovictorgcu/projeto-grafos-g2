@@ -1,4 +1,4 @@
-// [IA] Claude Code (Claude Opus 5.5) – contas do frontend sobre os dados prontos: camadas, passos do percurso, onda de exploração
+// [IA] Claude Code (Claude Opus 5.5) – contas do frontend sobre os dados prontos: camadas, passos do percurso, onda de exploração; resumoDaComparacao simplificada com auxílio do ChatGPT.
 import type { Algoritmo, DadosDoMapa, Estado, Passo, Resultado, Status } from "./tipos";
 
 export const ALGORITMOS: Algoritmo[] = ["BFS", "DIJKSTRA", "BELLMAN_FORD"];
@@ -77,14 +77,7 @@ export function resumoDaComparacao(
   a: { nome: string; resultado: Resultado },
   b: { nome: string; resultado: Resultado },
 ) {
-  const ok = (r: Resultado) => r.status === "OK";
-  if (!ok(a.resultado) && !ok(b.resultado)) return `Nenhum dos dois chega ao G: ${NOME_DO_STATUS[a.resultado.status].toLowerCase()} × ${NOME_DO_STATUS[b.resultado.status].toLowerCase()}.`;
-  if (!ok(a.resultado)) return `Só o lado B chega ao G. O lado A: ${NOME_DO_STATUS[a.resultado.status].toLowerCase()}.`;
-  if (!ok(b.resultado)) return `Só o lado A chega ao G. O lado B: ${NOME_DO_STATUS[b.resultado.status].toLowerCase()}.`;
-  const dp = (b.resultado.passos ?? 0) - (a.resultado.passos ?? 0);
-  const dc = (b.resultado.custo ?? 0) - (a.resultado.custo ?? 0);
-  if (dp === 0 && dc === 0) return "Os dois fazem o mesmo número de passos com o mesmo custo.";
-  const passos = dp === 0 ? "o mesmo número de passos" : `${Math.abs(dp)} passo${Math.abs(dp) > 1 ? "s" : ""} a ${dp > 0 ? "mais" : "menos"}`;
-  const custo = dc === 0 ? "o mesmo custo" : `custo ${Math.abs(dc)} ${dc > 0 ? "maior" : "menor"}`;
-  return `${b.nome} faz ${passos} que ${a.nome}, com ${custo}.`;
+  const mostrarResultado = (r: Resultado) =>
+    r.status === "OK" ? `${r.passos} passos, custo ${r.custo}` : NOME_DO_STATUS[r.status];
+  return `${a.nome}: ${mostrarResultado(a.resultado)}. ${b.nome}: ${mostrarResultado(b.resultado)}.`;
 }
