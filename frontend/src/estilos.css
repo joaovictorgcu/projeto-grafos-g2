@@ -434,6 +434,17 @@ code { font-family: var(--fonte-mono); font-size: 0.88em; background: var(--supe
 .par header { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
 .par h4 { margin: 0; font-family: var(--fonte-titulo); font-size: 16px; }
 .par.ciclo { border-top: 4px solid var(--ciclo); }
+.pares-lista { display: flex; flex-direction: column; gap: 8px; }
+.par.recolhivel { padding: 0; gap: 0; }
+.par-titulo { margin: 0; }
+.par-cabeca { width: 100%; display: flex; align-items: center; gap: 14px; padding: 14px 18px; background: none; border: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.par-cabeca:focus-visible { outline: 2px solid var(--destaque); outline-offset: -2px; }
+.par-nome { flex: 1; font-family: var(--fonte-titulo); font-size: 16px; }
+.par-seta { flex: none; color: var(--texto-3); transition: transform 0.2s; }
+.par.aberto .par-seta { transform: rotate(180deg); }
+.par-corpo { overflow: hidden; }
+.par-corpo > div { padding: 0 18px 16px; display: flex; flex-direction: column; gap: 8px; }
+.par-corpo .jogada { max-width: 520px; }
 .valor { font-family: var(--fonte-mono); font-weight: 600; white-space: nowrap; }
 .valor.negativo { color: #b3261e; }
 .detalhe { font-size: 12.5px; color: var(--texto-3); }

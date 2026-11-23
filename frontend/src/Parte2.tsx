@@ -1,5 +1,6 @@
 // [IA] Claude Code (Claude Opus 5.5) – Parte 2: números do grafo, caminhos e ciclos dos algoritmos, desempenho e as visualizações de AVD com as notas do grupo
 // [IA] Claude Code (Claude Opus 5.5) – Parte 2 mais enxuta: sem funil, sem lista de ciclos de ida e volta, sem transferências por arco e sem as figuras A1 a A4, que repetiam as abas Caminhos e Desempenho
+import { ChevronDown } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { carregarParte2 } from "./api";
@@ -77,14 +78,27 @@ function VisaoGeral({ dados }: { dados: DadosDaParte2 }) {
 }
 
 function CartaoDoPar({ par }: { par: ParDoDijkstra }) {
+  const [aberto, setAberto] = useState(false);
   return (
-    <article className="cartao par">
-      <header>
-        <h4>{par.origem} → {par.destino}</h4>
-        <span className={par.custo_original < 0 ? "valor negativo" : "valor"}>{euro(par.custo_original)}</span>
-      </header>
-      <Rota clubes={par.caminho} />
-      <span className="detalhe">{par.arcos} arcos no Dijkstra, {par.passos_bfs} arcos no menor caminho da BFS</span>
+    <article className={aberto ? "cartao par recolhivel aberto" : "cartao par recolhivel"}>
+      <h4 className="par-titulo">
+        <button type="button" className="par-cabeca" onClick={() => setAberto((a) => !a)} aria-expanded={aberto}>
+          <span className="par-nome">{par.origem} → {par.destino}</span>
+          <span className={par.custo_original < 0 ? "valor negativo" : "valor"}>{euro(par.custo_original)}</span>
+          <ChevronDown size={18} aria-hidden className="par-seta" />
+        </button>
+      </h4>
+      <AnimatePresence initial={false}>
+        {aberto && (
+          <motion.div className="par-corpo" initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }}>
+            <div>
+              <Rota clubes={par.caminho} />
+              <span className="detalhe">{par.arcos} arcos no Dijkstra, {par.passos_bfs} arcos no menor caminho da BFS</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </article>
   );
 }
@@ -98,7 +112,7 @@ function Caminhos({ dados }: { dados: DadosDaParte2 }) {
       <section>
         <h3 className="titulo-secao">Dijkstra: menor custo entre 6 pares</h3>
         <p className="texto-secao">Pesos deslocados com <code>{r.dijkstra.transformacao.formula}</code> (+{euro(r.dijkstra.transformacao.deslocamento_eur)} por arco), porque o Dijkstra não aceita peso negativo. O custo mostrado é o original.</p>
-        <div className="pares">
+        <div className="pares-lista">
           {r.dijkstra.pares.map((par) => <CartaoDoPar key={`${par.origem}-${par.destino}`} par={par} />)}
         </div>
       </section>
