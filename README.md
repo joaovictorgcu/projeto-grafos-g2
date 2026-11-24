@@ -87,6 +87,18 @@ As notas analíticas dessas figuras estão em
 
 ### Labirinto interativo
 
+A página `out/parte1/labirinto_interativo.html` abre direto no navegador, sem servidor e sem instalar
+nada. Ela é gerada pelo `src/viz.py` a partir dos mapas de `data/`:
+
+```
+python -m src.viz --interativo ./out/parte1/labirinto_interativo.html
+python -m src.viz --mapa ./data/mapas/m03_tres_chaves.txt --interativo ./labirinto_m03.html   # um mapa só
+```
+
+Tem seleção de mapa e algoritmo, animação passo a passo com posição, chaves, bônus e custo acumulado,
+controle de velocidade, estados-armadilha e alternância entre camadas. A versão completa, com editor de
+mapas e comparação lado a lado, é a do servidor, descrita a seguir.
+
 Frontend em React + TypeScript (`frontend/`). Quem calcula tudo é o Python: o `src/servidor.py`
 monta o grafo de estados e roda os algoritmos do `src/graphs/`, e o navegador só desenha e anima.
 A versão compilada fica em `frontend/dist/`, então para abrir basta o Python:
@@ -120,6 +132,19 @@ depois, cinco abas, com o algoritmo e as opções numa barra acima do tabuleiro:
   bônus e fonte), comece de um mapa existente se quiser, baixe o `.txt` ou teste direto no labirinto.
   O mapa passa pela mesma validação do `src/graphs/io.py`.
 
+A aba **Comparar** mostra:
+
+- o placar dos dois lados: passos e custo até G, ou o resultado quando não há caminho (`RECUSA`,
+  `CICLO_NEGATIVO`, `SEM_SOLUCAO`);
+- os dois percursos animados juntos, sobrepostos na mesma grade ou em dois tabuleiros lado a lado;
+- a curva de custo acumulado por passo dos dois lados;
+- um quadro com os passos e o custo de cada lado.
+
+Em *Exemplos prontos* há comparações já montadas: BFS × Dijkstra no m01, m03 e m08 (menos passos
+contra menor custo), BFS × Bellman-Ford no m05 (o desvio pelos bônus), Dijkstra × Bellman-Ford no
+m05 (recusa por peso negativo), fonte infinita × consumível no m06 (o ciclo negativo some) e
+m02 × m07 (com e sem solução).
+
 O resultado de cada algoritmo aparece como cartão do árbitro: verde (caminho encontrado), amarelo
 (recusou o mapa), vermelho (ciclo negativo) e azul (sem solução).
 
@@ -133,18 +158,6 @@ npm install
 npm run dev      # em outro terminal: python -m src.servidor --sem-navegador
 npm run build    # gera de novo o frontend/dist/
 ```
-A tela mostra:
-
-- o placar dos dois lados: passos e custo até G, ou o resultado quando não há caminho (`RECUSA`,
-  `CICLO_NEGATIVO`, `SEM_SOLUCAO`);
-- os dois percursos animados juntos, sobrepostos na mesma grade ou em dois tabuleiros lado a lado;
-- a curva de custo acumulado por passo dos dois lados;
-- um quadro com os passos e o custo de cada lado.
-
-Em *Exemplos prontos* há comparações já montadas: BFS × Dijkstra no m01, m03 e m08 (menos passos
-contra menor custo), BFS × Bellman-Ford no m05 (o desvio pelos bônus), Dijkstra × Bellman-Ford no
-m05 (recusa por peso negativo), fonte infinita × consumível no m06 (o ciclo negativo some) e
-m02 × m07 (com e sem solução).
 
 ### Comandos do enunciado
 
@@ -289,7 +302,8 @@ projeto-grafos-g2/
 │  ├─ solve.py            # Parte 1 pelo cli (--mapa): algoritmos, armadilhas, interativo
 │  ├─ servidor.py         # servidor local do labirinto interativo (dados em JSON + frontend)
 │  ├─ analise.py          # análises e artefatos da Parte 1 (P3)
-│  ├─ viz.py              # figuras da Parte 1
+│  ├─ viz.py              # figuras da Parte 1 e gerador do labirinto_interativo.html
+│  ├─ labirinto_template.html   # modelo da página do labirinto interativo
 │  ├─ parte2.py           # experimentos da Parte 2
 │  ├─ avd_parte2.py       # análise exploratória da Parte 2
 │  ├─ viz_parte2.py       # gráficos da Parte 2

@@ -274,3 +274,35 @@ camadas {a,b} e {a,b,c}, e que no m03 e no m08 as casas de cada camada contêm a
 Nenhum código ou arquivo de resultados foi alterado, e os testes não foram rodados.
 
 O que foi conferido manualmente: Caio leu as notas finais e conferiu as correções.
+
+
+12
+
+Responsável: Caio Leimig (P5). Data: 24/11/2026. Ferramenta: Claude Code (Anthropic), modelo Claude
+Opus 5.5.
+
+Trechos dos pedidos: "com base nesse checklist do projeto, na minha parte 5, falta alguma coisa ? ou
+ja esta tudo feito" e "com base nos criterios, e uso proibido e permitido de IA, faca as alteracoes
+que voce pode fazer para ajustar isso e me fale depois o que esta faltando".
+
+O que a IA fez no primeiro pedido: comparou o repositório com o checklist da P5, rodou os testes e
+regenerou as figuras em pasta temporária. Sem que isso fosse pedido, também comparou as notas de
+docs/parte1/notas_visualizacoes.md com os dados e apontou cinco trechos que considerou incorretos
+(dois do m08, dois do m03 e um do heatmap), citando os números. Não escreveu texto para as notas.
+
+O que a IA fez no segundo pedido:
+- src/viz.py e src/labirinto_template.html: recuperou do histórico do git (af9f1ac, c695081) o gerador
+  do labirinto interativo em HTML, removido em 21/10, e o ligou ao algorithms.py atual. O modelo HTML é
+  o mesmo do histórico. O out/parte1/labirinto_interativo.html não foi gerado pela IA.
+- src/servidor.py: corrigiu a leitura das notas para o site (título em linha própria, listas e "---").
+- tests/test_viz_parte1.py (novo) e tests/test_servidor.py: testes dessas mudanças.
+- README.md: comando da página HTML e reposição de um bloco da aba Comparar que estava fora do lugar.
+- Leu a Declaração de Uso de IA no Google Docs, sem editar, para listar o que faltava.
+Não alterou notas, relatório, figuras, saídas de out/, frontend nem src/graphs/.
+
+O que foi conferido pela IA: pytest com 1148 testes passando; a página gerada em pasta temporária foi
+aberta no Chrome com os 10 mapas e os 3 algoritmos, e passos, custos e status bateram com solucoes.csv.
+
+O que foi conferido manualmente: [Caio preenche]
+
+O que foi feito com os cinco apontamentos sobre as notas: [Caio preenche]

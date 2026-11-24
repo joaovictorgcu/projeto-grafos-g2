@@ -107,3 +107,16 @@ def test_nota_separa_paragrafos_e_tabelas():
     blocos = blocos_da_nota("**O que mostra.** texto\nquebrado\n\n| a | b |\n|---|---|\n| 1 | 2 |\n")
     assert blocos == [{"tipo": "paragrafo", "texto": "**O que mostra.** texto quebrado"},
                       {"tipo": "tabela", "linhas": [["a", "b"], ["1", "2"]]}]
+
+
+# [IA] Claude Code (Claude Opus 5.5) – formato atual das notas: título em linha própria, lista e separador ---
+def test_nota_com_titulo_em_linha_propria_lista_e_separador():
+    blocos = blocos_da_nota("**Insight**  \ntexto\nquebrado\n\nExtras:\n- um\n- dois\n\n---\n")
+    assert [b["texto"] for b in blocos] == ["**Insight.** texto quebrado", "Extras:", "• um", "• dois"]
+
+
+def test_cada_figura_da_parte1_tem_os_tres_trechos_da_nota():
+    for figura in figuras_da_parte1():
+        textos = [b["texto"] for b in figura["blocos"] if b["tipo"] == "paragrafo"]
+        for titulo in ("**O que mostra.** ", "**Insight.** ", "**Por que esse gráfico.** "):
+            assert sum(t.startswith(titulo) for t in textos) == 1, (figura["arquivo"], titulo)

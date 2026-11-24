@@ -57,6 +57,24 @@ def dados_da_parte2():
     return {"relatorio": relatorio, "figuras": figuras}
 
 
+# [IA] Claude Code (Claude Opus 5.5) – correção da leitura das notas: título em linha própria, itens de lista e separador ---
+def paragrafos_da_nota(linhas):
+    titulo = re.fullmatch(r"\*\*([^*]+?)\.?\*\*", linhas[0])
+    if titulo:
+        linhas = [f"**{titulo.group(1)}.** {linhas[1]}".rstrip() if len(linhas) > 1 else f"**{titulo.group(1)}.**", *linhas[2:]]
+    paragrafos, em_lista = [], False
+    for linha in linhas:
+        item = linha.startswith("- ")
+        if item:
+            paragrafos.append("• " + linha[2:])
+        elif paragrafos and not em_lista:
+            paragrafos[-1] += " " + linha
+        else:
+            paragrafos.append(linha)
+        em_lista = item
+    return paragrafos
+
+
 # [IA] Claude Code (Claude Opus 5.5) – figuras da Parte 1 para o frontend, com as notas do grupo em docs/parte1/notas_visualizacoes.md
 def blocos_da_nota(texto):
     blocos = []
@@ -68,8 +86,8 @@ def blocos_da_nota(texto):
             celulas = [[c.strip() for c in l.strip("|").split("|")] for l in linhas]
             celulas = [c for c in celulas if not all(re.fullmatch(r":?-+:?", x) for x in c)]
             blocos.append({"tipo": "tabela", "linhas": celulas})
-        else:
-            blocos.append({"tipo": "paragrafo", "texto": " ".join(linhas)})
+        elif not all(re.fullmatch(r"-{3,}", l) for l in linhas):
+            blocos.extend({"tipo": "paragrafo", "texto": t} for t in paragrafos_da_nota(linhas))
     return blocos
 
 
