@@ -105,8 +105,7 @@ O outro ramo vai até o ALVO. O “pega a” acontece entre os níveis 11 e 12.
 Cores separam estados sem chave dos estados com {a}.
 
 Números de apoio:  
-- BFS chega em 34 passos com custo 46  
-- A comparação de modelagem registra 35 porque conta o arco até o ALVO
+- BFS chega em 34 passos com custo 46 
 
 **Insight**  
 A árvore quase não ramifica. Tem 39 estados em 36 níveis e a única bifurcação de verdade está na raiz. Isso mostra que o m02 é basicamente um corredor.  
