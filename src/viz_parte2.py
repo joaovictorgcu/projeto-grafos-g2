@@ -376,11 +376,14 @@ def explanatoria_ligas(t, saida):
     ax.xaxis.set_major_formatter(FuncFormatter(pct_eixo))
     ax.set_xlabel("% das transferências com peso negativo (saída abaixo do valor de mercado)")
     ax.grid(axis="y", visible=False)
-    # [IA] Claude Code (Claude Opus 5.5) – rótulo y e legenda no canto vazio à direita das barras mais curtas
+    # [IA] Claude Code (Claude Opus 5.5) – código do rótulo y e da legenda; textos da legenda escritos por Caio
     ax.set_ylabel("liga do clube de destino")
-    ax.legend(handles=[Patch(color=DESTAQUE, label="destaque: menor % negativa"), Patch(color=NEUTRO, label="demais ligas"),
-                       Line2D([], [], color=TEXTO_2, ls="--", lw=1, label="metade (50%)")],
-              loc="lower right", fontsize=8.5)
+    ax.legend(handles=[
+    Patch(color=DESTAQUE, label="menor % de transferências abaixo do valor"),
+    Patch(color=NEUTRO, label="outras competições"),
+    Line2D([], [], color=TEXTO_2, ls="--", lw=1, label="linha dos 50%")
+],
+        loc="lower left", bbox_to_anchor=(1.01, 0), fontsize=8.5)
     r = g.loc[destaque]
     sinal = "+" if r["mediana"] > 0 else ""
     ax.set_title(f"Só a {LIGAS.get(destaque, destaque)} compra, em geral, acima do valor de mercado\n"
