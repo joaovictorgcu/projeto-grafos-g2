@@ -306,3 +306,24 @@ aberta no Chrome com os 10 mapas e os 3 algoritmos, e passos, custos e status ba
 O que foi conferido manualmente: [Caio preenche]
 
 O que foi feito com os cinco apontamentos sobre as notas: [Caio preenche]
+
+
+13
+
+Responsável: Caio Leimig (P5). Data: 24/11/2026. Ferramenta: Claude Code (Anthropic), modelo Claude
+Opus 5.5.
+
+Trechos dos pedidos: "porque a X1 nao precisa de legenda ? ou eu sou obrigado a colocar uma legenda ?"
+e "coloque a legenda da X1, pois é uma questao obrigatoria, basicamente apenas diga em laranja a
+transferencia do mbappe, e em cinza as demais transferencia".
+
+O que a IA fez: no primeiro pedido, apontou que o enunciado exige legenda em cada visualização e
+recomendou colocá-la; mostrou a sintaxe com as duas cores já usadas na figura e textos em branco. No
+segundo, escreveu em explanatoria_caminho() (src/viz_parte2.py) o código da legenda com as duas
+entradas e os textos definidos por Caio, e escolheu a posição dela num canto sem dados. Cores, valores
+e destaque não mudaram. A nota da X1 no relatório e o PNG de out/parte2/ não foram alterados pela IA.
+
+O que foi conferido pela IA: gerou as figuras em pasta temporária; só a X1 mudou, a legenda não cobre
+dados nem rótulos, e os 1148 testes passaram.
+
+O que foi conferido manualmente: [Caio preenche]

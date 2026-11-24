@@ -352,7 +352,11 @@ def explanatoria_caminho(relatorio, saida):
                  f"Bellman-Ford no grafo temporal a partir de {rota[0]}: custo total {milhoes(menor['custo'])} "
                  f"até {rota[-1]}", fontsize=12)
     ax.set_ylim(min(custos) * 1.25, max(custos) + 3e7)
-    # [IA] Claude Code (Claude Opus 5.5) – remove a legenda da X1 para a figura bater com a nota
+    # [IA] Claude Code (Claude Opus 5.5) – código da legenda da X1; conteúdo definido por Caio
+    ax.legend(handles=[
+        Line2D([], [], color=DESTAQUE, marker="o", lw=3.2, label="transferência do Mbappé"),
+        Line2D([], [], color=NEUTRO, marker="o", lw=2, label="demais transferências"),
+    ], loc="lower left", fontsize=8.5)
     rodape(fig, "Cada degrau é uma transferência (peso = valor pago − valor de mercado, somado no par e na temporada). "
                 "Grafo temporal: nó = (clube, temporada), sem ciclos. Fonte: Transfermarkt Datasets.")
     return salvar(fig, Path(saida) / "x1_explanatoria_caminho.png")
