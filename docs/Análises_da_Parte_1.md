@@ -20,16 +20,16 @@ Isso é necessário porque a mesma casa pode permitir movimentos diferentes depe
 
 ### `data/mapas_grupo/mapa_chaves.txt`
 
-O mapa tem as chaves `a`, `b` e `c`, a porta `A`, três casas de esteira `>>>` e um bônus `+`.
+O mapa tem dimensão 12 × 17, as chaves `a`, `b` e `c`, as portas `A`, `B` e `C`, uma sequência de esteira `>>>` e um bônus `+`.
 
 | Item | Resultado |
 |---|---:|
-| Estados alcançáveis | 976 |
-| Arcos | 3.176 |
-| Teto teórico | 1.024 |
-| Ocupação do teto | 95,31% |
-| BFS | 12 passos, custo 12 |
-| Bellman-Ford | 12 passos, custo 12 |
+| Estados alcançáveis | 253 |
+| Arcos | 492 |
+| Teto teórico | 1.072 |
+| Ocupação do teto | 23,60% |
+| BFS | 65 passos, custo 65 |
+| Bellman-Ford | 67 passos, custo 62 |
 
 O teto teórico é calculado por:
 
@@ -78,7 +78,7 @@ A densidade dirigida é calculada por:
 
 Os arquivos `out/parte1/graus_*.csv` registram, para cada estado, o grau de entrada e o grau de saída.
 
-`out/parte1/comparacao_modelagem.csv` compara três modelos nos mapas m02, m03 e m04:
+`out/parte1/comparacao_modelagem.csv` compara três modelos nos mapas m02, m03 e m04. Cada linha registra o mapa, a abordagem, a quantidade de passos, se o caminho é válido e uma observação:
 
 1. portas tratadas como chão;
 2. portas tratadas como parede;
@@ -88,7 +88,7 @@ Os dois primeiros modelos são simplificações: o primeiro pode liberar uma por
 
 ## Resultados dos algoritmos
 
-Os resultados completos estão em `out/parte1/solucoes.csv`.
+Os resultados completos estão em `out/parte1/solucoes.csv`, que atualmente registra `mapa`, `algoritmo`, `passos`, `custo`, `status` e `caminho`. Quando um algoritmo não deve ser aplicado ou não encontra solução, o campo `status` registra essa situação e os campos numéricos podem ficar vazios.
 
 | Mapa | BFS | Dijkstra | Bellman-Ford |
 |---|---|---|---|
@@ -105,7 +105,7 @@ BFS minimiza a quantidade de passos. Dijkstra e Bellman-Ford minimizam o custo, 
 
 ## DFS, percurso e ciclo negativo
 
-`out/parte1/dfs_classificacao.csv` classifica os arcos da DFS como árvore, retorno, avanço ou cruzamento. A classificação segue a ordem de vizinhança definida no projeto.
+`out/parte1/dfs_classificacao.csv` registra, por mapa, as contagens de arcos classificados como árvore, retorno, avanço ou cruzamento. A classificação segue a ordem de vizinhança definida no projeto.
 
 `out/parte1/percurso_m03.json` registra o percurso de menor custo do m03: 91 passos e custo 99.
 
