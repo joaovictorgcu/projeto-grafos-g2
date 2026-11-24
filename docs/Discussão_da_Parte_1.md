@@ -18,9 +18,9 @@ No m07, a porta `A` bloqueia o corredor até a saída. A chave `a` fica em uma r
 
 ## Mapa com chaves, esteiras e bônus
 
-O arquivo `data/mapas_grupo/mapa_chaves.txt` contém as chaves `a`, `b` e `c`, três esteiras, a porta `A` e um bônus `+`.
+O arquivo `data/mapas_grupo/mapa_chaves.txt` tem dimensão 12 × 17 e contém as chaves `a`, `b` e `c`, as portas `A`, `B` e `C`, uma sequência de esteira `>>>` e um bônus `+`.
 
-O grafo possui 976 estados alcançáveis e 3.176 arcos. BFS encontra a saída em 12 passos e custo 12. Bellman-Ford encontra o mesmo resultado. Dijkstra recusa o grafo porque a primeira utilização do bônus gera um peso negativo.
+O grafo possui 253 estados alcançáveis e 492 arcos, de um teto teórico de 1.072 estados (23,60% de ocupação). BFS encontra a saída em 65 passos e custo 65. Bellman-Ford encontra um caminho de 67 passos e custo 62, pois prioriza o menor custo. Dijkstra recusa o grafo porque a primeira utilização do bônus gera um peso negativo.
 
 ## Mapa com estados-armadilha
 
