@@ -249,6 +249,13 @@ python -m src.viz_parte2 --dataset ./data/dataset_parte2/ --out ./out/parte2/
 
 O `viz_parte2` lê o `parte2_report.json`, então rode o `--benchmark` antes.
 
+A análise exploratória passo a passo (recorte, faltantes, distribuições, relações, outliers e o caminho até as
+explanatórias) está no notebook `docs/parte2/eda_parte2.ipynb`, que chama as mesmas funções:
+
+```
+python -m notebook docs/parte2/eda_parte2.ipynb
+```
+
 ### Saídas em `out/parte2/`
 
 | Arquivo | Conteúdo |

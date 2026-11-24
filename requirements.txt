@@ -5,6 +5,9 @@ pandas>=2.0
 # Figuras da Parte 1 e visualizações da Parte 2
 matplotlib>=3.8
 
+# Notebook da análise exploratória da Parte 2 (docs/parte2/eda_parte2.ipynb)
+notebook>=7.0
+
 # Testes
 pytest>=8.0
 
