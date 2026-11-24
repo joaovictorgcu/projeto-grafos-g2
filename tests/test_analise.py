@@ -1,6 +1,5 @@
 import csv
 import json
-from collections import Counter
 from pathlib import Path
 
 import networkx as nx
@@ -20,7 +19,7 @@ OUT = ROOT / "out" / "parte1"
 def test_mapa_chaves_tem_tres_chaves_esteiras_e_bonus():
     mapa = ler_mapa(MAPAS_GRUPO / "mapa_chaves.txt")
     assert mapa.nome == "mapa_chaves"
-    assert (mapa.altura, mapa.largura) == (7, 15)
+    assert (mapa.altura, mapa.largura) == (12, 17)
     assert len(mapa.tipos_de_chave) >= 3
     assert mapa.esteiras
     assert mapa.bonus
@@ -84,13 +83,12 @@ def test_solucoes_batem_com_o_networkx(linha):
     status, alg = linha["status"], linha["algoritmo"]
     tem_negativo = any(d["weight"] < 0 for _, _, d in ref.edges(data=True))
 
-    if status == "ERRO":  # só o Dijkstra pode recusar, e só se houver peso negativo
+    if status == "RECUSA":  # só o Dijkstra pode recusar, e só se houver peso negativo
         assert alg == "DIJKSTRA" and tem_negativo
-        assert "negativos" in linha["custo_ou_motivo"]
     elif status == "CICLO_NEGATIVO":
         assert alg == "BELLMAN_FORD"
         assert nx.negative_edge_cycle(ref, weight="weight")
-        assert float(linha["custo_ou_motivo"]) < 0
+        assert float(linha["custo"]) < 0
     elif status == "SEM_SOLUCAO":
         assert not nx.has_path(ref, inicio, ALVO)
     else:
@@ -100,7 +98,7 @@ def test_solucoes_batem_com_o_networkx(linha):
             assert int(linha["passos"]) == esperado
         else:
             esperado = nx.bellman_ford_path_length(ref, inicio, ALVO, weight="weight")
-            assert float(linha["custo_ou_motivo"]) == esperado
+            assert float(linha["custo"]) == esperado
 
 
 def test_percurso_m03_e_um_caminho_valido():
@@ -133,13 +131,10 @@ def test_armadilhas_sao_os_estados_que_nao_chegam_ao_alvo(nome):
 
 def test_dfs_classificacao_forma_uma_arvore_geradora():
     """Em cada mapa, os arcos de árvore ligam exatamente os estados alcançáveis do início."""
-    por_mapa = {}
     for linha in ler_csv("dfs_classificacao.csv"):
-        por_mapa.setdefault(linha["mapa"], []).append(linha)
-    for nome, linhas in por_mapa.items():
+        nome = linha["mapa"]
         inicio, ref = referencia(nome)
         alcancaveis = nx.descendants(ref, inicio) | {inicio}
-        tipos = Counter(l["tipo"] for l in linhas)
-        assert set(tipos) <= {"arvore", "retorno", "avanco", "cruzamento"}
+        tipos = {tipo: int(linha[tipo]) for tipo in ("arvore", "retorno", "avanco", "cruzamento")}
         assert tipos["arvore"] == len(alcancaveis) - 1, nome
-        assert len(linhas) == sum(ref.out_degree(n) for n in alcancaveis), nome
+        assert sum(tipos.values()) == sum(ref.out_degree(n) for n in alcancaveis), nome

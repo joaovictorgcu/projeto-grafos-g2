@@ -14,7 +14,7 @@ from pathlib import Path
 
 from .graphs.algorithms import bellman_ford, bfs, caminho, dfs, dijkstra, estados_armadilha
 from .graphs.estados import ALVO, construir_estados, construir_posicoes
-from .graphs.io import ler_mapa
+from .graphs.io import CHAVES, PORTAS, ler_mapa
 
 ROOT = Path(__file__).resolve().parents[1]
 MAPAS = ROOT / "data" / "mapas"
@@ -126,28 +126,30 @@ def custo_caminho(grafo, nodes):
 
 def solution_row(nome, alg, construido):
     g, inicio = construido.grafo, construido.inicial
-    try:
-        if alg == "BFS":
-            dist, pai = bfs(g, inicio)
-            if ALVO not in dist:
-                return [nome, alg, "SEM_SOLUCAO", "", ""]
-            path = caminho(pai, ALVO)
-            return [nome, alg, "OK", len(path) - 2, custo_caminho(g, path[:-1])]
-        if alg == "DIJKSTRA":
+
+    if alg == "BFS":
+        dist, pai = bfs(g, inicio)
+    elif alg == "DIJKSTRA":
+        try:
             dist, pai = dijkstra(g, inicio)
-            if ALVO not in dist:
-                return [nome, alg, "SEM_SOLUCAO", "", ""]
-            path = caminho(pai, ALVO)
-            return [nome, alg, "OK", len(path) - 2, dist[ALVO]]
+        except ValueError:
+            # O CSV solicitado não possui coluna para detalhar o motivo da recusa.
+            return [nome, alg, "", "", "RECUSA", ""]
+    elif alg == "BELLMAN_FORD":
         dist, pai, ciclo = bellman_ford(g, inicio)
         if ciclo:
-            return [nome, alg, "CICLO_NEGATIVO", "", ciclo[1]]
-        if ALVO not in dist:
-            return [nome, alg, "SEM_SOLUCAO", "", ""]
-        path = caminho(pai, ALVO)
-        return [nome, alg, "OK", len(path) - 2, dist[ALVO]]
-    except (ValueError, KeyError) as exc:
-        return [nome, alg, "ERRO", "", str(exc)]
+            # Sem caminho mínimo: registra o custo e os estados do ciclo.
+            return [nome, alg, "", ciclo[1], "CICLO_NEGATIVO", " -> ".join(ciclo[0])]
+    else:
+        raise ValueError(f"Algoritmo desconhecido: {alg}")
+
+    if ALVO not in dist:
+        return [nome, alg, "", "", "SEM_SOLUCAO", ""]
+
+    path = caminho(pai, ALVO)
+    passos = len(path) - 2  # Desconsidera o arco artificial de G até ALVO.
+    custo = custo_caminho(g, path[:-1]) if alg == "BFS" else dist[ALVO]
+    return [nome, alg, passos, custo, "OK", " -> ".join(path[:-1])]
 
 
 def solucoes():
@@ -156,7 +158,7 @@ def solucoes():
         construido = construir_estados(ler_mapa(path))
         for alg in ("BFS", "DIJKSTRA", "BELLMAN_FORD"):
             rows.append(solution_row(nome, alg, construido))
-    write_csv(OUT / "solucoes.csv", ["mapa", "algoritmo", "status", "passos", "custo_ou_motivo"], rows)
+    write_csv(OUT / "solucoes.csv", ["mapa", "algoritmo", "passos", "custo", "status", "caminho"], rows)
 
 
 def dfs_classificacao():
@@ -164,9 +166,9 @@ def dfs_classificacao():
     for nome, path in maps():
         construido = construir_estados(ler_mapa(path))
         tipos, _, _, _ = dfs(construido.grafo, [construido.inicial])
-        for (u, v), tipo in sorted(tipos.items()):
-            rows.append([nome, u, v, tipo])
-    write_csv(OUT / "dfs_classificacao.csv", ["mapa", "origem", "destino", "tipo"], rows)
+        contagens = Counter(tipos.values())
+        rows.append([nome, contagens["arvore"], contagens["retorno"], contagens["avanco"], contagens["cruzamento"]])
+    write_csv(OUT / "dfs_classificacao.csv", ["mapa", "arvore", "retorno", "avanco", "cruzamento"], rows)
 
 
 def percurso_m03():
@@ -214,9 +216,44 @@ def comparacao_modelagem():
         mapa = ler_mapa(path)
         estado = construir_estados(mapa)
         for modelo, construido in (("portas_chao", construir_posicoes(mapa, "chao")), ("portas_parede", construir_posicoes(mapa, "parede")), ("estados", estado)):
-            dist, _ = bfs(construido.grafo, construido.inicial)
-            rows.append([nome, modelo, len([n for n in construido.grafo.nos() if n != ALVO]), graph_metrics(construido.grafo)["tamanho"], "OK" if ALVO in dist else "SEM_SOLUCAO", dist.get(ALVO, "")])
-    write_csv(OUT / "comparacao_modelagem.csv", ["mapa", "modelo", "ordem", "tamanho", "status_bfs", "passos_bfs"], rows)
+            dist, pai = bfs(construido.grafo, construido.inicial)
+            if ALVO not in dist:
+                rows.append([nome, modelo, "", "", "não chega ao G"])
+                continue
+
+            rotulos = caminho(pai, ALVO)[:-1]
+            passos = dist[ALVO] - 1  # Exclui o arco de custo zero para o nó ALVO.
+
+            if modelo == "estados":
+                valido = True
+                observacao = "caminho respeita as chaves e portas"
+            elif modelo == "portas_parede":
+                valido = True
+                observacao = "caminho sem atravessar portas"
+            else:
+                # G_pos com portas como chão pode atravessá-las sem possuir a chave.
+                coletadas = set()
+                porta_bloqueada = None
+                for rotulo in rotulos:
+                    pos = re.match(r"\((\d+),(\d+)\)", rotulo)
+                    if pos is None:
+                        raise ValueError(f"Rótulo de posição inválido: {rotulo}")
+                    l, c = map(int, pos.groups())
+                    casa = mapa.casa(l, c)
+                    if casa in CHAVES:
+                        coletadas.add(casa)
+                    elif casa in PORTAS and casa.lower() not in coletadas:
+                        porta_bloqueada = casa
+                        break
+
+                valido = porta_bloqueada is None
+                observacao = (
+                    f"atravessa a porta {porta_bloqueada} sem a chave"
+                    if porta_bloqueada else "caminho respeita as chaves e portas"
+                )
+
+            rows.append([nome, modelo, passos, "SIM" if valido else "NAO", observacao])
+    write_csv(OUT / "comparacao_modelagem.csv", ["mapa", "abordagem", "passos", "caminho_valido", "observacao"], rows)
 
 
 def main():

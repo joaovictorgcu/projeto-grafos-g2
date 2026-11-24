@@ -135,14 +135,11 @@ npm run build    # gera de novo o frontend/dist/
 ```
 A tela mostra:
 
-- uma frase-resumo da diferença (quem chega com menos passos, quem sai mais barato e em que passo
-  os percursos se separam), ou qual lado não tem solução e por quê (`RECUSA`, `CICLO_NEGATIVO`,
-  `SEM_SOLUCAO`);
-- os dois tabuleiros, cada um com passos até G, custo final (no B, a diferença para o A), custo e
-  chaves no passo atual;
-- os dois percursos sobrepostos na mesma grade, com as casas que só um deles usa marcadas, e a
-  curva de custo acumulado por passo;
-- a tabela passo a passo com os rótulos dos dois lados e o tamanho do grafo de estados de cada um.
+- o placar dos dois lados: passos e custo até G, ou o resultado quando não há caminho (`RECUSA`,
+  `CICLO_NEGATIVO`, `SEM_SOLUCAO`);
+- os dois percursos animados juntos, sobrepostos na mesma grade ou em dois tabuleiros lado a lado;
+- a curva de custo acumulado por passo dos dois lados;
+- um quadro com os passos e o custo de cada lado.
 
 Em *Exemplos prontos* há comparações já montadas: BFS × Dijkstra no m01, m03 e m08 (menos passos
 contra menor custo), BFS × Bellman-Ford no m05 (o desvio pelos bônus), Dijkstra × Bellman-Ford no
@@ -170,9 +167,8 @@ python -m src.analise
 
 Regenera em `out/parte1/` as métricas globais, as camadas, os graus, a comparação de modelagens,
 as soluções, a classificação da DFS, o percurso do m03, o ciclo negativo do m06 e os
-estados-armadilha dos mapas fornecidos e dos mapas do grupo. A discussão está em
-`docs/parte1_p3_guilherme.md`, `docs/p3_guilherme_entrega_final.md` e
-`docs/relatorio_execucao_p3_guilherme.md`.
+estados-armadilha dos mapas fornecidos e dos mapas do grupo. A análise e a discussão estão em
+`docs/Análises_da_Parte_1.md` e `docs/Discussão_da_Parte_1.md`.
 
 ## Parte 2: rede de transferências
 
@@ -275,8 +271,8 @@ projeto-grafos-g2/
 ├─ requirements.txt
 ├─ docs/
 │  ├─ checkpoint_12-10/   # proposta do dataset e apresentação do checkpoint
-│  ├─ parte1_p3_guilherme.md, p3_guilherme_entrega_final.md,
-│  │  relatorio_execucao_p3_guilherme.md   # análises e discussão da Parte 1 (P3)
+│  ├─ Análises_da_Parte_1.md, Discussão_da_Parte_1.md   # análises e discussão da Parte 1 (P3)
+│  ├─ parte1/             # notas analíticas das figuras da Parte 1
 │  └─ parte2/             # relatório, notas analíticas e prompts de IA da Parte 2
 ├─ data/
 │  ├─ mapas/              # m01 a m08

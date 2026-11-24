@@ -150,59 +150,30 @@
   "mapa_chaves": {
     "camadas": {
       "-": {
-        "estados": 117,
-        "arcos_internos": 359,
-        "grau_saida_medio": 3.2564102564102564
+        "estados": 4,
+        "arcos_internos": 6,
+        "grau_saida_medio": 1.75
       },
       "a": {
-        "estados": 123,
-        "arcos_internos": 381,
-        "grau_saida_medio": 3.2439024390243905
+        "estados": 41,
+        "arcos_internos": 79,
+        "grau_saida_medio": 1.975609756097561
       },
       "ab": {
-        "estados": 125,
-        "arcos_internos": 397,
-        "grau_saida_medio": 3.256
+        "estados": 75,
+        "arcos_internos": 147,
+        "grau_saida_medio": 1.9866666666666666
       },
       "abc": {
-        "estados": 127,
-        "arcos_internos": 413,
-        "grau_saida_medio": 3.267716535433071
-      },
-      "ac": {
-        "estados": 125,
-        "arcos_internos": 397,
-        "grau_saida_medio": 3.256
-      },
-      "b": {
-        "estados": 119,
-        "arcos_internos": 375,
-        "grau_saida_medio": 3.26890756302521
-      },
-      "bc": {
-        "estados": 121,
-        "arcos_internos": 391,
-        "grau_saida_medio": 3.28099173553719
-      },
-      "c": {
-        "estados": 119,
-        "arcos_internos": 375,
-        "grau_saida_medio": 3.26890756302521
+        "estados": 133,
+        "arcos_internos": 255,
+        "grau_saida_medio": 1.9323308270676691
       }
     },
     "arcos_entre_camadas": {
-      "-->a": 6,
-      "-->b": 8,
-      "-->c": 8,
-      "a->ab": 8,
-      "a->ac": 8,
-      "ab->abc": 8,
-      "ac->abc": 8,
-      "b->ab": 6,
-      "b->bc": 8,
-      "bc->abc": 6,
-      "c->ac": 6,
-      "c->bc": 8
+      "-->a": 1,
+      "a->ab": 2,
+      "ab->abc": 2
     }
   }
 }

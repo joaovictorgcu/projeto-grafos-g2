@@ -1,6 +1,6 @@
 {
   "m01": {
-    "arquivo": "data/mapas/m01_terreno.txt",
+    "arquivo": "data\\mapas\\m01_terreno.txt",
     "chaves": [],
     "bonus": 0,
     "livres": 24,
@@ -23,7 +23,7 @@
     "ocupacao_G_est": 1.0
   },
   "m02": {
-    "arquivo": "data/mapas/m02_uma_chave.txt",
+    "arquivo": "data\\mapas\\m02_uma_chave.txt",
     "chaves": [
       "a"
     ],
@@ -48,7 +48,7 @@
     "ocupacao_G_est": 0.8478260869565217
   },
   "m03": {
-    "arquivo": "data/mapas/m03_tres_chaves.txt",
+    "arquivo": "data\\mapas\\m03_tres_chaves.txt",
     "chaves": [
       "a",
       "b",
@@ -75,7 +75,7 @@
     "ocupacao_G_est": 0.3503289473684211
   },
   "m04": {
-    "arquivo": "data/mapas/m04_esteiras.txt",
+    "arquivo": "data\\mapas\\m04_esteiras.txt",
     "chaves": [
       "a"
     ],
@@ -100,7 +100,7 @@
     "ocupacao_G_est": 0.7708333333333334
   },
   "m05": {
-    "arquivo": "data/mapas/m05_bonus.txt",
+    "arquivo": "data\\mapas\\m05_bonus.txt",
     "chaves": [],
     "bonus": 3,
     "livres": 44,
@@ -123,7 +123,7 @@
     "ocupacao_G_est": 0.6107954545454546
   },
   "m06": {
-    "arquivo": "data/mapas/m06_fonte.txt",
+    "arquivo": "data\\mapas\\m06_fonte.txt",
     "chaves": [],
     "bonus": 0,
     "livres": 24,
@@ -146,7 +146,7 @@
     "ocupacao_G_est": 1.0
   },
   "m07": {
-    "arquivo": "data/mapas/m07_impossivel.txt",
+    "arquivo": "data\\mapas\\m07_impossivel.txt",
     "chaves": [
       "a"
     ],
@@ -171,7 +171,7 @@
     "ocupacao_G_est": 0.25806451612903225
   },
   "m08": {
-    "arquivo": "data/mapas/m08_grande.txt",
+    "arquivo": "data\\mapas\\m08_grande.txt",
     "chaves": [
       "a",
       "b",
@@ -199,7 +199,7 @@
     "ocupacao_G_est": 0.156062874251497
   },
   "mapa_armadilhas": {
-    "arquivo": "data/mapas_grupo/mapa_armadilhas.txt",
+    "arquivo": "data\\mapas_grupo\\mapa_armadilhas.txt",
     "chaves": [],
     "bonus": 0,
     "livres": 23,
@@ -222,30 +222,30 @@
     "ocupacao_G_est": 0.782608695652174
   },
   "mapa_chaves": {
-    "arquivo": "data/mapas_grupo/mapa_chaves.txt",
+    "arquivo": "data\\mapas_grupo\\mapa_chaves.txt",
     "chaves": [
       "a",
       "b",
       "c"
     ],
     "bonus": 1,
-    "livres": 64,
-    "teto_teorico": 1024,
+    "livres": 67,
+    "teto_teorico": 1072,
     "G_pos_portas_chao": {
-      "ordem": 64,
-      "tamanho": 208,
-      "densidade": 0.051587301587301584
+      "ordem": 67,
+      "tamanho": 128,
+      "densidade": 0.028946178199909543
     },
     "G_pos_portas_parede": {
-      "ordem": 63,
-      "tamanho": 203,
-      "densidade": 0.05197132616487455
+      "ordem": 64,
+      "tamanho": 116,
+      "densidade": 0.028769841269841268
     },
     "G_est": {
-      "ordem": 976,
-      "tamanho": 3176,
-      "densidade": 0.003337536780159731
+      "ordem": 253,
+      "tamanho": 492,
+      "densidade": 0.007716920760399021
     },
-    "ocupacao_G_est": 0.953125
+    "ocupacao_G_est": 0.23600746268656717
   }
 }
