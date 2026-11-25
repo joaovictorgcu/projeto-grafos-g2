@@ -9,6 +9,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 from matplotlib.patheffects import withStroke
@@ -172,10 +173,14 @@ def pesos(t, saida):
     linthresh = 1e3
     bordas = np.concatenate([-np.logspace(8.4, 3, 28), [-500, 500], np.logspace(3, 8.4, 28)])
     ticks = [-1e8, -1e6, -1e4, 0, 1e4, 1e6, 1e8]
-    grupos = [("saída gratuita (valor pago = 0): peso = − valor de mercado", t[t["gratuita"]], DESTAQUE),
-              ("venda paga: peso = valor pago − valor de mercado", t[~t["gratuita"]], CORES[0])]
-    for ax, (rotulo, g, cor) in zip(eixos, grupos):
-        ax.hist(g["peso"], bins=bordas, color=cor, edgecolor="white", linewidth=0.5)
+    grupos = [("saída gratuita (valor pago = 0): peso = − valor de mercado", t[t["gratuita"]]),
+              ("venda paga: peso = valor pago − valor de mercado", t[~t["gratuita"]])]
+    # [IA] Claude Code (Claude Opus 5.5) – código das cores e dos destaques decididos por João em 25/11/2026: a cor indica o sinal do peso (negativo laranja, zero cinza-escuro, positivo azul) nos dois painéis
+    cor_negativo, cor_zero, cor_positivo = DESTAQUE, TEXTO_2, CORES[0]
+    for ax, (rotulo, g) in zip(eixos, grupos):
+        _, esquerdas, barras = ax.hist(g["peso"], bins=bordas, edgecolor="white", linewidth=0.5)
+        for barra, esquerda in zip(barras, esquerdas[:-1]):
+            barra.set_facecolor(cor_negativo if esquerda < -500 else cor_zero if esquerda < 500 else cor_positivo)
         ax.set_xscale("symlog", linthresh=linthresh, linscale=0.5)
         ax.axvline(0, color=TEXTO, lw=1)
         neg = (g["peso"] < 0).mean()
@@ -195,8 +200,9 @@ def pesos(t, saida):
     eixos[1].set_xlim(-2.5e8, 2.5e8)
     eixos[1].set_xlabel("peso da transferência em EUR (escala symlog: logarítmica a partir de ±1 mil)")
     # [IA] Claude Code (Claude Opus 5.5) – legenda das cores e da linha do peso 0, no lado positivo vazio do painel de cima
-    eixos[0].legend(handles=[Patch(color=DESTAQUE, label="saída gratuita"), Patch(color=CORES[0], label="venda paga"),
-                             Line2D([], [], color=TEXTO, lw=1, label="peso 0")], loc="upper right", fontsize=8.5)
+    eixos[0].legend(handles=[Patch(color=cor_negativo, label="peso negativo"), Patch(color=cor_zero, label="peso zero"),
+                             Patch(color=cor_positivo, label="peso positivo"),
+                             Line2D([], [], color=TEXTO, lw=1, label="linha do peso 0")], loc="upper right", fontsize=8.5)
     fig.suptitle("Distribuição dos pesos: a maior parte da rede é negativa", x=0.01, ha="left",
                  fontsize=12, color=TEXTO)
     fig.tight_layout()
@@ -210,11 +216,17 @@ def faltantes(d, saida):
     faltas = b.groupby("temporada")[["transfer_fee", "market_value_in_eur"]].apply(lambda x: x.isna().mean())
     mv, fee = faltas["market_value_in_eur"], faltas["transfer_fee"]
     fig, ax = plt.subplots(figsize=(8.5, 4.8))
+    ultima = faltas.index[-1]
+    # [IA] Claude Code (Claude Opus 5.5) – código das cores e dos destaques decididos por João em 25/11/2026: último ponto maior com contorno branco, % final em negrito na cor da linha e linha vertical na última temporada
+    ax.axvline(ultima, color=TEXTO_2, ls="--", lw=1, zorder=1)
     for col, rotulo, cor in (("market_value_in_eur", "valor de mercado", CORES[0]),
                              ("transfer_fee", "valor pago", CORES[1])):
         ax.plot(faltas.index, faltas[col], color=cor, lw=2, marker="o", ms=4, label=rotulo)
-        ax.annotate(f"{rotulo}: {pct(faltas[col].iloc[-1])}", (faltas.index[-1], faltas[col].iloc[-1]),
-                    xytext=(6, 0), textcoords="offset points", va="center", color=TEXTO_2)
+        ax.plot([ultima], [faltas[col].iloc[-1]], "o", color=cor, ms=10, mec="white", mew=1.8, zorder=4)
+        ax.annotate(f"{rotulo}: {pct(faltas[col].iloc[-1])}", (ultima, faltas[col].iloc[-1]),
+                    xytext=(10, 0), textcoords="offset points", va="center", color=cor, fontweight="bold")
+    ax.set_xlim(faltas.index[0] - 0.8, ultima + 5.5)
+    ax.set_xticks(range(int(faltas.index[0]), int(ultima) + 1, 5))
     ax.set_ylim(0, 1.02)
     ax.yaxis.set_major_formatter(FuncFormatter(pct_eixo))
     ax.set_xlabel("temporada (ano de início)")
@@ -243,16 +255,18 @@ def relacoes(t, saida):
         g = t.groupby(col, observed=True).agg(neg=("negativo", "mean"), n=("negativo", "size"))
         if col != "faixa_idade":
             g = g.sort_values("neg")
-        grupos.append((titulo, nomes, g))
+        grupos.append((col, titulo, nomes, g))
     # painéis empilhados com o mesmo eixo x; a altura de cada um segue o número de categorias
-    alturas = [len(g) + 0.9 for _, _, g in grupos]
+    alturas = [len(g) + 0.9 for *_, g in grupos]
     fig, eixos = plt.subplots(len(grupos), 1, figsize=(8.5, 0.38 * sum(alturas) + 1.2), sharex=True,
                               gridspec_kw={"height_ratios": alturas})
-    for ax, (titulo, nomes, g) in zip(eixos, grupos):
+    # [IA] Claude Code (Claude Opus 5.5) – código das cores e dos destaques decididos por João em 25/11/2026: idade em laranja, os outros três atributos em azul
+    for ax, (col, titulo, nomes, g) in zip(eixos, grupos):
+        cor = DESTAQUE if col == "faixa_idade" else CORES[0]
         rotulos = [(nomes or {}).get(str(i), str(i)) for i in g.index]
         y = np.arange(len(g))
         ax.hlines(y, 0, g["neg"], color=GRADE, lw=2)
-        ax.plot(g["neg"], y, "o", color=CORES[0], ms=8)
+        ax.plot(g["neg"], y, "o", color=cor, ms=8)
         for yi, (v, n) in enumerate(zip(g["neg"], g["n"])):
             ax.text(v + 0.012, yi, f"{pct(v)}  (n={br(n)})", va="center", fontsize=8.5, color=TEXTO_2,
                     clip_on=False)
@@ -267,9 +281,10 @@ def relacoes(t, saida):
     eixos[-1].xaxis.set_major_formatter(FuncFormatter(pct_eixo))
     eixos[-1].set_xlabel("% das transferências com peso negativo (saída abaixo do valor de mercado)")
     # [IA] Claude Code (Claude Opus 5.5) – legenda na linha do título do 1º painel, fora dos dados, e rótulo y comum aos painéis
-    eixos[0].legend(handles=[Line2D([], [], color=CORES[0], marker="o", ms=7, ls="", label="% negativo no grupo"),
+    eixos[0].legend(handles=[Line2D([], [], color=DESTAQUE, marker="o", ms=7, ls="", label="idade"),
+                             Line2D([], [], color=CORES[0], marker="o", ms=7, ls="", label="demais atributos"),
                              Line2D([], [], color=TEXTO_2, ls="--", lw=1, label="média geral")],
-                    loc="lower right", bbox_to_anchor=(1, 1), ncol=2, fontsize=8.5, borderaxespad=0.2)
+                    loc="lower right", bbox_to_anchor=(1, 1), ncol=3, fontsize=8.5, borderaxespad=0.2)
     fig.supylabel("atributo / categoria", fontsize=9.5, color=TEXTO_2)
     fig.suptitle("Relação do peso com os atributos do jogador: a idade é o que mais separa",
                  x=0.01, ha="left", fontsize=12, color=TEXTO)
@@ -284,28 +299,35 @@ def outliers(t, saida):
     pagas["log_razao"] = np.log10(pagas["razao"])
     lim = iqr(pagas["log_razao"])
     fora = (pagas["log_razao"] < lim["limite_inferior"]) | (pagas["log_razao"] > lim["limite_superior"])
+    # [IA] Claude Code (Claude Opus 5.5) – código do E5 decidido por João em 25/11/2026: em laranja só os 8 outliers do IQR
+    # mais extremos (as 4 menores e as 4 maiores razões valor pago / valor de mercado); em cinza, amostra aleatória de
+    # 1.500 das demais vendas pagas (semente 42), com 10% de opacidade; sem nomes; critério e amostra no rodapé.
+    # O cálculo do IQR não mudou.
+    outl = pagas[fora].sort_values("razao", kind="stable")
+    extremos = pd.concat([outl.head(4), outl.tail(4)])
+    demais = pagas.drop(extremos.index)
+    amostra = demais.sample(n=min(1500, len(demais)), random_state=42)
     fig, ax = plt.subplots(figsize=(7.5, 6.5))
-    ax.scatter(pagas.loc[~fora, "market_value_in_eur"], pagas.loc[~fora, "transfer_fee"], s=6, alpha=0.25,
-               color=NEUTRO, linewidths=0, label=f"dentro do IQR ({br((~fora).sum())})")
-    ax.scatter(pagas.loc[fora, "market_value_in_eur"], pagas.loc[fora, "transfer_fee"], s=10, alpha=0.7,
-               color=DESTAQUE, linewidths=0, label=f"outlier pela regra do IQR ({br(fora.sum())})")
+    ax.scatter(amostra["market_value_in_eur"], amostra["transfer_fee"], s=6, alpha=0.10, color=NEUTRO,
+               linewidths=0, label="amostra de transferências")
+    ax.scatter(extremos["market_value_in_eur"], extremos["transfer_fee"], s=36, alpha=1.0, color=DESTAQUE,
+               linewidths=0, label=f"{len(extremos)} outliers extremos", zorder=3)
     x = np.array([1e4, 3e8])
-    ax.plot(x, x, color=TEXTO, lw=1, ls="--", label="valor pago = valor de mercado (peso 0)")
+    ax.plot(x, x, color=TEXTO_2, lw=1, ls="--", label="linha de peso zero")
     ax.set_xscale("log")
     ax.set_yscale("log")
+    ax.grid(color=GRADE, lw=0.4, alpha=0.6)
     ax.xaxis.set_major_formatter(FuncFormatter(eur))
     ax.yaxis.set_major_formatter(FuncFormatter(eur))
     ax.set_xlabel("valor de mercado (EUR, escala log)")
     ax.set_ylabel("valor pago (EUR, escala log)")
-    ax.set_title("Outliers nas vendas pagas: valor pago contra valor de mercado\n"
-                 "acima da diagonal, pagou-se mais que o mercado; abaixo, menos")
-    legenda = ax.legend(loc="upper left", markerscale=2)
-    maiores = pagas.reindex(pagas["peso"].abs().sort_values(ascending=False).index).head(5)
-    rotular_sem_sobrepor(ax, [(r.market_value_in_eur, r.transfer_fee, r.player_name) for r in maiores.itertuples()],
-                         evitar=[legenda])
-    rodape(fig, f"IQR sobre log10(valor pago / valor de mercado): fora de [{br(lim['limite_inferior'], 2)}; "
-                f"{br(lim['limite_superior'], 2)}]. Nomes: as 5 maiores diferenças em módulo. "
-                f"{br(len(pagas))} vendas pagas.")
+    ax.set_title("Outliers: valor pago × valor de mercado")
+    ax.legend(loc="upper left", markerscale=1.5)
+    rodape(fig, f"IQR sobre log10(valor pago / valor de mercado), fora de [{br(lim['limite_inferior'], 2)}; "
+                f"{br(lim['limite_superior'], 2)}]: {br(int(fora.sum()))} outliers nas {br(len(pagas))} vendas pagas.\n"
+                f"Em laranja, os {len(extremos)} mais extremos (as 4 menores e as 4 maiores razões valor pago / valor de mercado). "
+                f"Em cinza, amostra aleatória de {br(len(amostra))}\ndas outras {br(len(demais))} vendas pagas (semente 42): "
+                "o gráfico não mostra todos os dados.")
     return salvar(fig, Path(saida) / "e5_outliers.png")
 
 
@@ -418,6 +440,12 @@ def tempos(relatorio, saida):
     ax.set_xscale("log")
     ax.set_xlim(1, 2e5)
     ax.hlines(y, 1, 2e5, color=GRADE, lw=1)
+    # [IA] Claude Code (Claude Opus 5.5) – código das cores e dos destaques decididos por João em 25/11/2026: linha vertical tracejada no tempo da BFS (referência) e faixa roxa suave na linha do Bellman-Ford
+    bfs = next(l for l in linhas if l["algoritmo"] == "BFS")
+    ax.axvline(bfs["media_s"] * 1000, color=TEXTO_2, ls="--", lw=1, zorder=2)
+    for yi, l in zip(y, linhas):
+        if l["algoritmo"] == "BELLMAN_FORD":
+            ax.axhspan(yi - 0.45, yi + 0.45, color=cor_do_algoritmo("BELLMAN_FORD"), alpha=0.08, lw=0, zorder=0)
     for yi, l in zip(y, linhas):
         ax.errorbar(ms[yi], yi, xerr=desvio[yi], fmt="o", ms=10, color=cor_do_algoritmo(l["algoritmo"]),
                     ecolor=TEXTO_2, capsize=4, elinewidth=1, zorder=3)
@@ -435,7 +463,8 @@ def tempos(relatorio, saida):
     # [IA] Claude Code (Claude Opus 5.5) – rótulo y e legenda das marcas, abaixo da linha da BFS
     ax.set_ylabel("algoritmo")
     ax.legend(handles=[Line2D([], [], color=TEXTO_2, marker="o", ms=8, ls="", label="média (a cor identifica o algoritmo)"),
-                       Line2D([], [], color=TEXTO_2, marker="|", ms=8, lw=1, label="desvio padrão")],
+                       Line2D([], [], color=TEXTO_2, marker="|", ms=8, lw=1, label="desvio padrão"),
+                       Line2D([], [], color=TEXTO_2, ls="--", lw=1, label="tempo médio da BFS (referência)")],
               loc="lower right", fontsize=8.5)
     l0 = linhas[0]
     ax.set_title(f"Tempo dos quatro algoritmos no grafo completo ({br(l0['V'])} clubes, {br(l0['E'])} arcos)\n"
@@ -472,23 +501,21 @@ def escalabilidade(relatorio, saida):
 
 
 def camadas_bfs(relatorio, saida):
+    # [IA] Claude Code (Claude Opus 5.5) – código da simplificação do A3 decidida por João em 25/11/2026: título curto, sem subtítulo,
+    # sem faixa e sem círculos, linhas finas com pontos pequenos, vermelho fechado / azul / verde-petróleo, legenda só com os
+    # nomes, só a grade horizontal e sem rodapé
     fig, ax = plt.subplots(figsize=(8.5, 4.6))
-    resumos = []
-    for b, cor in zip(relatorio["bfs"], CORES):
-        ax.plot(range(len(b["camadas"])), b["camadas"], "o-", color=cor, lw=2, ms=6,
-                label=f"{b['nome']}: {br(b['alcancados'])} alcançados")
-        resumos.append(resumo_camadas(b["camadas"]))
-    meio = [r[0] for r in resumos]
-    ate5 = [r[1] for r in resumos]
+    cores_fontes = ["#b3261e", "#2a78d6", "#1d7f8c"]
+    for b, cor in zip(relatorio["bfs"], cores_fontes):
+        ax.plot(range(len(b["camadas"])), b["camadas"], "o-", color=cor, lw=1.4, ms=3.5, label=b["nome"])
     ax.set_xticks(range(max(len(b["camadas"]) for b in relatorio["bfs"])))
     ax.yaxis.set_major_formatter(FuncFormatter(lambda v, _: br(v)))
+    ax.grid(axis="x", visible=False)
+    ax.grid(axis="y", color=GRADE, lw=0.6)
     ax.set_xlabel("nível da BFS (número de transferências desde a fonte)")
     ax.set_ylabel("clubes descobertos no nível")
-    ax.set_title("BFS a partir de três clubes: a rede é um 'mundo pequeno'\n"
-                 f"{pct(min(meio))} a {pct(max(meio))} dos clubes alcançáveis estão a 2 a 4 transferências da fonte; "
-                 f"{pct(min(ate5))} a {pct(max(ate5))} a até 5")
+    ax.set_title("Clubes descobertos por nível da BFS")
     ax.legend()
-    rodape(fig, "Os três chegam aos mesmos clubes: a fonte muda a forma das camadas, não o conjunto alcançável.")
     return salvar(fig, Path(saida) / "a3_camadas_bfs.png")
 
 
