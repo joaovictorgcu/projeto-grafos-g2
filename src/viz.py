@@ -13,9 +13,6 @@ Uso (o percurso é calculado pelo grafo de estados; --percurso JSON é opcional)
     python -m src.viz --mapa data/mapas/m02_uma_chave.txt --camadas out/parte1/camadas_m02.png
     python -m src.viz --mapa data/mapas/m02_uma_chave.txt --arvore-bfs out/parte1/arvore_bfs_m02.png
     python -m src.viz --mapa data/mapas/m08_grande.txt --multiplicidade out/parte1/multiplicidade_m08.png
-
-Labirinto interativo (todos os mapas, ou só o do --mapa):
-    python -m src.viz --interativo out/parte1/labirinto_interativo.html
 """
 import argparse
 import json
@@ -560,74 +557,9 @@ def percurso_de_menor_custo(construido):
     return rotulos[:-1], algoritmo
 
 
-# [IA] Claude Code (Claude Opus 5.5) – gerador do labirinto interativo recuperado do histórico (af9f1ac e c695081) e ligado
-# ao algorithms.py atual: só organiza os dados no formato do src/labirinto_template.html e grava a página
-MODELO_INTERATIVO = Path(__file__).with_name("labirinto_template.html")
-
-
-def caminhos_dos_algoritmos(construido):
-    from .graphs.algorithms import bellman_ford, bfs, caminho, dijkstra
-
-    def percurso(pai):
-        rotulos = caminho(pai, "ALVO")
-        if rotulos is None:
-            return {"caminho": [], "status": "SEM_SOLUCAO",
-                    "motivo": "Nenhum estado em G é alcançável a partir do início."}
-        return {"caminho": rotulos[:-1], "status": "OK", "motivo": ""}
-
-    g, inicio = construido.grafo, construido.inicial
-    resultado = {"BFS": percurso(bfs(g, inicio)[1])}
-    try:
-        resultado["DIJKSTRA"] = percurso(dijkstra(g, inicio)[1])
-    except ValueError as erro:
-        resultado["DIJKSTRA"] = {"caminho": [], "status": "RECUSA", "motivo": str(erro)}
-    _, pai, ciclo = bellman_ford(g, inicio)
-    if ciclo:
-        nos, custo = ciclo
-        resultado["BELLMAN_FORD"] = {"caminho": [], "status": "CICLO_NEGATIVO",
-                                     "motivo": f"Ciclo negativo de custo {custo}: {' → '.join(nos)}"}
-    else:
-        resultado["BELLMAN_FORD"] = percurso(pai)
-    return resultado
-
-
-def dados_do_mapa(arquivo):
-    from .graphs.algorithms import estados_armadilha
-    from .graphs.estados import construir_estados
-    from .graphs.io import ler_mapa as ler_mapa_validado
-
-    arquivo = Path(arquivo)
-    mapa = ler_mapa_validado(arquivo)
-    construido = construir_estados(mapa)
-    camadas = {}
-    for no in construido.grafo.nos():
-        if no != "ALVO":
-            camadas.setdefault(ler_rotulo(no)[1] or "-", []).append(no)
-    codigo, _, resto = arquivo.stem.partition("_")
-    return {
-        "id": arquivo.stem,
-        "titulo": f"{codigo}: {resto.replace('_', ' ')}" if resto else codigo,
-        "origem": "grupo" if arquivo.parent.name == "mapas_grupo" else "enunciado",
-        "grade": list(mapa.grade),
-        "camadas": camadas,
-        "armadilhas": estados_armadilha(construido.grafo, "ALVO"),
-        "algoritmos": caminhos_dos_algoritmos(construido),
-    }
-
-
-def gerar_interativo(arquivos, saida):
-    dados = {"mapas": [dados_do_mapa(a) for a in arquivos]}
-    texto = json.dumps(dados, ensure_ascii=False).replace("</", "<\\/")
-    pagina = MODELO_INTERATIVO.read_text(encoding="utf-8").replace("/*__DADOS__*/null", texto)
-    saida = Path(saida)
-    saida.parent.mkdir(parents=True, exist_ok=True)
-    saida.write_text(pagina, encoding="utf-8")
-    return saida
-
-
 def main(argv=None):
     p = argparse.ArgumentParser(description="Figuras da Parte 1 sobre um mapa.")
-    p.add_argument("--mapa", help="arquivo .txt do mapa")
+    p.add_argument("--mapa", required=True, help="arquivo .txt do mapa")
     p.add_argument("--png", help="desenha o percurso de menor custo neste arquivo")
     p.add_argument("--percurso", help="JSON com os rótulos do percurso; sem ele, o percurso é calculado "
                                       "pelo grafo de estados (Dijkstra, ou Bellman-Ford com peso negativo)")
@@ -635,26 +567,11 @@ def main(argv=None):
     p.add_argument("--camadas", metavar="PNG", help="desenha o grafo de estados em camadas neste arquivo")
     p.add_argument("--arvore-bfs", metavar="PNG", help="desenha a árvore BFS de estados neste arquivo")
     p.add_argument("--multiplicidade", metavar="PNG", help="desenha o heatmap de multiplicidade neste arquivo")
-    p.add_argument("--interativo", metavar="HTML",
-                   help="gera o labirinto interativo com todos os mapas (ou só o do --mapa)")
     args = p.parse_args(argv)
     if args.percurso and not args.png:
         p.error("--percurso precisa de --png.")
-    estaticas = args.png or args.camadas or args.arvore_bfs or args.multiplicidade
-    if not (estaticas or args.interativo):
-        p.error("nada a desenhar: use --png, --camadas, --arvore-bfs, --multiplicidade ou --interativo.")
-    if estaticas and not args.mapa:
-        p.error("as figuras precisam de --mapa.")
-
-    if args.interativo:
-        if args.mapa:
-            arquivos = [Path(args.mapa)]
-        else:
-            raiz = Path(__file__).resolve().parent.parent / "data"
-            arquivos = sorted((raiz / "mapas").glob("*.txt")) + sorted((raiz / "mapas_grupo").glob("*.txt"))
-        print(f"Página salva em {gerar_interativo(arquivos, args.interativo)}")
-    if not estaticas:
-        return
+    if not (args.png or args.camadas or args.arvore_bfs or args.multiplicidade):
+        p.error("nada a desenhar: use --png, --camadas, --arvore-bfs ou --multiplicidade.")
 
     from .graphs.estados import construir_estados
     from .graphs.io import ler_mapa as ler_mapa_validado
