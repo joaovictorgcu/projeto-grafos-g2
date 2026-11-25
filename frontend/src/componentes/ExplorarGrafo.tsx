@@ -8,10 +8,10 @@ import { Carregando, EscudoDoClube, MiniEscudo } from "./Futebol";
 
 const ALGORITMOS: AlgoritmoDaParte2[] = ["BFS", "DFS", "DIJKSTRA", "BELLMAN_FORD"];
 const O_QUE_ACHA: Record<AlgoritmoDaParte2, string> = {
-  BFS: "caminho com menos arcos",
-  DFS: "primeiro caminho da busca em profundidade",
-  DIJKSTRA: "menor custo, com os pesos deslocados",
-  BELLMAN_FORD: "menor custo, aceita peso negativo",
+  BFS: "procura um caminho com a menor quantidade de arcos",
+  DFS: "explora os caminhos em profundidade até encontrar o destino",
+  DIJKSTRA: "procura o menor custo usando pesos ajustados",
+  BELLMAN_FORD: "procura o menor custo mesmo com pesos negativos, desde que não exista ciclo negativo relevante",
 };
 const NOME_DO_GRAFO: Record<GrafoDaParte2, string> = { clubes: "Clubes", temporal: "Clubes por temporada" };
 const STATUS: Record<RotaDaParte2["status"], string> = { OK: "caminho encontrado", SEM_CAMINHO: "sem caminho", CICLO_NEGATIVO: "ciclo negativo" };
@@ -314,9 +314,12 @@ export function ExplorarGrafo({ cores, nomes, euro, detalhes }: {
       </div>
       <p className="detalhe explorar-dica">
         <b>{nomes[alg]}:</b> {O_QUE_ACHA[alg]}.
-        {grafo === "temporal" && " No grafo por temporada, o destino vale em qualquer temporada; o site mostra a que o algoritmo alcança primeiro (BFS e DFS) ou com menor custo (Dijkstra e Bellman-Ford)."}
-        {grafo === "temporal" && alg === "DIJKSTRA" && " Aqui o Dijkstra usa a repesagem de Johnson, como no relatório."}
-        {bfLento && " O grafo de clubes tem ciclos negativos: o Bellman-Ford faz as |V| − 1 passadas e leva de 1 a 2 minutos."}
+        {grafo === "temporal" &&
+          " No grafo por temporada, a chegada pode acontecer em qualquer temporada. BFS e DFS seguem suas próprias ordens de busca, enquanto Dijkstra e Bellman-Ford consideram os custos das conexões."}
+        {grafo === "temporal" && alg === "DIJKSTRA" &&
+          " Neste grafo, o Dijkstra utiliza a repesagem de Johnson para trabalhar com pesos não negativos."}
+        {bfLento &&
+          " O grafo de clubes possui ciclos negativos. O Bellman-Ford realiza as passadas necessárias para verificar os custos, o que pode tornar a execução mais demorada."}
       </p>
 
       {erro && <p className="explorar-erro">{erro}</p>}
@@ -325,7 +328,13 @@ export function ExplorarGrafo({ cores, nomes, euro, detalhes }: {
         <DesenhoDaRota resumo={resumo} caminho={caminho} trechos={trechos} ciclo={ciclo} cor={mesmaConsulta ? cor : cores[rota?.algoritmo ?? alg]} euro={euro} />
         {calculando && <div className="explorar-carregando"><Carregando texto={bfLento ? "Bellman-Ford rodando no grafo de clubes…" : "calculando…"} /></div>}
       </div>
-      <span className="detalhe">Em cinza: os {resumo.contexto.nos.length} clubes com mais arcos e as setas entre eles. Em cor: o resultado do algoritmo. O valor em cada seta é o peso (pago − valor de mercado).</span>
+      <span className="detalhe">
+        Os {resumo.contexto.nos.length} clubes com mais conexões
+        aparecem em cinza, mostrando o contexto da rede.
+        As setas coloridas representam o resultado do algoritmo,
+        e os números indicam o peso de cada conexão
+        (valor pago menos valor de mercado).
+      </span>
 
       {rota && (
         <div className="explorar-resultado">
@@ -339,10 +348,20 @@ export function ExplorarGrafo({ cores, nomes, euro, detalhes }: {
             <div><dt>nós alcançados</dt><dd>{rota.alcancados.toLocaleString("pt-BR")}</dd></div>
             <div><dt>tempo</dt><dd>{rota.segundos.toLocaleString("pt-BR")} s{rota.guardado && <small> (já calculado antes, veio da memória)</small>}</dd></div>
           </dl>
-          {rota.status === "SEM_CAMINHO" && <p className="detalhe">O destino não é alcançável a partir da origem neste grafo.</p>}
-          {ciclo && <p className="detalhe">Existe um ciclo negativo alcançável a partir da origem: o custo até o destino não tem mínimo, por isso o Bellman-Ford devolve o ciclo em vez do caminho.</p>}
+          {rota.status === "SEM_CAMINHO" && (
+            <p className="detalhe">
+              Não foi encontrado um caminho que ligue o clube de origem ao destino neste grafo.
+            </p>
+          )}
+          {ciclo && (
+            <p className="detalhe">
+              O Bellman-Ford encontrou um ciclo negativo que pode ser alcançado a partir da origem. Como repetir esse ciclo pode diminuir o custo continuamente, o algoritmo apresenta o ciclo encontrado em vez de um caminho de menor custo.
+            </p>
+          )}
           {rota.custo_deslocado !== undefined && (
-            <p className="detalhe">O Dijkstra roda com os pesos deslocados (+{euro(resumo.deslocamento)} por arco), porque não aceita peso negativo; o custo mostrado é o original.</p>
+            <p className="detalhe">
+              Para conseguir executar o Dijkstra, os pesos foram ajustados em +{euro(resumo.deslocamento)} por arco, evitando valores negativos. O custo apresentado no resultado continua sendo o valor original, sem esse ajuste.
+            </p>
           )}
           {caminho && detalhes(caminho, trechos, ciclo)}
         </div>
