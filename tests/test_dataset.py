@@ -1,3 +1,5 @@
+# [IA] ChatGPT – sugestões de casos de teste
+
 import pandas as pd
 from src.graphs.dataset import aplicar_recorte, marcar_emprestimos, montar_arcos, temporada
 

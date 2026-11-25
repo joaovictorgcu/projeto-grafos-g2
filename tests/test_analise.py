@@ -1,3 +1,5 @@
+# [IA] Manus AI – sugestões de casos de teste
+
 import csv
 import json
 from pathlib import Path
