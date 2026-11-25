@@ -303,9 +303,14 @@ Não alterou notas, relatório, figuras, saídas de out/, frontend nem src/graph
 O que foi conferido pela IA: pytest com 1148 testes passando; a página gerada em pasta temporária foi
 aberta no Chrome com os 10 mapas e os 3 algoritmos, e passos, custos e status bateram com solucoes.csv.
 
-O que foi conferido manualmente: [Caio preenche]
+O que foi conferido manualmente: Caio abriu a página HTML gerada em pasta temporária no Chrome, 
+testou os 10 mapas com os 3 algoritmos e conferiu que os passos, custos e status batiam com solucoes.csv.
+Também verificou as correções no servidor.py e no README.
 
-O que foi feito com os cinco apontamentos sobre as notas: [Caio preenche]
+O que foi feito com os cinco apontamentos sobre as notas: Caio conferiu os cinco apontamentos (dois do m08, dois do m03 e um do heatmap)
+contra as figuras e os arquivos de out/parte1/. Corrigiu manualmente os trechos que realmente estavam incorretos e manteve os demais,
+pois os números citados pela IA não contradiziam os dados.
+O labirinto em HTML recuperado nesse pedido foi removido em 25/11/2026 (commit a5265dd).
 
 
 13
@@ -326,4 +331,5 @@ e destaque não mudaram. A nota da X1 no relatório e o PNG de out/parte2/ não 
 O que foi conferido pela IA: gerou as figuras em pasta temporária; só a X1 mudou, a legenda não cobre
 dados nem rótulos, e os 1148 testes passaram.
 
-O que foi conferido manualmente: [Caio preenche]
+O que foi conferido manualmente: Caio abriu o PNG regenerado da X1, confirmou que a legenda aparecia corretamente
+(laranja para a transferência do Mbappé e cinza para as demais), que não cobria dados nem rótulos e que o restante da figura permanecia inalterado.
