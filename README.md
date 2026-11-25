@@ -210,8 +210,7 @@ baixa os 3 arquivos (`transfers`, `players` e `clubs`, 10,3 MB em `.csv.gz`) par
 python scripts/ficha_transfermarkt.py --baixar
 ```
 
-No Windows, `scripts/rodar_fichas.bat` faz o mesmo com duplo clique. A ficha vai para
-`out/parte2/ficha_dataset.json`.
+A ficha vai para `out/parte2/ficha_dataset.json`.
 
 ### 2. Rodar os experimentos
 
@@ -295,8 +294,7 @@ projeto-grafos-g2/
 │  ├─ parte1/
 │  └─ parte2/
 ├─ scripts/
-│  ├─ ficha_transfermarkt.py   # download + ficha do dataset
-│  └─ rodar_fichas.bat
+│  └─ ficha_transfermarkt.py   # download + ficha do dataset
 ├─ src/
 │  ├─ cli.py              # linha de comando das duas partes
 │  ├─ solve.py            # Parte 1 pelo cli (--mapa): algoritmos, armadilhas, interativo
