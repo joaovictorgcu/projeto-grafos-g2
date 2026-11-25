@@ -37,7 +37,7 @@ export interface DadosDoMapa {
   estados: Estado[];
   arcos: [number, number, number][];
   metricas: { ordem: number; tamanho: number; densidade: number };
-  algoritmos: Record<Algoritmo, Resultado>;
+  algoritmos: Record<Algoritmo, Resultado> & { DFS?: Resultado };
 }
 
 export interface ResumoDoMapa {
@@ -115,4 +115,36 @@ export interface DadosDaParte2 {
     escalabilidade: { algoritmo: string; complexidade: string; tamanho_pct: number; V: number; E: number; media_s: number; tempo_relativo: number; teoria_relativa: number }[];
     parametros: { repeticoes: number };
   };
+}
+
+// [IA] Claude Code (Claude Opus 5.5) – tipos do grafo interativo da Visão geral da Parte 2
+export type AlgoritmoDaParte2 = "BFS" | "DFS" | "DIJKSTRA" | "BELLMAN_FORD";
+export type GrafoDaParte2 = "clubes" | "temporal";
+
+export interface ClubeDoGrafo { id: number; nome: string; grau: number; temporadas: number[] }
+
+export interface ResumoDoGrafoDaParte2 {
+  clubes: ClubeDoGrafo[];
+  contexto: { nos: { id: number; nome: string }[]; arcos: [number, number, number][] };
+  deslocamento: number;
+  padrao: { clubes: { origem: number; destino: number }; temporal: { origem: number; temporada: number; destino: number } };
+}
+
+export interface NoDaRota { id: number; nome: string; temporada: string | null }
+export interface TrechoDaRota { de: string; para: string; peso: number; temporada: string | null; espera: boolean; transferencias: string[] }
+
+export interface RotaDaParte2 {
+  grafo: GrafoDaParte2;
+  algoritmo: AlgoritmoDaParte2;
+  status: "OK" | "SEM_CAMINHO" | "CICLO_NEGATIVO";
+  alcancados: number;
+  segundos: number;
+  guardado?: boolean;
+  custo?: number;
+  custo_deslocado?: number;
+  arcos?: number;
+  transferencias_no_caminho?: number;
+  caminho?: NoDaRota[];
+  trechos?: TrechoDaRota[];
+  ciclo?: { custo: number; arcos: number; caminho: NoDaRota[]; trechos: TrechoDaRota[] };
 }

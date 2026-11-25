@@ -1,5 +1,5 @@
 // [IA] Claude Code (Claude Opus 5.5) – chamadas ao servidor Python, com cache para não recalcular o mesmo mapa
-import type { DadosDaParte2, DadosDoMapa, FiguraDaParte1, ResumoDoMapa } from "./tipos";
+import type { AlgoritmoDaParte2, DadosDaParte2, DadosDoMapa, FiguraDaParte1, GrafoDaParte2, ResumoDoGrafoDaParte2, ResumoDoMapa, RotaDaParte2 } from "./tipos";
 
 const guardados = new Map<string, Promise<DadosDoMapa>>();
 
@@ -41,4 +41,15 @@ export async function carregarParte2(): Promise<DadosDaParte2> {
 
 export async function carregarFigurasDaParte1(): Promise<FiguraDaParte1[]> {
   return lerResposta(await fetch("/api/parte1/figuras"));
+}
+
+// [IA] Claude Code (Claude Opus 5.5) – grafo interativo da Visão geral da Parte 2
+export async function carregarGrafoDaParte2(): Promise<ResumoDoGrafoDaParte2> {
+  return lerResposta(await fetch("/api/parte2/grafo"));
+}
+
+export async function calcularRota(grafo: GrafoDaParte2, alg: AlgoritmoDaParte2, origem: number, destino: number, temporada?: number): Promise<RotaDaParte2> {
+  const busca = new URLSearchParams({ grafo, alg, origem: String(origem), destino: String(destino) });
+  if (grafo === "temporal" && temporada !== undefined) busca.set("temporada", String(temporada));
+  return lerResposta(await fetch(`/api/parte2/rota?${busca}`));
 }

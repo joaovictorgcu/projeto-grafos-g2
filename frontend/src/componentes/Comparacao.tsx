@@ -1,7 +1,7 @@
 // [IA] Claude Code (Claude Opus 5.5) – comparação lado a lado (bônus): dois percursos na mesma linha do tempo, sobrepostos ou lado a lado, com a curva de custo
 import { Cartao } from "./Futebol";
 import { CARTAO } from "./Status";
-import { Columns2, GitCompareArrows, Layers2 } from "lucide-react";
+import { Columns2, GitCompareArrows, Grid2x2, Layers2 } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { ALGORITMOS, NOME_DO_ALGORITMO, NOME_DO_STATUS, passosDoResultado, resumoDaComparacao } from "../modelo";
@@ -97,7 +97,137 @@ function PlacarDoConfronto({ a, b, resA, resB, mapas }: { a: Lado; b: Lado; resA
   );
 }
 
+// [IA] Claude Code (Claude Opus 5.5) – os 4 algoritmos no mesmo mapa ao mesmo tempo (pedido da professora no acompanhamento): BFS, DFS, Dijkstra e Bellman-Ford na mesma linha do tempo
+const QUATRO = ["BFS", "DFS", "DIJKSTRA", "BELLMAN_FORD"] as const;
+type DosQuatro = (typeof QUATRO)[number];
+const NOME_DOS_QUATRO: Record<DosQuatro, string> = { BFS: "BFS", DFS: "DFS", DIJKSTRA: "Dijkstra", BELLMAN_FORD: "Bellman-Ford" };
+// as mesmas cores dos algoritmos na Parte 2
+const COR_DOS_QUATRO: Record<DosQuatro, string> = { BFS: "#2a78d6", DFS: "#eb6834", DIJKSTRA: "#1baf7a", BELLMAN_FORD: "#9a5fd8" };
+
+function QuatroAlgoritmos({ mapas, mapaInicial, obterDados }: {
+  mapas: ResumoDoMapa[]; mapaInicial: string; obterDados: (id: string, fonte: boolean) => Promise<DadosDoMapa>;
+}) {
+  const [mapa, setMapa] = useState(mapaInicial);
+  const [fonte, setFonte] = useState(false);
+  const [dados, setDados] = useState<DadosDoMapa | null>(null);
+
+  useEffect(() => {
+    let vivo = true;
+    obterDados(mapa, fonte).then((d) => vivo && setDados(d)).catch(() => vivo && setDados(null));
+    return () => { vivo = false; };
+  }, [mapa, fonte, obterDados]);
+
+  const pronto = dados !== null && dados.id === mapa && dados.fonte_consumivel === fonte;
+  const resultados = useMemo(
+    () => (pronto && dados ? QUATRO.map((a) => (a === "DFS" ? dados.algoritmos.DFS : dados.algoritmos[a])) : []),
+    [pronto, dados],
+  );
+  const passos = useMemo(
+    () => (pronto && dados ? resultados.map((r) => (r ? passosDoResultado(dados, r) : [])) : []),
+    [pronto, dados, resultados],
+  );
+  const ultimo = Math.max(0, ...passos.map((p) => p.length - 1));
+  const reproducao = usarReproducao(ultimo, `${mapa}|${fonte}`);
+  const duracao = Math.min(0.35, 0.85 / reproducao.velocidade);
+  const faltaDfs = pronto && dados !== null && !dados.algoritmos.DFS;
+
+  return (
+    <>
+      <div className="lado-config quatro-config" style={{ "--cor": "var(--destaque)" } as CSSProperties}>
+        <span className="lado-nome">mapa</span>
+        <select value={mapa} onChange={(ev) => setMapa(ev.target.value)} aria-label="Mapa dos 4 algoritmos">
+          {mapas.map((m) => <option key={m.id} value={m.id}>{m.titulo}</option>)}
+        </select>
+        <label className="interruptor pequeno">
+          <input type="checkbox" checked={fonte} onChange={(ev) => setFonte(ev.target.checked)} />
+          <span className="interruptor-trilho" aria-hidden />
+          <span>fonte consumível</span>
+        </label>
+      </div>
+
+      {faltaDfs ? (
+        <div className="carregando">O servidor que está rodando é de uma versão antiga. Feche-o com Ctrl+C e rode de novo: python -m src.servidor</div>
+      ) : !pronto || !dados ? (
+        <div className="carregando">Calculando os 4 algoritmos…</div>
+      ) : (
+        <>
+          <div className="quatro-quadros">
+            {QUATRO.map((a, i) => {
+              const r = resultados[i]!;
+              const p = passos[i];
+              return (
+                <div key={a} className="quadro" style={{ "--cor": COR_DOS_QUATRO[a] } as CSSProperties}>
+                  <span className="quadro-rotulo">{NOME_DOS_QUATRO[a]}</span>
+                  <span className={`etiqueta quadro-status status-${r.status.toLowerCase()}`}>
+                    {NOME_DO_STATUS[r.status]}{r.status === "OK" ? `: ${r.passos} passos, custo ${r.custo}` : ""}
+                  </span>
+                  <Tabuleiro dados={dados} resultado={r} passos={p} passo={Math.min(reproducao.passo, p.length - 1)} duracao={duracao}
+                    camadaFixa={null} mostrarArmadilhas={r.status === "SEM_SOLUCAO"} corDoJogador={COR_DOS_QUATRO[a]} compacto />
+                </div>
+              );
+            })}
+          </div>
+
+          <Controles reproducao={reproducao} ultimo={ultimo} cor={COR_DOS_QUATRO.BFS} />
+
+          <div className="comparacao-baixo">
+            <div className="cartao">
+              <span className="rotulo-pequeno">custo acumulado por passo</span>
+              <GraficoCusto passo={reproducao.passo} altura={190}
+                series={QUATRO.map((a, i) => ({ nome: NOME_DOS_QUATRO[a], cor: COR_DOS_QUATRO[a], custos: resultados[i]?.custos ?? [] }))} />
+              <div className="legenda-linhas">
+                {QUATRO.map((a) => <span key={a}><i className="ponto" style={{ background: COR_DOS_QUATRO[a] }} />{NOME_DOS_QUATRO[a]}</span>)}
+              </div>
+            </div>
+            <div className="cartao resumo-comparacao">
+              <span className="rotulo-pequeno">os 4 no mesmo mapa</span>
+              <table className="tabela-algoritmos">
+                <thead><tr><th scope="col">algoritmo</th><th scope="col">resultado</th><th scope="col">passos</th><th scope="col">custo</th></tr></thead>
+                <tbody>
+                  {QUATRO.map((a, i) => {
+                    const r = resultados[i]!;
+                    return (
+                      <tr key={a}>
+                        <th scope="row" style={{ color: COR_DOS_QUATRO[a] }}>{NOME_DOS_QUATRO[a]}</th>
+                        <td><span className={`etiqueta status-${r.status.toLowerCase()}`}>{NOME_DO_STATUS[r.status]}</span></td>
+                        <td className="numero">{r.passos ?? "-"}</td>
+                        <td className="numero">{r.custo ?? "-"}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </>
+      )}
+    </>
+  );
+}
+
 export function Comparacao({ mapas, mapaInicial, obterDados }: {
+  mapas: ResumoDoMapa[]; mapaInicial: string; obterDados: (id: string, fonte: boolean) => Promise<DadosDoMapa>;
+}) {
+  const [modo, setModo] = useState<"dois" | "quatro">("dois");
+  return (
+    <div className="comparacao">
+      <div className="segmentado" role="radiogroup" aria-label="O que comparar">
+        {([["dois", "Dois lados (A × B)", GitCompareArrows], ["quatro", "Os 4 algoritmos", Grid2x2]] as const).map(([valor, nome, Icone]) => (
+          <button key={valor} type="button" role="radio" aria-checked={modo === valor} className={modo === valor ? "ativo" : ""} onClick={() => setModo(valor)}>
+            {modo === valor && <motion.span layoutId="modo-comparar" className="segmentado-fundo" />}
+            <Icone size={16} aria-hidden />
+            <span>{nome}</span>
+          </button>
+        ))}
+      </div>
+      {modo === "quatro"
+        ? <QuatroAlgoritmos mapas={mapas} mapaInicial={mapaInicial} obterDados={obterDados} />
+        : <DoisLados mapas={mapas} mapaInicial={mapaInicial} obterDados={obterDados} />}
+    </div>
+  );
+}
+
+function DoisLados({ mapas, mapaInicial, obterDados }: {
   mapas: ResumoDoMapa[]; mapaInicial: string; obterDados: (id: string, fonte: boolean) => Promise<DadosDoMapa>;
 }) {
   const [a, setA] = useState<Lado>({ mapa: mapaInicial, algoritmo: "BFS", fonte: false });
@@ -137,7 +267,7 @@ export function Comparacao({ mapas, mapaInicial, obterDados }: {
   }
 
   return (
-    <div className="comparacao">
+    <>
       <div className="exemplos">
         <span className="rotulo-pequeno"><GitCompareArrows size={14} aria-hidden /> exemplos prontos</span>
         <div className="chips">
@@ -213,6 +343,6 @@ export function Comparacao({ mapas, mapaInicial, obterDados }: {
           </div>
         </>
       )}
-    </div>
+    </>
   );
 }

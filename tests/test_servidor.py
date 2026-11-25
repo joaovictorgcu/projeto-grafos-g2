@@ -120,3 +120,14 @@ def test_cada_figura_da_parte1_tem_os_tres_trechos_da_nota():
         textos = [b["texto"] for b in figura["blocos"] if b["tipo"] == "paragrafo"]
         for titulo in ("**O que mostra.** ", "**Insight.** ", "**Por que esse gráfico.** "):
             assert sum(t.startswith(titulo) for t in textos) == 1, (figura["arquivo"], titulo)
+
+
+# [IA] Claude Code (Claude Opus 5.5) – DFS da comparação dos 4 algoritmos
+def test_dfs_chega_em_g_pelos_arcos_do_grafo_de_estados():
+    d = dados("m03")
+    r = d["algoritmos"]["DFS"]
+    assert r["status"] == "OK" and r["caminho"][0] == d["inicial"]
+    assert d["estados"][r["caminho"][-1]]["saida"]
+    arcos = {(u, v): p for u, v, p in d["arcos"]}
+    assert r["custo"] == sum(arcos[(u, v)] for u, v in zip(r["caminho"], r["caminho"][1:]))
+    assert dados("m07")["algoritmos"]["DFS"]["status"] == "SEM_SOLUCAO"

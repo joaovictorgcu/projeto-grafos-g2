@@ -9,9 +9,10 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, quote, unquote, urlparse
 
-from .graphs.algorithms import bellman_ford, bfs, caminho, dijkstra, estados_armadilha
+from .graphs.algorithms import bellman_ford, bfs, caminho, dfs, dijkstra, estados_armadilha
 from .graphs.estados import ALVO, construir_estados, metricas
 from .graphs.io import MapaInvalido, interpretar_mapa
+from .rotas_parte2 import CarregadorDaParte2, PedidoInvalido
 
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -174,6 +175,10 @@ def rodar_algoritmos(grafo, inicio, indice):
         }
     else:
         algoritmos["BELLMAN_FORD"] = resultado(dist, pai, grafo, indice)
+    # [IA] Claude Code (Claude Opus 5.5) – DFS para a comparação dos 4 algoritmos: o caminho até G pelos arcos de árvore
+    tipo, descoberta, _, _ = dfs(grafo, [inicio])
+    pai = {inicio: None, **{v: u for (u, v), t in tipo.items() if t == "arvore"}}
+    algoritmos["DFS"] = resultado(descoberta, pai, grafo, indice)
     return algoritmos
 
 
@@ -208,9 +213,10 @@ def analisar(texto, nome, fonte_consumivel=False, origem="enviado"):
 class Servidor(ThreadingHTTPServer):
     daemon_threads = True
 
-    def __init__(self, endereco, mapas):
+    def __init__(self, endereco, mapas, parte2=None):
         super().__init__(endereco, Atendente)
         self.mapas = mapas
+        self.parte2 = parte2 or CarregadorDaParte2()
 
 
 class Atendente(BaseHTTPRequestHandler):
@@ -235,6 +241,21 @@ class Atendente(BaseHTTPRequestHandler):
             if not (PARTE2 / "parte2_report.json").is_file():
                 return self.responder(404, {"erro": "falta o out/parte2/parte2_report.json (rode o --benchmark)"})
             return self.responder(200, dados_da_parte2())
+        # [IA] Claude Code (Claude Opus 5.5) – grafo interativo da Visão geral da Parte 2: lista de clubes e rota calculada na hora
+        if url.path in ("/api/parte2/grafo", "/api/parte2/rota"):
+            try:
+                grafo = self.server.parte2.obter()
+            except FileNotFoundError as erro:
+                return self.responder(404, {"erro": str(erro)})
+            if url.path == "/api/parte2/grafo":
+                return self.responder(200, grafo.resumo())
+            consulta = {k: v[0] for k, v in parse_qs(url.query).items()}
+            try:
+                inteiro = lambda chave: int(consulta[chave]) if consulta.get(chave, "").lstrip("-").isdigit() else None
+                return self.responder(200, grafo.rota(consulta.get("grafo", "clubes"), consulta.get("alg", "BFS"),
+                                                      inteiro("origem"), inteiro("destino"), inteiro("temporada")))
+            except PedidoInvalido as erro:
+                return self.responder(400, {"erro": str(erro)})
         if url.path == "/api/parte1/figuras":
             return self.responder(200, figuras_da_parte1())
         if url.path.startswith(("/parte1/", "/parte2/")):
@@ -290,6 +311,7 @@ def main(argv=None):
     args = p.parse_args(argv)
     extras = [Path(args.mapa)] if args.mapa else []
     servidor = Servidor(("127.0.0.1", args.porta), mapas_do_projeto(extras))
+    servidor.parte2.iniciar()  # carrega o dataset da Parte 2 em segundo plano
     endereco = f"http://127.0.0.1:{args.porta}/"
     if args.mapa:
         endereco += f"?mapa={quote(Path(args.mapa).stem)}"

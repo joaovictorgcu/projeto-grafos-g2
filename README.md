@@ -114,7 +114,11 @@ Abre em `http://127.0.0.1:8000`, numa tela inicial para escolher a Parte 1 ou a 
 **Parte 2:** números do grafo, os caminhos do Dijkstra, os casos do Bellman-Ford (com e sem ciclo
 negativo), BFS e DFS a partir de 3 clubes, desempenho e escalabilidade e as visualizações de AVD
 (exploratórias e explanatórias de `out/parte2/`) com as notas analíticas do
-`docs/parte2/relatorio_parte2.md`.
+`docs/parte2/relatorio_parte2.md`. Na **Visão geral** há um grafo interativo: escolha o grafo (clubes
+ou clubes por temporada), a origem, o destino e o algoritmo (BFS, DFS, Dijkstra ou Bellman-Ford), e o
+servidor roda o algoritmo na hora e desenha o caminho (ou o ciclo negativo) sobre os 20 clubes com mais
+arcos. Precisa do snapshot em `data/dataset_parte2/`; no grafo de clubes, o Bellman-Ford leva de 1 a
+2 minutos, porque o ciclo negativo impede a parada antecipada.
 
 **Parte 1:** primeiro uma página para escolher o mapa (ou enviar um `.txt`, como o mapa surpresa);
 depois, cinco abas, com o algoritmo e as opções numa barra acima do tabuleiro:
@@ -125,7 +129,8 @@ depois, cinco abas, com o algoritmo e as opções numa barra acima do tabuleiro:
 - **Grafo de estados:** as camadas (uma por conjunto de chaves) empilhadas em 3D; pegar uma chave
   sobe de andar. Arraste para girar.
 - **Comparar (bônus):** dois percursos na mesma linha do tempo, sobrepostos ou lado a lado, com a
-  curva de custo acumulado e exemplos prontos.
+  curva de custo acumulado e exemplos prontos. No modo **Os 4 algoritmos**, o mesmo mapa roda com BFS, DFS, Dijkstra e
+  Bellman-Ford ao mesmo tempo, em quatro tabuleiros, com a curva de custo e o quadro dos quatro.
 - **Visualizações:** as figuras da Seção 8 (`out/parte1/`), uma por vez, com as notas de
   `docs/parte1/notas_visualizacoes.md` ao lado. As setas ← → trocam de figura.
 - **Editor de mapas:** desenhe um mapa clicando na grade (terreno, S, G, chaves, portas, esteiras,

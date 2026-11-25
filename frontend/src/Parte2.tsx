@@ -7,6 +7,7 @@ import { carregarParte2 } from "./api";
 import { Galeria, tituloDoArquivo, type GrupoDaGaleria } from "./componentes/Galeria";
 import { Cartao, Carregando, Jogada, MiniEscudo, corDoClube } from "./componentes/Futebol";
 import { Boneco } from "./componentes/Pixel";
+import { ExplorarGrafo } from "./componentes/ExplorarGrafo";
 import { NumeroAnimado } from "./componentes/NumeroAnimado";
 import { NotaCorrida } from "./componentes/TextoDaNota";
 import { Topo, type Aba } from "./componentes/Topo";
@@ -30,8 +31,8 @@ const euro = (v: number) => formatoEuro.format(v);
 const TIPO_DE_ARCO: Record<string, string> = { arvore: "árvore", retorno: "retorno", avanco: "avanço", cruzamento: "cruzamento" };
 const numero = (v: number, casas = 0) => v.toLocaleString("pt-BR", { maximumFractionDigits: casas, minimumFractionDigits: casas });
 
-function Rota({ clubes, ciclo }: { clubes: string[]; ciclo?: boolean }) {
-  if (clubes.length <= 5) return <Jogada clubes={clubes} ciclo={ciclo} />;
+function Rota({ clubes, ciclo, lista }: { clubes: string[]; ciclo?: boolean; lista?: boolean }) {
+  if (clubes.length <= 5 && !lista) return <Jogada clubes={clubes} ciclo={ciclo} />;
   return (
     <ol className={ciclo ? "rota ciclo" : "rota"}>
       {clubes.map((clube, i) => (
@@ -74,18 +75,29 @@ function VisaoGeral({ dados }: { dados: DadosDaParte2 }) {
         </dl>
         <span className="detalhe">Fonte: {d.fonte}</span>
       </section>
+
+      <ExplorarGrafo cores={COR} nomes={NOME} euro={euro} detalhes={(caminho, trechos, ciclo) => (
+        <>
+          <Rota lista ciclo={ciclo} clubes={caminho.map((n) => (n.temporada ? `${n.nome} (${n.temporada})` : n.nome))} />
+          {trechos.some((t) => t.transferencias.length > 0) && (
+            <Recolhivel titulo="Jogadores de cada seta">
+              <TabelaDeTransferencias lista={trechos.filter((t) => !t.espera).map((t) => [`${t.de} -> ${t.para}`, t.transferencias] as [string, string[]])} />
+            </Recolhivel>
+          )}
+        </>
+      )} />
     </div>
   );
 }
 
-function Recolhivel({ titulo, valor, classe = "", children }: { titulo: ReactNode; valor: number; classe?: string; children: ReactNode }) {
+function Recolhivel({ titulo, valor, classe = "", children }: { titulo: ReactNode; valor?: number; classe?: string; children: ReactNode }) {
   const [aberto, setAberto] = useState(false);
   return (
     <article className={`cartao par recolhivel ${classe}${aberto ? " aberto" : ""}`}>
       <h4 className="par-titulo">
         <button type="button" className="par-cabeca" onClick={() => setAberto((a) => !a)} aria-expanded={aberto}>
           <span className="par-nome">{titulo}</span>
-          <span className={valor < 0 ? "valor negativo" : "valor"}>{euro(valor)}</span>
+          {valor !== undefined && <span className={valor < 0 ? "valor negativo" : "valor"}>{euro(valor)}</span>}
           <ChevronDown size={18} aria-hidden className="par-seta" />
         </button>
       </h4>
@@ -124,12 +136,13 @@ function FichaDoJogador({ nome, temporada, arco, peso }: { nome: string; tempora
   );
 }
 
-function TabelaDeTransferencias({ lista }: { lista: Record<string, string[]> }) {
+function TabelaDeTransferencias({ lista }: { lista: Record<string, string[]> | [string, string[]][] }) {
   const [aberto, setAberto] = useState<string | null>(null);
-  const linhas = Object.entries(lista).flatMap(([arco, jogadores]) => jogadores.map((texto, i) => {
+  const grupos = Array.isArray(lista) ? lista : Object.entries(lista);
+  const linhas = grupos.flatMap(([arco, jogadores], g) => jogadores.map((texto, i) => {
     const partes = /^(.*) \((\d\d\/\d\d)\): (-?[\d.]+)$/.exec(texto);
     return {
-      arco, i, total: jogadores.length, chave: `${arco}#${i}`,
+      arco, i, total: jogadores.length, grupo: `${g}|${arco}`, chave: `${g}|${arco}#${i}`,
       nome: partes ? partes[1] : texto,
       temporada: partes ? partes[2] : "",
       peso: partes ? Number(partes[3].replace(/\./g, "")) : null,
@@ -142,7 +155,7 @@ function TabelaDeTransferencias({ lista }: { lista: Record<string, string[]> }) 
         {linhas.map((l) => [
           <tr key={l.chave}>
             {l.i === 0 && (
-              <th scope="rowgroup" rowSpan={l.total + (aberto?.startsWith(`${l.arco}#`) ? 1 : 0)}>{l.arco.replace(" -> ", " → ")}</th>
+              <th scope="rowgroup" rowSpan={l.total + (aberto?.startsWith(`${l.grupo}#`) ? 1 : 0)}>{l.arco.replace(" -> ", " → ")}</th>
             )}
             <td>
               <button type="button" className="nome-jogador" aria-expanded={aberto === l.chave}
