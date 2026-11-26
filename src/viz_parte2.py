@@ -298,36 +298,51 @@ def outliers(t, saida):
     pagas = t[~t["gratuita"]].copy()
     pagas["log_razao"] = np.log10(pagas["razao"])
     lim = iqr(pagas["log_razao"])
-    fora = (pagas["log_razao"] < lim["limite_inferior"]) | (pagas["log_razao"] > lim["limite_superior"])
-    # [IA] Claude Code (Claude Opus 5.5) – código do E5 decidido por João em 25/11/2026: em laranja só os 8 outliers do IQR
-    # mais extremos (as 4 menores e as 4 maiores razões valor pago / valor de mercado); em cinza, amostra aleatória de
-    # 1.500 das demais vendas pagas (semente 42), com 10% de opacidade; sem nomes; critério e amostra no rodapé.
-    # O cálculo do IQR não mudou.
-    outl = pagas[fora].sort_values("razao", kind="stable")
-    extremos = pd.concat([outl.head(4), outl.tail(4)])
-    demais = pagas.drop(extremos.index)
-    amostra = demais.sample(n=min(1500, len(demais)), random_state=42)
-    fig, ax = plt.subplots(figsize=(7.5, 6.5))
-    ax.scatter(amostra["market_value_in_eur"], amostra["transfer_fee"], s=6, alpha=0.10, color=NEUTRO,
-               linewidths=0, label="amostra de transferências")
-    ax.scatter(extremos["market_value_in_eur"], extremos["transfer_fee"], s=36, alpha=1.0, color=DESTAQUE,
-               linewidths=0, label=f"{len(extremos)} outliers extremos", zorder=3)
-    x = np.array([1e4, 3e8])
-    ax.plot(x, x, color=TEXTO_2, lw=1, ls="--", label="linha de peso zero")
-    ax.set_xscale("log")
-    ax.set_yscale("log")
-    ax.grid(color=GRADE, lw=0.4, alpha=0.6)
-    ax.xaxis.set_major_formatter(FuncFormatter(eur))
-    ax.yaxis.set_major_formatter(FuncFormatter(eur))
-    ax.set_xlabel("valor de mercado (EUR, escala log)")
-    ax.set_ylabel("valor pago (EUR, escala log)")
-    ax.set_title("Outliers: valor pago × valor de mercado")
-    ax.legend(loc="upper left", markerscale=1.5)
-    rodape(fig, f"IQR sobre log10(valor pago / valor de mercado), fora de [{br(lim['limite_inferior'], 2)}; "
-                f"{br(lim['limite_superior'], 2)}]: {br(int(fora.sum()))} outliers nas {br(len(pagas))} vendas pagas.\n"
-                f"Em laranja, os {len(extremos)} mais extremos (as 4 menores e as 4 maiores razões valor pago / valor de mercado). "
-                f"Em cinza, amostra aleatória de {br(len(amostra))}\ndas outras {br(len(demais))} vendas pagas (semente 42): "
-                "o gráfico não mostra todos os dados.")
+    baixo, alto = lim["limite_inferior"], lim["limite_superior"]
+    abaixo = int((pagas["log_razao"] < baixo).sum())
+    acima = int((pagas["log_razao"] > alto).sum())
+    n = len(pagas)
+    # [IA] Claude Code (Claude Opus 5.5) – E5 refeito em 26/11/2026 a pedido do João, após a professora de AVD achar o
+    # dispersograma confuso: histograma de todas as vendas pagas na mesma variável em que o IQR é calculado (log10 da
+    # razão valor pago / valor de mercado), com as faixas de outlier sombreadas e a contagem de cada lado.
+    # O cálculo do IQR não mudou; o gráfico deixa de usar amostra.
+    bins = np.arange(-2.6, 2.61, 0.1)
+    cont, bordas = np.histogram(pagas["log_razao"], bins=bins)
+    centros = (bordas[:-1] + bordas[1:]) / 2
+    cores = [DESTAQUE if c < baixo or c > alto else NEUTRO for c in centros]
+    fig, ax = plt.subplots(figsize=(9, 5.2))
+    ax.axvspan(bins[0], baixo, color=DESTAQUE, alpha=0.08, lw=0)
+    ax.axvspan(alto, bins[-1], color=DESTAQUE, alpha=0.08, lw=0)
+    ax.bar(centros, cont, width=0.1, color=cores, edgecolor="white", linewidth=0.4)
+    for x in (baixo, alto):
+        ax.axvline(x, color=DESTAQUE, lw=1.2, ls="--")
+    ax.axvline(0, color=TEXTO_2, lw=1, ls=":")
+    topo = cont.max()
+    ax.text(0.03, topo * 1.04, "pago = valor de mercado", ha="left", va="bottom", fontsize=8.5, color=TEXTO_2)
+    fator_baixo, fator_alto = 10 ** -baixo, 10 ** alto
+    ax.text((bins[0] + baixo) / 2, topo * 0.55,
+            f"{br(abaixo)} vendas\n({pct(abaixo / n, 1)})\npagas por menos de\n1/{br(fator_baixo)} do valor de mercado",
+            ha="center", va="center", fontsize=9.5, color=DESTAQUE, fontweight="bold")
+    ax.text((alto + bins[-1]) / 2, topo * 0.55,
+            f"{br(acima)} vendas\n({pct(acima / n, 1)})\npagas por mais de\n{br(fator_alto)}× o valor de mercado",
+            ha="center", va="center", fontsize=9.5, color=DESTAQUE, fontweight="bold")
+    ax.text(-0.5, topo * 0.8, f"faixa normal\n{br(n - abaixo - acima)} vendas\n({pct((n - abaixo - acima) / n, 1)})",
+            ha="center", va="center", fontsize=9.5, color=TEXTO, fontweight="bold")
+    marcas = [-2, -1, 0, 1, 2]
+    ax.xaxis.set_major_locator(FixedLocator(marcas))
+    ax.set_xticklabels(["1/100×", "1/10×", "1×", "10×", "100×"])
+    ax.set_xlim(bins[0], bins[-1])
+    ax.set_ylim(0, topo * 1.15)
+    ax.yaxis.set_major_formatter(FuncFormatter(lambda v, _: br(v)))
+    ax.grid(axis="x", visible=False)
+    ax.set_xlabel("valor pago ÷ valor de mercado (escala log)")
+    ax.set_ylabel("número de vendas pagas")
+    ax.set_title(f"Outliers: {br(abaixo + acima)} das {br(n)} vendas pagas ({pct((abaixo + acima) / n, 1)}) "
+                 f"fogem da faixa normal de preço")
+    rodape(fig, f"Regra do IQR (1,5 × IQR) aplicada a log10(valor pago / valor de mercado): limites "
+                f"{br(baixo, 2)} e {br(alto, 2)}, ou seja, 1/{br(fator_baixo)} e {br(fator_alto)}× o valor de mercado.\n"
+                "Barras em laranja = outliers. Todas as vendas pagas aparecem; as gratuitas (valor pago = 0) ficam de fora "
+                "porque a razão não existe.")
     return salvar(fig, Path(saida) / "e5_outliers.png")
 
 

@@ -121,7 +121,7 @@ altura 0,08 (desprezível). Entre as categóricas (`e4_relacoes.png`):
   todos transferências conhecidas e corretas.
 - **Razão valor pago / valor de mercado (log10), nas vendas pagas:** 713 outliers (4,34%), fora de
   [−0,96; 0,86], ou seja, pagas por menos de 1/9 ou mais de 7 vezes o valor de mercado
-  (`e5_outliers.png`, que exibe uma amostra de 1.500 vendas e os 8 casos mais extremos). Nas faixas baixas há valores de mercado redondos (25 mil, 50 mil) com valor
+  (`e5_outliers.png`, histograma de todas as vendas pagas com as faixas de outlier em destaque). Nas faixas baixas há valores de mercado redondos (25 mil, 50 mil) com valor
   pago de milhões, onde o valor de mercado provavelmente está desatualizado.
 - **Tratamento:** os outliers ficam no grafo. Eles são o fenômeno que a pergunta de pesquisa estuda
   (os maiores ciclos e caminhos negativos passam por eles), e removê-los mudaria a resposta. Nos
@@ -293,7 +293,7 @@ mais que os outros atributos e a relação é monotônica. Por que esse gráfico
 ao número de categorias, permite comparar os efeitos entre atributos; o n de cada grupo fica
 escrito para não supervalorizar grupos pequenos.
 
-**E5: `e5_outliers.png` (exploratória).** O gráfico compara o valor pago com o valor de mercado nas transferências, utilizando escala logarítmica nos dois eixos. A análise completa identificou 713 outliers entre as 16.435 vendas pagas, utilizando a regra do IQR sobre o logaritmo da razão entre esses valores. Para deixar a visualização mais limpa, foram exibidas 1.500 transferências selecionadas aleatoriamente com semente fixa 42, em cinza claro, além de 8 casos extremos destacados em laranja: os quatro com menores razões e os quatro com maiores razões entre os outliers identificados. A linha tracejada representa as transferências em que o valor pago é igual ao valor de mercado. O gráfico permite observar que existem transferências com valores pagos muito acima ou abaixo do valor de mercado, especialmente entre jogadores com valores de mercado menores. A dispersão foi mantida porque permite comparar diretamente as duas variáveis, enquanto a escala logarítmica facilita a visualização de valores com diferenças muito grandes. A redução dos pontos exibidos e dos destaques evita a sobreposição excessiva sem alterar a análise realizada sobre o conjunto completo.
+**E5: `e5_outliers.png` (exploratória).** O gráfico é um histograma da razão entre o valor pago e o valor de mercado nas 16.435 vendas pagas, em escala logarítmica (1× = pago exatamente o valor de mercado). É a mesma variável sobre a qual a regra do IQR é calculada, então os limites aparecem direto no eixo: as linhas tracejadas marcam 1/9 e 7× o valor de mercado, e tudo o que fica fora delas (faixas sombreadas, barras em laranja) é outlier. São 713 outliers (4,3%): 332 vendas pagas por menos de 1/9 do valor de mercado e 381 por mais de 7×. A maior parte das vendas se concentra perto de 1×, com leve inclinação para baixo (mediana abaixo do valor de mercado), e as caudas são parecidas dos dois lados. O histograma substituiu o dispersograma valor pago × valor de mercado porque mostra todas as vendas, sem amostra, e deixa visível onde o critério de outlier corta a distribuição. Os outliers ficam no grafo, porque são justamente as transferências que geram os maiores pesos e os caminhos negativos estudados.
 
 **X1: `x1_explanatoria_caminho.png` (explanatória, responde à pergunta).** Custo acumulado ao
 longo do caminho de menor custo do Bellman-Ford no grafo temporal, com a saída do Mbappé em
