@@ -43,8 +43,7 @@ grafo estático ele torna o caminho mínimo indefinido (−∞) para quem o alca
 O empréstimo é uma heurística: valor pago 0 num vai-e-volta consecutivo do mesmo jogador. A
 marcação é feita sobre o histórico completo do jogador, antes dos outros filtros, com ordenação
 estável. Feita depois, a perna de ida cuja volta caiu no filtro de faltantes escapava e o grafo
-saía com 5.207 nós e 33.688 arcos, diferente da proposta aprovada
-(`tests/test_dataset.py::test_emprestimo_sai_mesmo_quando_a_volta_nao_tem_valor_de_mercado`).
+saía com 5.207 nós e 33.688 arcos, diferente da proposta aprovada.
 
 ## 2. Exploração dos dados (AVD)
 
@@ -122,7 +121,7 @@ altura 0,08 (desprezível). Entre as categóricas (`e4_relacoes.png`):
   todos transferências conhecidas e corretas.
 - **Razão valor pago / valor de mercado (log10), nas vendas pagas:** 713 outliers (4,34%), fora de
   [−0,96; 0,86], ou seja, pagas por menos de 1/9 ou mais de 7 vezes o valor de mercado
-  (`e5_outliers.png`). Nas faixas baixas há valores de mercado redondos (25 mil, 50 mil) com valor
+  (`e5_outliers.png`, que exibe uma amostra de 1.500 vendas e os 8 casos mais extremos). Nas faixas baixas há valores de mercado redondos (25 mil, 50 mil) com valor
   pago de milhões, onde o valor de mercado provavelmente está desatualizado.
 - **Tratamento:** os outliers ficam no grafo. Eles são o fenômeno que a pergunta de pesquisa estuda
   (os maiores ciclos e caminhos negativos passam por eles), e removê-los mudaria a resposta. Nos
@@ -294,12 +293,7 @@ mais que os outros atributos e a relação é monotônica. Por que esse gráfico
 ao número de categorias, permite comparar os efeitos entre atributos; o n de cada grupo fica
 escrito para não supervalorizar grupos pequenos.
 
-**E5: `e5_outliers.png` (exploratória).** Valor pago contra valor de mercado nas vendas pagas, em
-log-log, com a diagonal de peso 0 e os outliers do IQR (sobre o log da razão) em laranja. Insight:
-os outliers são as vendas muito acima ou muito abaixo do valor, concentradas nos valores de mercado
-baixos; os maiores pesos absolutos (Neymar, Dembélé, Haaland) estão perto da diagonal em termos
-relativos. Por que esse gráfico: dispersão para relação entre duas variáveis contínuas; log porque
-os valores cobrem 5 ordens de grandeza.
+**E5: `e5_outliers.png` (exploratória).** O gráfico compara o valor pago com o valor de mercado nas transferências, utilizando escala logarítmica nos dois eixos. A análise completa identificou 713 outliers entre as 16.435 vendas pagas, utilizando a regra do IQR sobre o logaritmo da razão entre esses valores. Para deixar a visualização mais limpa, foram exibidas 1.500 transferências selecionadas aleatoriamente com semente fixa 42, em cinza claro, além de 8 casos extremos destacados em laranja: os quatro com menores razões e os quatro com maiores razões entre os outliers identificados. A linha tracejada representa as transferências em que o valor pago é igual ao valor de mercado. O gráfico permite observar que existem transferências com valores pagos muito acima ou abaixo do valor de mercado, especialmente entre jogadores com valores de mercado menores. A dispersão foi mantida porque permite comparar diretamente as duas variáveis, enquanto a escala logarítmica facilita a visualização de valores com diferenças muito grandes. A redução dos pontos exibidos e dos destaques evita a sobreposição excessiva sem alterar a análise realizada sobre o conjunto completo.
 
 **X1: `x1_explanatoria_caminho.png` (explanatória, responde à pergunta).** Custo acumulado ao
 longo do caminho de menor custo do Bellman-Ford no grafo temporal, com a saída do Mbappé em
