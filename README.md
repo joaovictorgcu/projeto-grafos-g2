@@ -29,6 +29,7 @@ pytest                          # roda os testes
 ## Sumário
 
 - [Início rápido](#início-rápido)
+- [O app em prints](#o-app-em-prints)
 - [Integrantes e pacotes](#integrantes-e-pacotes-de-trabalho)
 - [Andamento](#andamento)
 - [Instalação](#instalação)
@@ -41,6 +42,83 @@ pytest                          # roda os testes
 - [Estrutura do repositório](#estrutura-do-repositório)
 - [Declaração de uso de IA](#declaração-de-uso-de-ia)
 - [Apresentação do checkpoint](#apresentação-do-checkpoint)
+
+## O app em prints
+
+O `python -m src.servidor` abre um site com as duas partes do projeto. O navegador só desenha:
+quem monta os grafos e roda BFS, DFS, Dijkstra e Bellman-Ford é o Python, com o mesmo código de
+`src/graphs/` usado nos testes e nos relatórios. Os prints abaixo estão em `docs/prints_app/`.
+
+### Tela inicial
+
+Escolha entre a Parte 1 e a Parte 2, com os cinco integrantes e o pacote de cada um.
+
+![tela inicial](docs/prints_app/inicio.png)
+
+### Parte 1: labirinto com chaves
+
+**Escolha do mapa.** Os oito mapas do enunciado e os dois do grupo (Armadilhas e Chaves). O botão
+*Enviar um mapa .txt* é por onde entra o mapa surpresa, que passa pela mesma validação do
+`src/graphs/io.py`.
+
+![escolha do mapa](docs/prints_app/p1_escolha_mapa.png)
+
+**Labirinto.** O Dijkstra no m03 (Três chaves), no passo 60 de 91. A linha muda de cor a cada chave
+coletada, e o painel da direita mostra o estado atual, que é o vértice do grafo de estados
+`(posição) | chaves | bônus usados`, aqui `(3,5) | ab | {}`, mais o custo acumulado (64 até aqui, 99 no
+fim). O cartão no alto é o "cartão do árbitro": verde quando o algoritmo acha o caminho.
+
+![labirinto m03](docs/prints_app/p1_labirinto_m03.png)
+
+**Grafo de estados.** O mesmo m03, com uma camada por conjunto de chaves, empilhadas em 3D: sem
+chaves (12 estados), {a} (53), {a,b} (72) e {a,b,c} (76), 213 estados no total. Pegar uma chave sobe
+de andar. É a ideia central da Parte 1: a mesma casa do mapa é um vértice diferente para cada
+conjunto de chaves.
+
+![grafo de estados m03](docs/prints_app/p1_grafo_estados_m03.png)
+
+**Comparar.** BFS × Dijkstra no m03, no mesmo tabuleiro. A BFS chega em menos passos (87 contra 91),
+e o Dijkstra gasta menos (custo 99 contra 119): menos passos não quer dizer menor custo. Os
+*Exemplos prontos* trazem os outros contrastes, como a recusa do Dijkstra no m05 (peso negativo) e
+o ciclo negativo do m06.
+
+![comparar m03](docs/prints_app/p1_comparar_m03.png)
+
+**Editor de mapas.** Desenha-se um mapa na grade (terreno, início, saída, chaves, portas, esteiras,
+bônus e fonte), e ele pode ser baixado como `.txt` ou testado direto no labirinto.
+
+![editor de mapas](docs/prints_app/p1_editor.png)
+
+### Parte 2: rede de transferências
+
+**Visão geral.** Os números do grafo de clubes: 4.739 clubes, 31.626 arcos, 79,14% deles com peso
+negativo (o jogador saiu por menos do que valia) e 1.780 ciclos negativos de dois arcos. Logo
+abaixo, a ficha do grafo: o que é nó, arco e peso.
+
+![visão geral](docs/prints_app/p2_visao_geral.png)
+
+**Explorar o grafo.** Escolhem-se a origem, o destino e o algoritmo, e o servidor roda o algoritmo na
+hora. No print, o Dijkstra de Santos até o PSG: Santos → Inter → PSG, custo −42,5 mi, com os 20
+clubes de mais arcos ao fundo. Como o Dijkstra não aceita peso negativo, os pesos são deslocados em
++180 mi por arco, e o custo mostrado é o original. Precisa do snapshot em `data/dataset_parte2/`
+(ver [Baixar o snapshot](#1-baixar-o-snapshot)).
+
+![explorar o grafo](docs/prints_app/p2_explorar_grafo.png)
+
+**Caminhos e ciclos.** Os seis pares do Dijkstra e os casos do Bellman-Ford: o caminho sem ciclo
+negativo no grafo por temporada (Benfica 15/16 → Bournemouth 27/28, −335,5 mi) e os ciclos negativos
+encontrados no grafo de clubes (cartão vermelho).
+
+![caminhos e ciclos](docs/prints_app/p2_caminhos.png)
+
+**Desempenho.** Tempo médio de 5 execuções em 10%, 25%, 50%, 75% e 100% dos nós, com a razão medida ao
+lado da razão teórica de cada complexidade. No grafo completo, a BFS leva 2,42 ms e o Bellman-Ford
+22 s.
+
+![desempenho](docs/prints_app/p2_desempenho.png)
+
+A aba *Visualizações de AVD* mostra as figuras de [Prints da Parte 2](#prints-da-parte-2), uma por vez,
+com as notas analíticas ao lado.
 
 ## Integrantes e pacotes de trabalho
 
@@ -134,7 +212,8 @@ python -m src.servidor --mapa ./data/mapas/m03_tres_chaves.txt
 python -m src.cli --mapa ./data/mapas/m03_tres_chaves.txt --interactive
 ```
 
-Abre em `http://127.0.0.1:8000`, numa tela inicial para escolher a Parte 1 ou a Parte 2.
+Abre em `http://127.0.0.1:8000`, numa tela inicial para escolher a Parte 1 ou a Parte 2. As telas
+estão em [O app em prints](#o-app-em-prints).
 
 **Parte 2:** números do grafo, os caminhos do Dijkstra, os casos do Bellman-Ford (com e sem ciclo
 negativo), BFS e DFS a partir de 3 clubes, desempenho e escalabilidade e as visualizações de AVD
