@@ -48,7 +48,7 @@ e revisar significa commitar alguma coisa lá: um teste, uma correção, uma doc
 - [x] Parte 2: rede de transferências entre clubes (`out/parte2/` e `docs/parte2/`)
   - [x] gráficos revisados e prompts da declaração de IA (`docs/parte2/prompts_declaracao_uso_ia.txt`)
 - [ ] Declaração de Uso de IA assinada (`docs/DECLARACAO_IA.pdf`)
-- [ ] PDF final (manual + técnica, com a matriz de contribuição)
+- [x] PDF final (manual + técnica, com a matriz de contribuição): `docs/relatorio_tecnico.pdf`
 - [ ] Entrega final (26/11/2026)
 
 ## Instalação
@@ -86,6 +86,11 @@ As notas analíticas dessas figuras estão em
 [docs/parte1/notas_visualizacoes.md](docs/parte1/notas_visualizacoes.md).
 
 ### Labirinto interativo
+
+O labirinto interativo pedido na Seção 9 do enunciado (`labirinto_interativo.html` ou app) é este
+site em React, servido pelo Python (`python -m src.servidor`, ou
+`python -m src.cli --mapa X --interactive`). O uso de framework foi liberado pela professora no
+acompanhamento de 04/11.
 
 Frontend em React + TypeScript (`frontend/`). Quem calcula tudo é o Python: o `src/servidor.py`
 monta o grafo de estados e roda os algoritmos do `src/graphs/`, e o navegador só desenha e anima.
