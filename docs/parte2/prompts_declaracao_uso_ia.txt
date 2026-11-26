@@ -4,6 +4,147 @@ Repositório: https://github.com/joaovictorgcu/projeto-grafos-g2
 Responsável: João Victor Uchôa
 Ferramenta: Claude Code (Anthropic), modelos Claude Opus 5.5 e Claude Fable 5.1
 
+
+# TRANSCRIÇÕES DE USO DE IA
+
+**Ferramenta:** Claude Code — Anthropic
+**Projeto:** Projeto Final de Grafos — Parte 2: Dados e experimentos
+**Integrante:** João Victor Uchôa
+---
+
+### 1. Revisão geral das visualizações
+
+**Usuário:**
+
+Analise os gráficos da Parte 2 do projeto. Quero identificar problemas de apresentação, principalmente em relação à formatação dos valores, títulos, legendas e consistência visual. Preserve os resultados originais dos experimentos.
+
+**Claude Code:**
+
+Após analisar a estrutura das visualizações, identifiquei oportunidades de padronização na apresentação dos dados. Alguns valores poderiam ser apresentados de maneira mais consistente, especialmente números monetários, percentuais e tempos de execução.
+
+Minha recomendação é centralizar a formatação em funções auxiliares, evitando implementações diferentes para cada gráfico. Isso facilita a manutenção e garante que todas as visualizações utilizem o mesmo padrão.
+
+Também recomendo conferir os títulos e as legendas com os dados efetivamente utilizados na geração de cada figura.
+
+### 2. Formatação monetária e numérica
+
+**Usuário:**
+
+Revise a apresentação dos valores monetários e numéricos. Como estamos trabalhando com dados de transferências de jogadores, quero que os gráficos fiquem mais intuitivos para quem está lendo o trabalho no Brasil.
+
+**Claude Code:**
+
+A apresentação dos valores pode ser padronizada para o formato brasileiro, utilizando vírgula como separador decimal e ponto como separador de milhares.
+
+Para valores monetários elevados, também é interessante utilizar uma representação abreviada em milhões, desde que a unidade esteja explicitada no eixo ou na legenda.
+
+Sugiro criar formatadores reutilizáveis para valores monetários, percentuais e tempos. Dessa forma, a alteração fica concentrada em um único local e reduz o risco de inconsistências entre os gráficos.
+
+### 3. Revisão dos histogramas
+
+**Usuário:**
+
+Confira os histogramas dos pesos das arestas. Quero garantir que a distribuição esteja sendo representada corretamente, inclusive os valores iguais a zero. Verifique também se os intervalos utilizados são adequados.
+
+**Claude Code**
+
+É importante verificar se os limites dos intervalos contemplam toda a distribuição e se os valores iguais a zero não estão sendo omitidos ou representados de maneira inadequada.
+
+A escolha dos intervalos deve permitir visualizar tanto a concentração dos valores quanto a existência de observações mais extremas.
+
+Recomendo revisar a construção dos bins e conferir a correspondência entre os valores utilizados no histograma e os dados originais. A alteração deve melhorar a visualização sem remover ou modificar observações.
+
+### 4. Consistência entre títulos e dados
+
+**Usuário:**
+
+Confira se os títulos e rodapés dos gráficos correspondem aos resultados reais. Não quero apresentar percentuais ou informações que não estejam de acordo com os arquivos dos experimentos.
+
+**Claude Code**
+
+Encontrei pontos que merecem atenção na correspondência entre as descrições apresentadas e os dados utilizados.
+
+Recomendo que os títulos e rodapés sejam construídos com base nas mesmas variáveis utilizadas para gerar cada visualização, evitando valores desatualizados ou descrições fixas que possam deixar de representar os resultados após uma nova execução.
+
+Também é importante preservar os arquivos originais de resultados e utilizar os dados calculados durante a execução para alimentar as visualizações.
+
+### 5. Organização dos painéis
+
+**Usuário:**
+
+Alguns gráficos possuem muitas categorias e outros poucas. Analise a distribuição dos painéis e proponha uma organização mais equilibrada, mantendo a leitura confortável.
+
+**Claude Code**
+
+A utilização de alturas idênticas para painéis com quantidades muito diferentes de categorias pode prejudicar a leitura.
+
+Uma solução é dimensionar os painéis proporcionalmente à quantidade de informações apresentadas, mantendo espaçamentos consistentes e evitando que os elementos fiquem comprimidos.
+
+Recomendo também conferir o resultado visual após a geração completa da figura, pois uma organização adequada individualmente nem sempre resulta em uma composição equilibrada no conjunto.
+
+### 6. Sobreposição de rótulos
+
+**Usuário:**
+
+Revise os gráficos que apresentam nomes de jogadores e outros rótulos. Existem situações em que as informações ficam sobrepostas e dificultam a identificação dos pontos.
+
+**Claude Code**
+
+A sobreposição prejudica principalmente gráficos com muitos pontos próximos.
+
+Sugiro implementar uma estratégia de posicionamento dos rótulos, considerando a distância entre os pontos e a área disponível na visualização.
+
+Também é importante evitar que os rótulos sejam deslocados de maneira que pareçam identificar outro ponto. A identificação deve permanecer associada corretamente à observação representada.
+
+Após o ajuste, recomendo inspecionar visualmente os casos mais densos.
+
+### 7. Comparação de desempenho dos algoritmos
+
+**Usuário:**
+
+Revise o gráfico de desempenho dos algoritmos. Quero que a comparação fique mais clara e que a variabilidade dos tempos de execução seja considerada, em vez de apresentar apenas um valor médio.
+
+**Claude Code**
+
+A utilização de médias acompanhadas de desvios padrão pode fornecer uma visão mais completa dos experimentos.
+
+Uma possibilidade é representar as médias como pontos e utilizar barras de erro para demonstrar a variabilidade observada nas execuções.
+
+Também é importante utilizar unidades consistentes e conferir a escala do eixo vertical, principalmente quando existem diferenças expressivas entre os tempos dos algoritmos.
+
+Essa alteração melhora a interpretação dos resultados sem modificar os tempos registrados durante os experimentos.
+
+### 8. Visualização das camadas da BFS
+
+**Usuário:**
+
+Confira o gráfico que apresenta as camadas alcançadas pela BFS. Quero garantir que os percentuais e as informações mostradas representem corretamente os clubes alcançados em cada nível.
+
+**Claude Code**
+
+A visualização deve apresentar claramente a relação entre os níveis percorridos pela busca e a quantidade de vértices alcançados.
+
+É importante verificar se os percentuais são calculados a partir do total correto e se o título descreve o comportamento efetivamente representado.
+
+Também recomendo conferir a diferença entre a quantidade de clubes alcançados em cada camada e a quantidade acumulada até aquela camada, pois são interpretações diferentes.
+
+### 9. Padronização visual e acessibilidade
+
+**Usuário:**
+
+Faça uma revisão final das cores, dos eixos e das legendas. Quero manter uma identidade visual consistente e facilitar a distinção entre os algoritmos, inclusive para pessoas com daltonismo.
+
+**Claude Code:**
+
+Recomendo manter uma associação consistente entre cada algoritmo e sua respectiva cor em todas as visualizações.
+
+A paleta deve oferecer contraste suficiente e evitar depender exclusivamente de diferenças entre tons semelhantes de verde e vermelho.
+
+Também sugiro padronizar os nomes dos eixos, unidades e formatação dos valores, garantindo que gráficos diferentes possam ser comparados sem exigir que o leitor reaprenda os padrões de apresentação.
+
+---
+
+
 A IA foi usada para revisar os gráficos da Parte 2 a partir do pedido reproduzido abaixo. O
 resultado foi dividido em nove commits, um por correção. Cada item a seguir traz o trecho do pedido
 que motivou o commit, o que a IA fez e o que foi conferido antes de aceitar. Os arquivos de
