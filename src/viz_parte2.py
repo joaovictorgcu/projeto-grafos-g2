@@ -10,12 +10,13 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 from matplotlib.patheffects import withStroke
 from matplotlib.ticker import FixedLocator, FuncFormatter, NullFormatter
 
-from .avd_parte2 import SEM_LIGA, enriquecer, iqr
+from .avd_parte2 import SEM_LIGA, enriquecer, iqr, spearman
 from .graphs.dataset import carregar_dataset, temporada
 
 # Identidade visual. CORES é a ordem fixa dos algoritmos (BFS, DFS, Dijkstra, Bellman-Ford) nos
@@ -241,56 +242,64 @@ def faltantes(d, saida):
     return salvar(fig, Path(saida) / "e3_faltantes.png")
 
 
+# [IA] Claude Code (Claude Fable 5.2) – E4 refeito em 26/11/2026 após o feedback da professora de AVD (o gráfico anterior não
+# mostrava relacionamentos): código da matriz de correlação de Spearman e das dispersões do peso, tipos de gráfico escolhidos
+# pelo João
 def relacoes(t, saida):
-    paineis = [
-        ("faixa_idade", "idade na transferência", None),
-        ("position", "posição", {"Attack": "atacante", "Midfield": "meio-campo", "Defender": "defensor",
-                                 "Goalkeeper": "goleiro"}),
-        ("foot", "pé preferido", {"right": "direito", "left": "esquerdo", "both": "ambos"}),
-        ("tem_empresario", "empresário", None),
-    ]
-    media = t["negativo"].mean()
-    grupos = []
-    for col, titulo, nomes in paineis:
-        g = t.groupby(col, observed=True).agg(neg=("negativo", "mean"), n=("negativo", "size"))
-        if col != "faixa_idade":
-            g = g.sort_values("neg")
-        grupos.append((col, titulo, nomes, g))
-    # painéis empilhados com o mesmo eixo x; a altura de cada um segue o número de categorias
-    alturas = [len(g) + 0.9 for *_, g in grupos]
-    fig, eixos = plt.subplots(len(grupos), 1, figsize=(8.5, 0.38 * sum(alturas) + 1.2), sharex=True,
-                              gridspec_kw={"height_ratios": alturas})
-    # [IA] Claude Code (Claude Opus 5.5) – código das cores e dos destaques decididos por João em 25/11/2026: idade em laranja, os outros três atributos em azul
-    for ax, (col, titulo, nomes, g) in zip(eixos, grupos):
-        cor = DESTAQUE if col == "faixa_idade" else CORES[0]
-        rotulos = [(nomes or {}).get(str(i), str(i)) for i in g.index]
-        y = np.arange(len(g))
-        ax.hlines(y, 0, g["neg"], color=GRADE, lw=2)
-        ax.plot(g["neg"], y, "o", color=cor, ms=8)
-        for yi, (v, n) in enumerate(zip(g["neg"], g["n"])):
-            ax.text(v + 0.012, yi, f"{pct(v)}  (n={br(n)})", va="center", fontsize=8.5, color=TEXTO_2,
-                    clip_on=False)
-        ax.axvline(media, color=TEXTO_2, ls="--", lw=1)
-        ax.set_yticks(y, rotulos)
-        ax.set_ylim(-0.7, len(g) - 0.3)
-        ax.set_title(titulo, fontsize=10.5)
-        ax.grid(axis="y", visible=False)
-    eixos[0].annotate(f"média geral: {pct(media)}", (media, 1), xycoords=("data", "axes fraction"),
-                      xytext=(4, -1), textcoords="offset points", va="top", fontsize=8, color=TEXTO_2)
-    eixos[-1].set_xlim(0.5, 1.0)
-    eixos[-1].xaxis.set_major_formatter(FuncFormatter(pct_eixo))
-    eixos[-1].set_xlabel("% das transferências com peso negativo (saída abaixo do valor de mercado)")
-    # [IA] Claude Code (Claude Opus 5.5) – legenda na linha do título do 1º painel, fora dos dados, e rótulo y comum aos painéis
-    eixos[0].legend(handles=[Line2D([], [], color=DESTAQUE, marker="o", ms=7, ls="", label="idade"),
-                             Line2D([], [], color=CORES[0], marker="o", ms=7, ls="", label="demais atributos"),
-                             Line2D([], [], color=TEXTO_2, ls="--", lw=1, label="média geral")],
-                    loc="lower right", bbox_to_anchor=(1, 1), ncol=3, fontsize=8.5, borderaxespad=0.2)
-    fig.supylabel("atributo / categoria", fontsize=9.5, color=TEXTO_2)
-    fig.suptitle("Relação do peso com os atributos do jogador: a idade é o que mais separa",
+    variaveis = [("peso", "peso"), ("transfer_fee", "valor pago"), ("market_value_in_eur", "valor de mercado"),
+                 ("idade", "idade"), ("height_in_cm", "altura"), ("temporada", "temporada")]
+    nomes = [n for _, n in variaveis]
+    k = len(variaveis)
+    rho = np.array([[1.0 if a == b else spearman(t[a], t[b]) for b, _ in variaveis] for a, _ in variaveis])
+
+    fig = plt.figure(figsize=(12.5, 6.2))
+    grade = fig.add_gridspec(2, 2, width_ratios=[1.15, 1], wspace=0.38, hspace=0.5)
+    ax = fig.add_subplot(grade[:, 0])
+    mapa = LinearSegmentedColormap.from_list("sinal", [DESTAQUE, "#ffffff", CORES[0]])
+    # só o triângulo inferior: a matriz é simétrica e a diagonal é sempre 1
+    visivel = np.ma.masked_where(np.triu(np.ones((k, k), dtype=bool), 1), rho)
+    imagem = ax.imshow(visivel, cmap=mapa, vmin=-1, vmax=1)
+    for i in range(k):
+        for j in range(i + 1):
+            ax.text(j, i, br(round(rho[i, j], 2) + 0.0, 2), ha="center", va="center", fontsize=9,
+                    color="white" if abs(rho[i, j]) > 0.6 else TEXTO)
+    ax.set_xticks(range(k), nomes, rotation=30, ha="right")
+    ax.set_yticks(range(k), nomes)
+    ax.grid(visible=False)
+    ax.tick_params(length=0)
+    for lado in ("left", "bottom"):
+        ax.spines[lado].set_visible(False)
+    ax.set_title("Correlação de Spearman entre as variáveis numéricas", fontsize=10.5)
+    barra = fig.colorbar(imagem, ax=ax, fraction=0.04, pad=0.03, ticks=[-1, -0.5, 0, 0.5, 1])
+    barra.ax.set_yticklabels([br(v, 1) for v in (-1, -0.5, 0, 0.5, 1)])
+    barra.set_label("ρ de Spearman (−1 inversa, 0 sem relação, +1 direta)", fontsize=8.5)
+    barra.outline.set_visible(False)
+
+    dispersoes = [("idade", "idade na transferência (anos)", False),
+                  ("market_value_in_eur", "valor de mercado (EUR, escala log)", True)]
+    for linha, (col, rotulo, em_log) in enumerate(dispersoes):
+        ax = fig.add_subplot(grade[linha, 1])
+        m = t[col].notna() & t["peso"].notna()
+        ax.scatter(t.loc[m, col], t.loc[m, "peso"], s=4, color=CORES[0], alpha=0.12, linewidths=0, rasterized=True)
+        ax.set_yscale("symlog", linthresh=1e3, linscale=0.5)
+        ax.yaxis.set_major_locator(FixedLocator([-1e8, -1e6, -1e4, 0, 1e4, 1e6, 1e8]))
+        ax.yaxis.set_major_formatter(FuncFormatter(eur))
+        ax.yaxis.set_minor_formatter(NullFormatter())
+        ax.tick_params(axis="y", which="minor", length=0)
+        ax.set_ylim(-2.5e8, 2.5e8)
+        ax.axhline(0, color=TEXTO_2, lw=0.8)
+        if em_log:
+            ax.set_xscale("log")
+            ax.xaxis.set_major_formatter(FuncFormatter(eur))
+            ax.xaxis.set_minor_formatter(NullFormatter())
+        ax.set_xlabel(rotulo)
+        ax.set_ylabel("peso (EUR, escala symlog)")
+        ax.set_title(f"peso × {nomes[[c for c, _ in variaveis].index(col)]}: "
+                     f"ρ = {br(spearman(t['peso'], t[col]), 2)} (n = {br(int(m.sum()))})", fontsize=10.5)
+    fig.suptitle("Relações entre as variáveis numéricas das transferências",
                  x=0.01, ha="left", fontsize=12, color=TEXTO)
-    fig.tight_layout()
-    rodape(fig, f"Linha tracejada: média geral ({pct(media)}). Posição, pé e empresário vêm de players.csv; "
-                "faltantes desses atributos (≤ 2,3%, empresário 32,8%) aparecem como categoria ou ficam fora do painel.")
+    rodape(fig, f"Peso = valor pago − valor de mercado. {br(len(t))} transferências usadas; cada ρ usa os pares sem valor "
+                "faltante. Nas dispersões, cada ponto é uma transferência.")
     return salvar(fig, Path(saida) / "e4_relacoes.png")
 
 
@@ -489,29 +498,53 @@ def tempos(relatorio, saida):
     return salvar(fig, Path(saida) / "a1_tempos.png")
 
 
+# [IA] Claude Code (Claude Fable 5.2) – A2 refeito em 26/11/2026 seguindo, item a item, o feedback da professora de AVD: eixo x
+# independente por painel com o parâmetro de complexidade do algoritmo (log-log) e a % dos nós como eixo secundário, eixo y
+# compartilhado em tempo absoluto, painéis numa linha só, uma legenda para a figura e menos elementos visuais
+PARAMETRO = {
+    "BFS": ("|V| + |E|", lambda v, e: v + e),
+    "DFS": ("|V| + |E|", lambda v, e: v + e),
+    "DIJKSTRA": ("(|V| + |E|) · log₂|V|", lambda v, e: (v + e) * np.log2(max(v, 2))),
+    "BELLMAN_FORD": ("|V| · |E|", lambda v, e: v * e),
+}
+
+
 def escalabilidade(relatorio, saida):
     esc = relatorio["escalabilidade"]
-    fig, eixos = plt.subplots(2, 2, figsize=(10, 7), sharex=True)
-    for ax, alg in zip(eixos.flat, NOMES_ALG):
+    fig, eixos = plt.subplots(1, 4, figsize=(13, 4.3), sharey=True)
+    for ax, alg in zip(eixos, NOMES_ALG):
         s = [l for l in esc if l["algoritmo"] == alg]
-        x = [l["tamanho_pct"] for l in s]
-        ax.plot(x, [l["tempo_relativo"] for l in s], "o-", color=cor_do_algoritmo(alg), lw=2, ms=7,
-                label="tempo medido")
-        ax.plot(x, [l["teoria_relativa"] for l in s], "--", color=TEXTO_2, lw=1.4, label=s[0]["complexidade"])
+        nome, f = PARAMETRO[alg]
+        x = np.array([f(l["V"], l["E"]) for l in s], dtype=float)
+        ms = np.array([l["media_s"] * 1000 for l in s])
+        # teoria: tempo proporcional ao parâmetro, ancorado no grafo completo (reta de inclinação 1 no log-log)
+        ax.plot(x, ms[-1] * x / x[-1], "--", color=TEXTO_2, lw=1.2)
+        ax.plot(x, ms, "o-", color=cor_do_algoritmo(alg), lw=1.6, ms=5)
+        ax.set_xscale("log")
         ax.set_yscale("log")
-        ax.set_title(f"{NOMES_ALG[alg]}: {s[0]['complexidade']}", fontsize=10.5)
-        ax.yaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:g}".replace(".", ",")))
-        ax.legend(loc="lower right", fontsize=8.5)
-        ax.set_xticks(x, [f"{p}%\n|V|={br(l['V'])}\n|E|={br(l['E'])}" for p, l in zip(x, s)], fontsize=7.5)
-    for ax in eixos[:, 0]:
-        ax.set_ylabel("relativo ao grafo completo (= 1), escala log")
-    for ax in eixos[1]:
-        ax.set_xlabel("tamanho do grafo (% dos nós sorteados; subgrafo induzido)")
+        ax.set_xlim(x[0] / 1.6, x[-1] * 1.6)
+        ax.xaxis.set_major_formatter(FuncFormatter(eur))
+        ax.xaxis.set_minor_formatter(NullFormatter())
+        ax.set_xlabel(f"{nome} (escala log)")
+        ax.grid(which="minor", visible=False)
+        ax.tick_params(which="minor", length=0)
+        topo = ax.secondary_xaxis("top")
+        topo.set_xticks(x, [f"{l['tamanho_pct']}%" for l in s], fontsize=7.5)
+        topo.xaxis.set_minor_formatter(NullFormatter())
+        topo.tick_params(which="minor", length=0)
+        topo.spines["top"].set_visible(False)
+        topo.set_xlabel("% dos nós do grafo", fontsize=8)
+        ax.set_title(f"{NOMES_ALG[alg]}: {s[0]['complexidade']}", fontsize=10.5, pad=8)
+    eixos[0].set_yticks([0.01, 0.1, 1, 10, 100, 1e3, 1e4], ["0,01 ms", "0,1 ms", "1 ms", "10 ms", "100 ms", "1 s", "10 s"])
+    eixos[0].set_ylabel("tempo médio por execução (escala log)")
     fig.suptitle("Escalabilidade: o crescimento do tempo medido acompanha a complexidade teórica",
                  x=0.01, ha="left", fontsize=12, color=TEXTO)
-    fig.tight_layout()
-    rodape(fig, "Curvas normalizadas pelo valor no grafo completo, para comparar formas de crescimento. "
-                "Amostras encaixadas de nós (semente 42); média de 5 execuções por ponto.")
+    fig.legend(handles=[Line2D([], [], color=TEXTO_2, marker="o", ms=5, lw=1.6, label="tempo medido (a cor identifica o algoritmo)"),
+                        Line2D([], [], color=TEXTO_2, ls="--", lw=1.2, label="crescimento teórico (tempo proporcional ao parâmetro)")],
+               loc="upper left", bbox_to_anchor=(0.005, 0.93), ncol=2, fontsize=8.5, borderaxespad=0.2)
+    fig.tight_layout(rect=(0, 0, 1, 0.88))
+    rodape(fig, "Média de 5 execuções por ponto, em subgrafos induzidos por amostras encaixadas de nós (semente 42). "
+                "A reta teórica passa pelo ponto do grafo completo.")
     return salvar(fig, Path(saida) / "a2_escalabilidade.png")
 
 
@@ -535,6 +568,9 @@ def camadas_bfs(relatorio, saida):
 
 
 # [IA] Claude Code (Claude Opus 5.5) – comparação dos caminhos do Dijkstra com os da BFS nos pares do relatório; revisado por Caio
+# [IA] Claude Code (Claude Fable 5.2) – A4 ajustado em 26/11/2026 seguindo, item a item, o feedback da professora de AVD: um só eixo y,
+# à direita (no zero), com o caminho completo; sem "arcos/passos" repetido em cada linha; sem grade; mais espaço entre o título
+# e as barras; figura mais estreita
 def caminhos(relatorio, saida):
     dij = relatorio["dijkstra"]
     pares = [p for p in dij["pares"] if p["status"] == "OK"]
@@ -542,33 +578,34 @@ def caminhos(relatorio, saida):
     desloc = dij["transformacao"]["deslocamento_eur"]
     iguais = sum(p["arcos"] == p["passos_bfs"] for p in pares)
 
-    fig, ax = plt.subplots(figsize=(10, 0.62 * len(pares) + 1.6))
+    fig, ax = plt.subplots(figsize=(8.5, 0.5 * len(pares) + 2.0))
     y = np.arange(len(pares))
     custos = [p["custo_original"] for p in pares]
     ax.barh(y, custos, color=cor_do_algoritmo("DIJKSTRA"), height=0.55)
-    ax.axvline(0, color=TEXTO_2, lw=1)
     for yi, p in enumerate(pares):
-        ax.text(p["custo_original"] * 1.02, yi, f"{milhoes(p['custo_original'])}", ha="right", va="center",
-                fontsize=9, color=TEXTO)
-        ax.text(0.02 * max(abs(c) for c in custos), yi,
-                f"{' → '.join(p['caminho'])}   |   Dijkstra: {p['arcos']} arcos, BFS: {p['passos_bfs']} passos",
-                ha="left", va="center", fontsize=8.5, color=TEXTO_2)
-    ax.set_yticks(y, [f"{p['origem']} → {p['destino']}" for p in pares], fontsize=9)
-    # [IA] Claude Code (Claude Opus 5.5) – eixo termina logo após o zero: a rota fica na margem direita, que o rodapé já ocupa
-    ax.set_xlim(min(custos) * 1.35, 0.03 * max(abs(c) for c in custos))
+        ax.annotate(milhoes(p["custo_original"]), (p["custo_original"], yi), xytext=(-5, 0), textcoords="offset points",
+                    ha="right", va="center", fontsize=9, color=TEXTO)
+    ax.set_xlim(min(custos) * 1.18, 0)
+    ax.set_ylim(-0.6, len(pares) - 0.4)
+    ax.grid(visible=False)
+    ax.spines["left"].set_visible(False)
+    ax.spines["right"].set_visible(True)
+    ax.yaxis.tick_right()
+    ax.yaxis.set_label_position("right")
+    ax.set_yticks(y, [" → ".join(p["caminho"]) for p in pares], fontsize=9)
+    ax.tick_params(axis="y", length=0, pad=6)
+    ax.set_ylabel("caminho do Dijkstra")
     ax.xaxis.set_major_formatter(FuncFormatter(eur))
     ax.set_xlabel("custo original do caminho do Dijkstra (soma de valor pago − valor de mercado, EUR)")
-    ax.grid(axis="y", visible=False)
-    # [IA] Claude Code (Claude Opus 5.5) – rótulo y e legenda no canto vazio à esquerda das barras menores
-    ax.set_ylabel("par origem → destino")
-    ax.legend(handles=[Patch(color=cor_do_algoritmo("DIJKSTRA"), label="custo do caminho do Dijkstra")],
-              loc="upper left", fontsize=8.5)
-    ax.set_title(f"Caminhos do Dijkstra contra a BFS: em {iguais} de {len(pares)} pares, "
-                 f"o caminho mais barato tem o mesmo número de arcos que o mais curto\n"
-                 f"o deslocamento de {milhoes(desloc)} por arco pesa mais que a diferença entre as transferências")
-    rodape(fig, f"Dijkstra no grafo de clubes com w' = w + {milhoes(desloc)} (todo peso ≥ 0); o custo mostrado é o "
-                f"original. BFS = menor número de transferências entre os mesmos clubes. Bellman-Ford não tem "
-                f"caminho mínimo aqui: o grafo de clubes tem ciclo negativo (ver o relatório).")
+    fig.suptitle(f"Caminhos do Dijkstra contra a BFS: em {iguais} de {len(pares)} pares, o caminho mais barato\n"
+                 f"tem o mesmo número de arcos que o mais curto",
+                 x=0.01, ha="left", fontsize=12, color=TEXTO)
+    ax.set_title(f"o deslocamento de {milhoes(desloc)} por arco pesa mais que a diferença entre as transferências",
+                 fontsize=9.5, color=TEXTO_2, pad=14)
+    fig.tight_layout()
+    rodape(fig, f"Dijkstra no grafo de clubes com w' = w + {milhoes(desloc)} (todo peso ≥ 0); o custo mostrado é o original.\n"
+                f"BFS = menor número de transferências entre os mesmos clubes. Bellman-Ford não tem caminho mínimo aqui:\n"
+                f"o grafo de clubes tem ciclo negativo (ver o relatório).")
     return salvar(fig, Path(saida) / "a4_caminhos.png")
 
 
