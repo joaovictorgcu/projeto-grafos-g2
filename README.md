@@ -9,16 +9,38 @@ Teoria dos Grafos + Análise e Visualização de Dados, CESAR School, 2026.2.
 BFS, DFS, Dijkstra e Bellman-Ford são implementação própria (`src/graphs/algorithms.py`). Nenhuma
 biblioteca de grafos é usada fora de `tests/`, onde o `networkx` entra só como oráculo.
 
+| Parte 1: percurso no m03 (três chaves) | Parte 2: caminho entre clubes |
+|---|---|
+| ![percurso m03](out/parte1/percurso_m03.png) | ![x1 caminho](out/parte2/x1_explanatoria_caminho.png) |
+
+**Documentos principais:** [relatório técnico (PDF)](docs/relatorio_tecnico.pdf) ·
+[relatório da Parte 2](docs/parte2/relatorio_parte2.md) ·
+[análises da Parte 1](docs/Análises_da_Parte_1.md) ·
+[discussão da Parte 1](docs/Discussão_da_Parte_1.md)
+
+## Início rápido
+
+```
+pip install -r requirements.txt
+python -m src.servidor          # abre o app em http://127.0.0.1:8000 (Parte 1 e Parte 2)
+pytest                          # roda os testes
+```
+
 ## Sumário
 
+- [Início rápido](#início-rápido)
 - [Integrantes e pacotes](#integrantes-e-pacotes-de-trabalho)
 - [Andamento](#andamento)
 - [Instalação](#instalação)
 - [Parte 1: labirintos](#parte-1-labirintos)
+  - [Prints da Parte 1](#prints-da-parte-1)
+  - [Labirinto interativo](#labirinto-interativo)
 - [Parte 2: rede de transferências](#parte-2-rede-de-transferências)
+  - [Prints da Parte 2](#prints-da-parte-2)
 - [Testes](#testes)
 - [Estrutura do repositório](#estrutura-do-repositório)
 - [Declaração de uso de IA](#declaração-de-uso-de-ia)
+- [Apresentação do checkpoint](#apresentação-do-checkpoint)
 
 ## Integrantes e pacotes de trabalho
 
@@ -48,7 +70,7 @@ e revisar significa commitar alguma coisa lá: um teste, uma correção, uma doc
 - [x] Parte 2: rede de transferências entre clubes (`out/parte2/` e `docs/parte2/`)
   - [x] gráficos revisados e prompts da declaração de IA (`docs/parte2/prompts_declaracao_uso_ia.txt`)
 - [ ] Declaração de Uso de IA assinada (`docs/DECLARACAO_IA.pdf`)
-- [x] PDF final (manual + técnica, com a matriz de contribuição): `docs/relatorio_tecnico.pdf`
+- [x] PDF final (manual + técnica, com a matriz de contribuição): [docs/relatorio_tecnico.pdf](docs/relatorio_tecnico.pdf)
 - [ ] Entrega final (26/11/2026)
 
 ## Instalação
@@ -84,6 +106,16 @@ python -m src.viz --mapa ./data/mapas/m08_grande.txt --multiplicidade ./out/part
 
 As notas analíticas dessas figuras estão em
 [docs/parte1/notas_visualizacoes.md](docs/parte1/notas_visualizacoes.md).
+
+### Prints da Parte 1
+
+| Percurso no m03 (três chaves) | Percurso no m08 (grande) |
+|---|---|
+| ![percurso m03](out/parte1/percurso_m03.png) | ![percurso m08](out/parte1/percurso_m08.png) |
+| **Camadas da BFS no m02** | **Árvore BFS no m02** |
+| ![camadas m02](out/parte1/camadas_m02.png) | ![arvore bfs m02](out/parte1/arvore_bfs_m02.png) |
+| **Multiplicidade no m08** | |
+| ![multiplicidade m08](out/parte1/multiplicidade_m08.png) | |
 
 ### Labirinto interativo
 
@@ -179,7 +211,8 @@ python -m src.analise
 Regenera em `out/parte1/` as métricas globais, as camadas, os graus, a comparação de modelagens,
 as soluções, a classificação da DFS, o percurso do m03, o ciclo negativo do m06 e os
 estados-armadilha dos mapas fornecidos e dos mapas do grupo. A análise e a discussão estão em
-`docs/Análises_da_Parte_1.md` e `docs/Discussão_da_Parte_1.md`.
+[docs/Análises_da_Parte_1.md](docs/Análises_da_Parte_1.md) e
+[docs/Discussão_da_Parte_1.md](docs/Discussão_da_Parte_1.md).
 
 ## Parte 2: rede de transferências
 
@@ -265,9 +298,36 @@ python -m notebook docs/parte2/eda_parte2.ipynb
 | `x1_explanatoria_caminho.png`, `x2_explanatoria_ligas.png` | visualizações explanatórias |
 | `a1_tempos.png`, `a2_escalabilidade.png`, `a3_camadas_bfs.png`, `a4_caminhos.png` | comparação dos algoritmos: tempo, comportamento e caminhos |
 
+### Prints da Parte 2
+
+**Análise exploratória**
+
+| Graus | Pesos |
+|---|---|
+| ![e1 graus](out/parte2/e1_graus.png) | ![e2 pesos](out/parte2/e2_pesos.png) |
+| **Faltantes** | **Relações** |
+| ![e3 faltantes](out/parte2/e3_faltantes.png) | ![e4 relacoes](out/parte2/e4_relacoes.png) |
+| **Outliers** | |
+| ![e5 outliers](out/parte2/e5_outliers.png) | |
+
+**Visualizações explanatórias**
+
+| Caminho entre clubes | Ligas |
+|---|---|
+| ![x1 caminho](out/parte2/x1_explanatoria_caminho.png) | ![x2 ligas](out/parte2/x2_explanatoria_ligas.png) |
+
+**Comparação dos algoritmos**
+
+| Tempos | Escalabilidade |
+|---|---|
+| ![a1 tempos](out/parte2/a1_tempos.png) | ![a2 escalabilidade](out/parte2/a2_escalabilidade.png) |
+| **Camadas da BFS** | **Caminhos** |
+| ![a3 camadas bfs](out/parte2/a3_camadas_bfs.png) | ![a4 caminhos](out/parte2/a4_caminhos.png) |
+
 A interpretação dos resultados e as notas analíticas de cada gráfico estão em
-`docs/parte2/relatorio_parte2.md`. Os prompts usados com IA na revisão dos gráficos, com o que foi
-conferido em cada commit, estão em `docs/parte2/prompts_declaracao_uso_ia.txt`.
+[docs/parte2/relatorio_parte2.md](docs/parte2/relatorio_parte2.md). Os prompts usados com IA na
+revisão dos gráficos, com o que foi conferido em cada commit, estão em
+[docs/parte2/prompts_declaracao_uso_ia.txt](docs/parte2/prompts_declaracao_uso_ia.txt).
 
 ## Testes
 
