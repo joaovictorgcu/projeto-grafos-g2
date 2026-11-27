@@ -409,38 +409,41 @@ def explanatoria_caminho(relatorio, saida):
 
 
 def explanatoria_ligas(t, saida):
-    g = t.groupby("liga").agg(neg=("negativo", "mean"), n=("negativo", "size"), mediana=("peso", "median"))
+    """Compara a proporção de pesos negativos nas três ligas selecionadas."""
+    ligas_escolhidas = ("GB1", "ES1", "FR1")
+    dados = t[t["liga"].isin(ligas_escolhidas)]
+    g = dados.groupby("liga").agg(neg=("negativo", "mean"), n=("negativo", "size"))
     g = g[g["n"] >= 300].sort_values("neg")
-    destaque = g.index[0]
-    fig, ax = plt.subplots(figsize=(9, 6.2))
+    if len(g) != len(ligas_escolhidas):
+        raise ValueError("X2 exige pelo menos 300 transferências em cada uma das três ligas escolhidas")
+
+    fig, ax = plt.subplots(figsize=(8.4, 4))
     y = np.arange(len(g))
-    cores = [DESTAQUE if i == destaque else NEUTRO for i in g.index]
-    ax.barh(y, g["neg"], color=cores, height=0.7)
-    for yi, (liga, r) in enumerate(g.iterrows()):
-        ax.text(r["neg"] + 0.01, yi, pct(r["neg"]), va="center", fontsize=8.5,
-                color=TEXTO if liga == destaque else TEXTO_2, fontweight="bold" if liga == destaque else "normal")
-    ax.set_yticks(y, [LIGAS.get(i, i) for i in g.index])
-    ax.axvline(0.5, color=TEXTO_2, lw=1, ls="--")
-    ax.text(0.5, len(g) - 0.4, " metade", color=TEXTO_2, fontsize=8, va="bottom")
-    ax.set_xlim(0, 1.05)
+    cores = [DESTAQUE if liga == "GB1" else NEUTRO for liga in g.index]
+    ax.barh(y, g["neg"], color=cores, height=0.55)
+
+    for yi, (liga, linha) in enumerate(g.iterrows()):
+        ax.text(linha["neg"] + 0.015, yi, pct(linha["neg"]), va="center",
+                fontsize=10, color=TEXTO if liga == "GB1" else TEXTO_2,
+                fontweight="bold" if liga == "GB1" else "normal")
+
+    ax.set_yticks(y, [LIGAS[liga] for liga in g.index])
+    ax.invert_yaxis()  # menor percentual no topo
+    ax.set_xlim(0, 1.03)
+    ax.set_xticks(np.arange(0, 1.01, 0.2))
     ax.xaxis.set_major_formatter(FuncFormatter(pct_eixo))
-    ax.set_xlabel("% das transferências com peso negativo (saída abaixo do valor de mercado)")
+    ax.set_xlabel("transferências com peso negativo (%)")
+    ax.set_ylabel("liga de destino")
+    ax.set_title("Transferências abaixo do valor de mercado são menos frequentes na Premier League", fontsize=12)
     ax.grid(axis="y", visible=False)
-    # [IA] Claude Code (Claude Opus 5.5) – código do rótulo y e da legenda; textos da legenda escritos por Caio
-    ax.set_ylabel("liga do clube de destino")
     ax.legend(handles=[
-    Patch(color=DESTAQUE, label="menor % de transferências abaixo do valor"),
-    Patch(color=NEUTRO, label="outras competições"),
-    Line2D([], [], color=TEXTO_2, ls="--", lw=1, label="linha dos 50%")
-],
-        loc="lower left", bbox_to_anchor=(1.01, 0), fontsize=8.5)
-    r = g.loc[destaque]
-    sinal = "+" if r["mediana"] > 0 else ""
-    ax.set_title(f"Só a {LIGAS.get(destaque, destaque)} compra, em geral, acima do valor de mercado\n"
-                 f"{pct(r['neg'])} das transferências para lá têm peso negativo; mediana do peso "
-                 f"{sinal}{br(r['mediana'] / 1e3)} mil EUR", fontsize=12)
-    rodape(fig, "Liga do clube de destino (clubs.csv); ligas com pelo menos 300 transferências no recorte. "
-                "'Fora das ligas cobertas' = destino fora das ligas que o dataset acompanha. Fonte: Transfermarkt Datasets.")
+        Patch(color=DESTAQUE, label="Premier League"),
+        Patch(color=NEUTRO, label="LaLiga e Ligue 1"),
+    ], loc="lower right", fontsize=8.5)
+    fig.tight_layout()
+    rodape(fig, "Comparação restrita às três ligas escolhidas pelo grupo; "
+                "liga do clube de destino, com pelo menos 300 transferências. "
+                "Fonte: Transfermarkt Datasets.")
     return salvar(fig, Path(saida) / "x2_explanatoria_ligas.png")
 
 

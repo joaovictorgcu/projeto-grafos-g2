@@ -100,7 +100,7 @@ por temporada. A consequência documentada é que o grafo representa sobretudo o
 
 Correlação de Spearman (monotônica, robusta aos outliers) do peso com os numéricos: idade −0,40
 (moderada, inversa), valor de mercado −0,30 (fraca a moderada, inversa), temporada −0,14 (fraca),
-altura 0,08 (desprezível). Entre as categóricas (`e4_relacoes.png`):
+altura 0,08 (desprezível). A figura `e4_relacoes.png` apresenta a matriz de correlações das variáveis numéricas e as dispersões de peso × idade e peso × valor de mercado. Nas comparações por faixas e categorias, realizadas separadamente na exploração, observamos:
 
 - **idade:** a % de transferências com peso negativo sobe de forma monotônica, de 62% (até 21 anos)
   a 96% (34+), junto com a % de gratuitas (45% → 90%). É a relação mais forte, direta e não linear
@@ -111,7 +111,7 @@ altura 0,08 (desprezível). Entre as categóricas (`e4_relacoes.png`):
 - **pé:** praticamente sem efeito (77% a 83%);
 - **liga do destino:** é a maior diferença entre grupos. A Premier League é a única com menos da
   metade das transferências negativas (37%, mediana do peso +950 mil); as demais ficam entre 54%
-  (Serie A) e 98% (`x2_explanatoria_ligas.png`).
+  (Serie A) e 98% no conjunto completo de ligas. O gráfico `x2_explanatoria_ligas.png` apresenta apenas o recorte escolhido de Premier League (37%), Ligue 1 (56%) e LaLiga (67%).
 
 ### Outliers
 
@@ -212,8 +212,7 @@ Memória (pico do `tracemalloc`, grafo completo): BFS 371 KB, DFS 3.662 KB, Dijk
 dele só foi medida até 50% (549 KB). A DFS gasta mais memória por guardar a classificação de
 todos os arcos.
 
-**Escalabilidade** (`a2_escalabilidade.png`): tempo no tamanho / tempo no grafo completo, contra a
-mesma razão da complexidade teórica.
+**Escalabilidade** (`a2_escalabilidade.png`): a figura mostra os tempos reais em milissegundos, em eixos logarítmicos, contra o parâmetro de complexidade de cada algoritmo. No topo de cada painel aparece a porcentagem de nós da amostra. A tabela a seguir mantém as razões relativas ao grafo completo como comparação numérica complementar.
 
 | Algoritmo | Complexidade | 10% (medido / teoria) | 50% (medido / teoria) |
 |---|---|---|---|
@@ -286,12 +285,7 @@ de mercado depende muito mais da época (100% até 2003, 16% em 2025) que o valo
 25% em 2025). Por que esse gráfico: linha para evolução no tempo; as duas séries têm a mesma
 unidade (%), então dividem o mesmo eixo sem distorção.
 
-**E4: `e4_relacoes.png` (exploratória, multivariada).** % de transferências com peso negativo por
-faixa etária, posição, pé e empresário, com a média geral tracejada. Insight: a idade separa muito
-mais que os outros atributos e a relação é monotônica. Por que esse gráfico: gráfico de pontos
-(dot plot) com os quatro painéis empilhados sobre o mesmo eixo x, cada um com altura proporcional
-ao número de categorias, permite comparar os efeitos entre atributos; o n de cada grupo fica
-escrito para não supervalorizar grupos pequenos.
+**E4: `e4_relacoes.png` (exploratória, multivariada).** **O que mostra:** uma matriz de correlação de Spearman entre peso, valor pago, valor de mercado, idade, altura e temporada, acompanhada de duas dispersões: peso × idade e peso × valor de mercado. **Insight:** entre as relações do peso com as demais variáveis numéricas analisadas, a idade apresentou a associação de maior intensidade em módulo (ρ = −0,40), seguida do valor de mercado (ρ = −0,30). As duas são inversas, mas correlação não significa causalidade. **Por que esse gráfico:** a matriz reúne a direção e a intensidade das correlações para comparação, enquanto as dispersões mostram a distribuição e a variação dos dados que os coeficientes, sozinhos, não revelam. A escala symlog do peso permite visualizar os valores negativos, positivos e zero.
 
 **E5: `e5_outliers.png` (exploratória).** O gráfico é um histograma da razão entre o valor pago e o valor de mercado nas 16.435 vendas pagas, em escala logarítmica (1× = pago exatamente o valor de mercado). É a mesma variável sobre a qual a regra do IQR é calculada, então os limites aparecem direto no eixo: as linhas tracejadas marcam 1/9 e 7× o valor de mercado, e tudo o que fica fora delas (faixas sombreadas, barras em laranja) é outlier. São 713 outliers (4,3%): 332 vendas pagas por menos de 1/9 do valor de mercado e 381 por mais de 7×. A maior parte das vendas se concentra perto de 1×, com leve inclinação para baixo (mediana abaixo do valor de mercado), e as caudas são parecidas dos dois lados. O histograma substituiu o dispersograma valor pago × valor de mercado porque mostra todas as vendas, sem amostra, e deixa visível onde o critério de outlier corta a distribuição. Os outliers ficam no grafo, porque são justamente as transferências que geram os maiores pesos e os caminhos negativos estudados.
 
@@ -303,12 +297,7 @@ responde por 54% do custo do caminho inteiro. Por que esse gráfico: o degrau ac
 contribuição de cada transferência na ordem do caminho; o destaque é por cor (laranja contra cinza)
 e tamanho.
 
-**X2: `x2_explanatoria_ligas.png` (explanatória).** % de transferências com peso negativo por liga
-do clube de destino. De onde nasceu: na E4 a idade e a posição mudavam a proporção de negativos;
-olhando a liga do destino apareceu a maior diferença entre grupos. Mensagem: só a Premier League
-compra, em geral, acima do valor de mercado. Por que esse gráfico: barras horizontais ordenadas
-para comparar muitas categorias com nomes longos; uma só cor de destaque e as demais em cinza; a
-linha de 50% dá a referência.
+**X2: `x2_explanatoria_ligas.png` (explanatória).** **O que mostra:** a proporção de transferências com peso negativo nas três ligas de destino selecionadas pelo grupo: Premier League (37%), Ligue 1 (56%) e LaLiga (67%). **Insight:** entre essas três ligas, as transferências abaixo do valor de mercado são menos frequentes na Premier League. Essa diferença foi percebida na análise relacional por liga de destino descrita na seção 2; não veio da figura E4 atual, que apresenta somente relações numéricas. **Por que esse gráfico:** três barras horizontais, com a Premier League em laranja e as outras em cinza, permitem comparar diretamente os percentuais sem o excesso de categorias da versão anterior. A linha de 50% foi retirada para simplificar a leitura, e a legenda identifica as cores usadas. A escolha dessas três ligas foi um recorte para apresentação, não uma seleção das maiores diferenças ou das ligas mais representativas: Serie A, Bundesliga e as demais permanecem na análise completa. A seleção das ligas e a retirada da linha foram decisões do grupo.
 
 **A1: `a1_tempos.png` (algoritmos).** Tempo médio de cada algoritmo no grafo completo, em escala
 log, com o desvio padrão e a razão para a BFS. Insight: BFS, Dijkstra e DFS ficam em milissegundos;
@@ -316,23 +305,11 @@ o Bellman-Ford leva segundos (9 mil vezes a BFS). Por que esse gráfico: pontos 
 e não barras, porque numa escala log o comprimento de uma barra não representa nada; escala log
 porque os tempos diferem em quatro ordens de grandeza.
 
-**A2: `a2_escalabilidade.png` (algoritmos).** Tempo medido e curva teórica, ambos relativos ao
-grafo completo, um painel por algoritmo. Insight: as duas curvas andam juntas, então o crescimento
-medido segue a complexidade. Por que esse gráfico: linhas para crescimento em função do tamanho;
-normalizar pelo maior grafo deixa medida e teoria na mesma escala sem eixo duplo.
+**A2: `a2_escalabilidade.png` (algoritmos).** **O que mostra:** em quatro painéis, o tempo médio medido (em milissegundos) e a curva de crescimento teórico para BFS, DFS, Dijkstra e Bellman-Ford. Os dois eixos usam escala logarítmica: o eixo vertical mostra o tempo real; o horizontal, o parâmetro de complexidade de cada algoritmo (|V| + |E| para BFS e DFS, (|V| + |E|) × log₂|V| para Dijkstra, e |V| × |E| para Bellman-Ford). Na parte superior aparece a porcentagem de nós de cada amostra. **Insight:** o crescimento medido acompanha, de modo geral, a tendência da complexidade teórica. Na amostra de 50%, o Bellman-Ford coincide com a referência teórica em termos relativos (0,098 medido e 0,098 previsto), e a BFS também fica próxima (0,252 contra 0,264). Nesse tamanho, o Dijkstra apresenta a maior diferença entre as proporções medidas e previstas (0,286 contra 0,235), enquanto a DFS registra 0,299 contra 0,264. **Por que esse gráfico:** comparar curvas medidas e teóricas permite verificar a tendência de crescimento à medida que o grafo aumenta. Os eixos log-log acomodam escalas muito diferentes; a curva teórica é ancorada no valor medido do grafo completo, mas os tempos exibidos não são normalizados.
 
 **A3: `a3_camadas_bfs.png` (algoritmos).** Clubes descobertos por nível da BFS a partir das três
 fontes. Insight: o pico fica no nível 3; 77% a 83% dos clubes alcançáveis estão a 2 a 4 transferências
 da fonte e 93% a 95% a até 5: mundo pequeno. Por que esse gráfico: linha porque o nível é ordenado;
 três séries no mesmo eixo para comparar as fontes.
 
-**A4: `a4_caminhos.png` (algoritmos).** Para os 6 pares do Dijkstra, uma barra com o custo
-original do caminho encontrado, a rota escrita ao lado e o número de arcos do Dijkstra contra o de
-passos da BFS. Insight: nos 6 pares o caminho "mais barato" tem os mesmos 2 arcos do caminho mais
-curto. Com o deslocamento de +180 mi por arco, cada arco a mais custa muito, e o Dijkstra acaba
-devolvendo um caminho mínimo em número de arcos, escolhendo entre esses o de menor custo original.
-É a evidência visual do limite do deslocamento discutido na seção 3. O Bellman-Ford fica de fora
-porque o grafo de clubes tem ciclo negativo e, portanto, não tem caminho mínimo. Por que esse
-gráfico: barras horizontais ordenadas para comparar o custo entre pares com nomes longos, com uma
-só cor porque todos os pares são do mesmo algoritmo; a rota e a contagem de arcos ficam escritas
-na linha, já que o ponto é ver que a contagem é igual em todas.
+**A4: `a4_caminhos.png` (algoritmos).** **O que mostra:** barras horizontais com os custos originais, em euros, dos caminhos encontrados pelo Dijkstra em seis pares de clubes; as rotas completas aparecem à direita. O título reúne a comparação entre a quantidade de arcos do Dijkstra e os passos da BFS, sem repeti-la em cada linha. **Insight:** em todos os seis pares, o Dijkstra encontrou caminhos de dois arcos, a mesma quantidade mínima de passos encontrada pela BFS. O deslocamento de +180 milhões de euros por arco torna percursos com mais arcos menos competitivos e não garante o menor custo original entre todos os percursos possíveis. **Por que esse gráfico:** as barras permitem comparar os custos negativos entre pares, e as rotas escritas à direita identificam os percursos sem sobrecarregar cada barra com informações repetidas. O Bellman-Ford não foi incluído porque há ciclos negativos no grafo de clubes que comprometem o caminho mínimo nos casos afetados.
